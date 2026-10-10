@@ -47,6 +47,7 @@ Ear-Ju-Da/
 └── supabase/
     ├── schema.sql      # 테이블 정의
     ├── policies.sql    # RLS 보안 정책
+    ├── functions.sql   # 포인트가 오가는 동작 (노트 구매, 예약, 완료, 취소)
     ├── seed.sql        # 데모용 샘플 데이터
     └── functions/      # Edge Functions (AI 보고서 등)
 ```
