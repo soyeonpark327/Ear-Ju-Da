@@ -1,0 +1,37 @@
+name: ✨ 기능 개발
+description: 새로운 기능이나 화면을 만들 때
+title: "[Feat] "
+labels: ["feature"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 기능 설명
+      description: 어떤 기능인지 간단히 적어주세요.
+      placeholder: 예) 베테랑 목록 페이지에서 키워드로 검색할 수 있다.
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: 할 일
+      description: 작업을 잘게 나눠서 체크리스트로 적어주세요.
+      value: |
+        - [ ]
+        - [ ]
+    validations:
+      required: true
+  - type: dropdown
+    id: part
+    attributes:
+      label: 담당 파트
+      multiple: true
+      options:
+        - 프론트엔드
+        - 백엔드
+        - 기획/디자인
+  - type: textarea
+    id: etc
+    attributes:
+      label: 참고 사항
+      description: 디자인 링크, 참고 자료 등

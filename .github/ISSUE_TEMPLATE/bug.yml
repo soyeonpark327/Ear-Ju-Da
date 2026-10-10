@@ -1,0 +1,31 @@
+name: 🐛 버그 제보
+description: 잘못 동작하는 부분을 알릴 때
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: 어떤 문제인가요?
+      placeholder: 예) 채팅방에서 메시지를 보내면 두 번 표시된다.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 재현 방법
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 원래 기대한 동작
+  - type: textarea
+    id: screenshot
+    attributes:
+      label: 스크린샷 / 콘솔 에러
+      description: 브라우저 개발자 도구(F12) > Console 탭의 빨간 에러를 붙여주세요.

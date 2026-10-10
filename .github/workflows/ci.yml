@@ -1,0 +1,50 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main, develop]
+
+jobs:
+  check:
+    name: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: HTML 문법 검사
+        run: npx --yes htmlhint@1.1.4 "**/*.html"
+
+      - name: JS 문법 검사
+        run: |
+          files=$(find js -name '*.js')
+          if [ -n "$files" ]; then
+            for f in $files; do
+              node --input-type=module --check < "$f" || { echo "::error file=$f::문법 오류"; exit 1; }
+            done
+          fi
+
+      - name: 비밀 키 커밋 방지
+        run: |
+          found=0
+          # 새 형식의 Supabase secret key, AI API 키
+          if grep -rIn --exclude-dir=.git --exclude-dir=.github -e 'sb_secret_' -e 'sk-ant-' -e 'sk-proj-' . ; then
+            found=1
+          fi
+          # JWT 형식 키: payload를 디코딩해서 role이 service_role인지 확인 (anon key는 통과)
+          for jwt in $(grep -rIohE --exclude-dir=.git 'eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+' . | sort -u); do
+            role=$(node -e 'try{console.log(JSON.parse(Buffer.from(process.argv[1].split(".")[1],"base64url")).role||"")}catch{}' "$jwt")
+            if [ "$role" = "service_role" ]; then
+              echo "service_role JWT 발견: ${jwt:0:20}..."
+              found=1
+            fi
+          done
+          if [ "$found" = 1 ]; then
+            echo "::error::service_role key 또는 AI API 키로 보이는 값이 있습니다. Edge Function Secrets로 옮겨주세요."
+            exit 1
+          fi

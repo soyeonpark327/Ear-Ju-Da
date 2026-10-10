@@ -1,0 +1,23 @@
+# PR이 열리면 아래 파일을 담당하는 사람이 자동으로 리뷰어로 지정됩니다.
+# 아래쪽 규칙일수록 우선 적용됩니다.
+
+# 기본: 개발자 전원
+*                   @soyeonpark327 @cl6y8 @yena0208
+
+# 프론트엔드 (장예나)
+/index.html         @yena0208
+/pages/             @yena0208
+/css/               @yena0208 @chlgeun
+/js/pages/          @yena0208
+/assets/            @yena0208 @chlgeun
+
+# 백엔드 (박소연, 오재인)
+/js/supabase.js     @soyeonpark327 @cl6y8
+/js/api/            @soyeonpark327 @cl6y8
+/supabase/          @soyeonpark327 @cl6y8
+
+# 문서 (기획: 최강은)
+/README.md          @chlgeun @soyeonpark327
+
+# 레포 설정
+/.github/           @soyeonpark327

@@ -1,0 +1,34 @@
+/* 색상·폰트 값은 디자인 확정 후 바꿔주세요. */
+:root {
+  /* Color */
+  --color-primary: #2f6fed;
+  --color-primary-dark: #1f4fb5;
+  --color-text: #1a1a1a;
+  --color-text-sub: #666666;
+  --color-bg: #ffffff;
+  --color-bg-sub: #f5f6f8;
+  --color-border: #e1e4e8;
+  --color-danger: #e5484d;
+
+  /* Font */
+  --font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+  --font-size-sm: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 20px;
+  --font-size-xl: 28px;
+
+  /* Spacing / Shape */
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 32px;
+  --radius: 8px;
+  --max-width: 1200px;
+}
+
+/* 시니어 모드: <html class="senior-mode">이면 글씨가 커집니다. */
+.senior-mode {
+  --font-size-sm: 18px;
+  --font-size-md: 20px;
+  --font-size-lg: 26px;
+  --font-size-xl: 34px;
+}

@@ -1,0 +1,4 @@
+-- 테이블 정의
+-- Supabase 대시보드 SQL Editor에서 실행한 SQL을 여기에도 저장해 두세요.
+-- 테이블을 만들면 바로 RLS도 켜 주세요:
+--   alter table 테이블명 enable row level security;
