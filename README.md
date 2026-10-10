@@ -16,7 +16,7 @@
 | 학번 | 이름 | 역할 | GitHub |
 | --- | --- | --- | --- |
 | 1108 | 박소연 | 백엔드 개발 | [@soyeonpark327](https://github.com/soyeonpark327) |
-| 1111 | 오재인 | 백엔드 개발 | [@cl6y8](https://github.com/cl6y8) |
+| 1111 | 오재인 | 프론트 개발 | [@cl6y8](https://github.com/cl6y8) |
 | 1116 | 장예나 | 프론트 개발 | [@yena0208](https://github.com/yena0208) |
 | 1618 | 최강은 | 기획 및 디자인 | [@chlgeun](https://github.com/chlgeun) |
 
