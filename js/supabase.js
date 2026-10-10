@@ -5,7 +5,7 @@ import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js
 // Supabase 대시보드 > Project Settings > API 에서 복사합니다.
 // anon key는 공개돼도 괜찮지만, 모든 테이블에 RLS를 반드시 켜야 합니다.
 // service_role key는 절대 여기에 넣지 마세요.
-const SUPABASE_URL = 'https://YOUR-PROJECT-ID.supabase.co';
-const SUPABASE_ANON_KEY = 'YOUR-ANON-KEY';
+const SUPABASE_URL = 'https://idjaoyktgnfqpfaovmth.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_H6JziVEwZH4Cu2QocxHPiQ_LK-kk42r';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
