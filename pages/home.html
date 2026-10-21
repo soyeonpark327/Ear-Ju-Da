@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="../css/variables.css" />
     <link rel="stylesheet" href="../css/pages/home-notes.css" />
   </head>
-  <body>
+  <body class="home-page">
     <a class="skip" href="#main">본문으로 이동</a>
     <div class="app">
       <header class="home-header">
@@ -33,12 +33,13 @@
         <section class="section experts-section">
           <h2><em>경력</em>으로 <em>증명</em>된 베테랑</h2>
           <p id="expert-status" class="status" role="status"></p>
-          <div id="experts" class="stack"></div>
+          <p class="swipe-hint">옆으로 넘겨 더 둘러보세요 →</p>
+          <div id="experts" class="stack" role="region" aria-label="추천 베테랑" tabindex="0"></div>
           <button id="more" class="outline full" hidden>
             베테랑 더보기 ﹀
           </button>
         </section>
-        <section class="section recent">
+        <section class="section recent" hidden>
           <h2>내가 둘러본 베테랑</h2>
           <div id="recent" class="chips"></div>
         </section>

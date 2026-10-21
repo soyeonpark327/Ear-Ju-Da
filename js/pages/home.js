@@ -69,10 +69,8 @@ function renderRecent() {
   } catch {
     /* Storage is optional. */
   }
-  if (!rows.length) {
-    box.textContent = "관심 있는 베테랑을 눌러보세요.";
-    return;
-  }
+  box.closest(".recent").hidden = !rows.length;
+  if (!rows.length) return;
   rows.forEach((row) => {
     const b = document.createElement("button");
     b.textContent = row.name;
@@ -165,7 +163,7 @@ async function loadNotes() {
       ? (await import("./demo-data.js")).notes
       : await (await import("../api/notes.js")).getNotes();
     document.querySelector("#popular").innerHTML = rows
-      .slice(0, 3)
+      .slice(0, 2)
       .map(
         (n, i) =>
           `<li><a href="${escape(route("note-detail.html", { id: n.id }))}"><strong>${i + 1}</strong><span class="paper" aria-hidden="true"></span><div><p class="author">${escape(n.author?.profiles?.name || "베테랑")}</p><h3>${escape(n.title)}</h3><small>${money(n.price_points)} P</small></div><span class="read">읽어보기</span></a></li>`,

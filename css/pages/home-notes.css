@@ -591,3 +591,120 @@ dialog form button {
     padding: 7px 13px;
   }
 }
+
+/* Compact home layout: keep browsing controls within easy reach. */
+.home-page .app {
+  padding-bottom: calc(88px + env(safe-area-inset-bottom));
+}
+.home-page .home-header {
+  padding: 16px 24px 8px;
+}
+.home-page .home-top {
+  padding-bottom: 20px;
+}
+.home-page .search {
+  margin-bottom: 18px;
+}
+.home-page .categories {
+  padding-top: 18px;
+  padding-bottom: 18px;
+  gap: 18px 8px;
+}
+.home-page .category {
+  gap: 6px;
+}
+.home-page .category img,
+.home-page .category .symbol {
+  height: 32px;
+  width: 32px;
+  line-height: 32px;
+}
+.home-page .section {
+  padding-top: 20px;
+  padding-bottom: 22px;
+}
+.home-page .section h2 {
+  margin-bottom: 10px;
+}
+.swipe-hint {
+  font-size: 11px;
+  color: #727788;
+  margin-bottom: 10px;
+}
+.home-page #experts {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: 1px;
+  padding: 2px 2px 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #b9dce5 transparent;
+}
+.home-page .expert {
+  flex: 0 0 92%;
+  min-width: 0;
+  scroll-snap-align: start;
+  padding: 16px;
+  grid-template-columns: 64px minmax(0, 1fr);
+  gap: 12px;
+}
+.home-page .portrait {
+  width: 64px;
+  height: 84px;
+}
+.home-page .career {
+  margin-top: 10px;
+}
+.home-page .bars {
+  max-width: 110px;
+  overflow: hidden;
+}
+.home-page #more {
+  margin-top: 10px;
+  padding: 8px;
+}
+.home-page .recent .chips {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+.home-page .recent .chips button {
+  flex-shrink: 0;
+}
+.home-page .popular {
+  gap: 18px;
+}
+.home-page .paper {
+  height: 64px;
+}
+.home-page .all-notes {
+  margin-top: 18px;
+  padding: 9px;
+}
+.home-page .bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  z-index: 3;
+  background: white;
+  border: 0;
+  border-top: 1px solid var(--line);
+  padding: 10px 8px calc(10px + env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 18px #20203006;
+}
+.home-page .bottom-nav span {
+  font-size: 27px;
+}
+.home-page .bottom-nav a,
+.home-page .bottom-nav button {
+  gap: 3px;
+  min-width: 72px;
+  min-height: 48px;
+  font-size: 12px;
+}
+.home-page #experts {
+  scroll-margin-top: 20px;
+}
