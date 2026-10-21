@@ -16,7 +16,7 @@
 | 학번 | 이름 | 역할 | GitHub |
 | --- | --- | --- | --- |
 | 1108 | 박소연 | 백엔드 개발 | [@soyeonpark327](https://github.com/soyeonpark327) |
-| 1111 | 오재인 | 백엔드 개발 | [@cl6y8](https://github.com/cl6y8) |
+| 1111 | 오재인 | 프론트 개발 | [@cl6y8](https://github.com/cl6y8) |
 | 1116 | 장예나 | 프론트 개발 | [@yena0208](https://github.com/yena0208) |
 | 1618 | 최강은 | 기획 및 디자인 | [@chlgeun](https://github.com/chlgeun) |
 
@@ -47,6 +47,7 @@ Ear-Ju-Da/
 └── supabase/
     ├── schema.sql      # 테이블 정의
     ├── policies.sql    # RLS 보안 정책
+    ├── functions.sql   # 포인트가 오가는 동작 (노트 구매, 예약, 완료, 취소)
     ├── seed.sql        # 데모용 샘플 데이터
     └── functions/      # Edge Functions (AI 보고서 등)
 ```
@@ -59,6 +60,24 @@ ES Modules를 쓰기 때문에 HTML 파일을 더블클릭해서 열면 동작�
 
 1. VS Code 확장 프로그램 **Live Server**를 설치합니다.
 2. `index.html`을 우클릭하고 **Open with Live Server**를 누릅니다.
+
+## 데모 계정
+
+비밀번호는 모두 `demo1234!` 입니다. (`supabase/seed.sql`로 생성)
+
+| 이메일 | 이름 | 역할 | 데모 포인트 |
+| --- | --- | --- | --- |
+| `kim@example.com` | 김대표 | 청년 (기획서 시나리오 주인공) | 노트 구매, 완료된 상담·보고서, 진행 중인 채팅 있음 |
+| `park@example.com` | 박청년 | 청년 | |
+| `lee@example.com` | 이정훈 | 베테랑 · 제조 30년 | 김대표와 상담 기록, 오답 노트 |
+| `mk@example.com` | 박미경 | 베테랑 · 유통 25년 | |
+| `choi@example.com` | 최동수 | 베테랑 · 세무 28년 | 김대표와 진행 중인 예약, 비공개 노트 초안 |
+| `ys@example.com` | 김영숙 | 베테랑 · 인사·노무 27년 | |
+| `jung@example.com` | 정성호 | 베테랑 · 무역 32년 | |
+| `han@example.com` | 한상철 | 베테랑 · 외식 22년 | |
+| `oh@example.com` | 오명수 | 베테랑 · 승인 대기 | 관리자 승인 데모용 |
+
+상담 가능 시간은 seed를 실행한 날 기준 **내일부터 7일간**만 있습니다. 시간이 지나면 SQL Editor에서 `seed.sql`을 다시 실행하세요. 기존 데모 데이터(`@example.com` 계정)를 지우고 새로 만듭니다.
 
 ## 브랜치 전략
 
