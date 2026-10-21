@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오답노트 미리보기 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="notes.html" data-route aria-label="메인으로 돌아가기">〈</a>
+        <h1>오답노트</h1>
+      </header>
+      <main id="main" class="detail-main">
+        <p id="detail-status" class="status" role="status"></p>
+        <article id="detail" hidden>
+          <p class="mistake">
+            <span class="cross" aria-hidden="true">×</span
+            ><strong id="note-label">오답노트</strong>
+          </p>
+          <div class="quote">
+            <h2 id="note-title"></h2>
+            <p id="note-summary"></p>
+          </div>
+          <section id="demo-preview" hidden>
+            <h3>내가 했던 생각</h3>
+            <p class="old-thought">
+              추후 협의라고 적혀 있으니 나중에 우리 쪽 의견도 반영되겠지. 지금은
+              일단 계약을 따내는 게 먼저다.
+            </p>
+            <aside class="lesson">
+              <h3>그때 알았어야 할 것</h3>
+              <p>
+                협의라는 단어는 결정권이 큰 쪽에 붙습니다. 기준을 못 정하겠으면
+                <em>협의 결렬 시의 값</em>을 적어두세요. 그 한 줄이 3년차 단가를
+                지킵니다.
+              </p>
+            </aside>
+          </section>
+          <div id="locked" class="locked">
+            ▣ &nbsp; 전체 오답노트와 첨부 서식은 구매 후 열람할 수 있어요.
+          </div>
+          <section id="body-section" hidden>
+            <h3>전체 오답노트</h3>
+            <div id="note-body" class="note-body"></div>
+          </section>
+          <footer class="purchase-footer">
+            <button id="purchase" class="primary full"></button>
+            <p id="purchase-status" role="status">
+              포인트로 전체 내용을 열람할 수 있어요.
+            </p>
+          </footer>
+        </article>
+      </main>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/note-detail.js"></script>
+  </body>
+</html>
