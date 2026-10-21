@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>오답노트 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
+        <h1>오답노트</h1>
+      </header>
+      <main id="main" class="notes-main">
+        <nav id="filters" class="filters" aria-label="오답노트 분야"></nav>
+        <p id="list-status" class="status" role="status"></p>
+        <div id="notes" class="stack"></div>
+      </main>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/notes.js"></script>
+  </body>
+</html>

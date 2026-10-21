@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>메인 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css" />
+  </head>
+  <body class="home-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="home-header">
+        <a href="home.html" class="brand">이어주다<span>경험을 잇다</span></a
+        ><button id="notifications" aria-label="알림">♧</button>
+      </header>
+      <main id="main">
+        <section class="home-top">
+          <h1 class="sr-only">베테랑의 경험을 청년 창업가에게</h1>
+          <form id="search-form" class="search">
+            <label class="search-field"
+              ><span aria-hidden="true">⌕</span
+              ><input
+                id="keyword"
+                type="search"
+                placeholder="무슨 문제를 겪고 계신가요?"
+                aria-label="고민 키워드" /></label
+            ><button type="submit" class="match">매칭 ✦</button>
+          </form>
+          <nav class="categories" id="categories" aria-label="전문 분야"></nav>
+        </section>
+        <section class="section experts-section">
+          <h2><em>경력</em>으로 <em>증명</em>된 베테랑</h2>
+          <p id="expert-status" class="status" role="status"></p>
+          <p class="swipe-hint">옆으로 넘겨 더 둘러보세요 →</p>
+          <div id="experts" class="stack" role="region" aria-label="추천 베테랑" tabindex="0"></div>
+          <button id="more" class="outline full" hidden>
+            베테랑 더보기 ﹀
+          </button>
+        </section>
+        <section class="section recent" hidden>
+          <h2>내가 둘러본 베테랑</h2>
+          <div id="recent" class="chips"></div>
+        </section>
+        <section class="section">
+          <h2>
+            최근 등록된 <a href="notes.html" data-route><em>오답노트</em> →</a>
+          </h2>
+          <p id="note-status" class="status" role="status"></p>
+          <ol id="popular" class="popular"></ol>
+          <a class="outline full all-notes" href="notes.html" data-route
+            >오답노트 전체 보기</a
+          >
+        </section>
+      </main>
+      <nav class="bottom-nav" aria-label="바로가기">
+        <button data-coming="예약하기"><span>▤</span>예약하기</button
+        ><button data-coming="후기 보기"><span>☆</span>후기 보기</button
+        ><a href="#experts"><span>☷</span>베테랑 찾기</a>
+      </nav>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/home.js"></script>
+  </body>
+</html>
