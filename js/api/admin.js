@@ -42,3 +42,12 @@ export async function getCertificateUrl(path) {
   if (error) throw new Error('증명서를 불러오지 못했어요.');
   return data.signedUrl;
 }
+
+/** 신고 목록 (status: 'open' 기본 / 'resolved' / 'dismissed' / null 전체) */
+export async function getReports(status = 'open') {
+  return unwrap(await supabase.rpc('admin_list_reports', { p_status: status }));
+}
+/** 신고 처리: 'resolved'(조치함) / 'dismissed'(문제없음) */
+export async function resolveReport(id, status, note = null) {
+  unwrap(await supabase.rpc('admin_resolve_report', { p_id: id, p_status: status, p_note: note }));
+}

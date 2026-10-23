@@ -14,6 +14,7 @@ const PROVIDER = { google: "구글", kakao: "카카오", naver: "네이버" };
 const MENU = [
   { href: "consultations.html", label: "내 상담", roles: ["youth", "veteran"] },
   { href: "notifications.html", label: "알림함", roles: ["youth", "veteran"], optional: true },
+  { href: "favorites.html", label: "찜·차단 목록", roles: ["youth", "veteran"] },
   { href: "library.html", label: "구매한 오답노트", roles: ["youth"], optional: true },
   { href: "expert-dashboard.html", label: "베테랑 대시보드", roles: ["veteran"] },
   { href: "expert-schedule.html", label: "상담 일정 관리", roles: ["veteran"] },

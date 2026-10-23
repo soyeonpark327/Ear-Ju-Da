@@ -51,7 +51,7 @@ function update() {
   const windowState = chatWindow();
   $("chat-window").textContent =
     windowState?.message ||
-    "채팅 시간 안내를 준비 중이에요. 지금은 대화 내역만 볼 수 있어요.";
+    "채팅 시간 정보를 불러오지 못했어요. 지금은 대화 내역만 볼 수 있어요.";
   $("chat-input").disabled = !allowed() || sending || completing;
   $("chat-send").disabled =
     !allowed() || sending || completing || !$("chat-input").value.trim();
