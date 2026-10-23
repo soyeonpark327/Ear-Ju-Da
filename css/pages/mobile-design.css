@@ -2203,7 +2203,8 @@ body.mobile-design {
 
 /* Supplied 804 × 200 bottom bar, displayed at the 402px design width. */
 .r-page-home .r-app,
-.r-page-notes .r-app {
+.r-page-notes .r-app,
+.r-page-mypage .r-app {
   padding-bottom: 100px;
 }
 .r-bottom-navigation {

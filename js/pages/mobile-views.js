@@ -195,7 +195,7 @@ function mypage() {
       ([n, p]) =>
         `<a ${p === "support" ? 'data-action="support"' : `href="${link(p)}"`}>${n}${icon("chevron")}</a>`,
     )
-    .join("")}<button data-action="logout">로그아웃</button></nav></main>`;
+    .join("")}<button data-action="logout">로그아웃</button></nav></main>${bottomNavigation()}`;
 }
 export function renderReference({ live = false } = {}) {
   document.body.className = "mobile-design mobile-ui r-page-" + page;
