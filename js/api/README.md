@@ -152,6 +152,7 @@ else showBuyButton(note.price_points); // 구매 안 함 → 구매 버튼
 | `getBooking(bookingId)` | 예약 하나 | 아래 형태, 당사자가 아니면 `null` |
 | `completeBooking(bookingId)` | 상담 완료 (청년만). 베테랑에게 포인트 지급 | |
 | `cancelBooking(bookingId)` | 예약 취소 (시작 전만). 포인트 환불 | |
+| `rescheduleBooking(bookingId, newSlotId)` | **일정 변경** (청년만, 시작 전, 한 예약당 `MAX_RESCHEDULE`=2번). 같은 베테랑의 빈 시간(`getSlots(booking.expert_id)`)으로 옮김. 포인트·채팅방 그대로, 양쪽에 알림 | |
 | `getReport(bookingId)` | AI 보고서 | `{ summary, checklist: [], risks: [] }` 또는 `null` |
 | `generateReport(bookingId)` | **AI 전략 보고서 만들기** (Gemini가 채팅 대화를 읽고 정리). 완료된 상담의 청년·베테랑만, 상담당 하나 (이미 있으면 그대로 반환) | `{ booking_id, summary, checklist: [], risks: [], created_at }` |
 | `getReviews(expertId)` | 후기 목록 | `[{ id, rating, content, created_at, youth: { name } }]` |
@@ -275,7 +276,7 @@ try {
 
 | type | 누르면 이동하면 좋은 곳 |
 | --- | --- |
-| `booking_new`, `booking_confirmed`, `booking_reminder`, `booking_cancelled`, `booking_completed`, `booking_no_show` | 내 상담 / 채팅방 (`data.booking_id`) |
+| `booking_new`, `booking_confirmed`, `booking_reminder`, `booking_cancelled`, `booking_rescheduled`, `booking_completed`, `booking_no_show` | 내 상담 / 채팅방 (`data.booking_id`) |
 | `report_ready` | AI 전략 보고서 (`data.booking_id`) |
 | `note_sold` | 오답노트 상세 (`data.note_id`) |
 | `review_new` | 내 베테랑 프로필 |

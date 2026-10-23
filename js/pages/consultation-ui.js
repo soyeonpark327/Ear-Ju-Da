@@ -70,6 +70,14 @@ export function card(booking, me) {
   chat.textContent =
     booking.status === "confirmed" ? "채팅방 보기" : "대화 내역 보기";
   actions.append(chat);
+  // 시작 전 예약: 시간 바꾸기·취소 화면으로
+  if (booking.status === "confirmed" && new Date(booking.slot?.start_at) > new Date()) {
+    const manage = document.createElement("a");
+    manage.href = route("booking-manage.html", { id: booking.id });
+    manage.className = "outline";
+    manage.textContent = "일정 변경·취소";
+    actions.append(manage);
+  }
   if (booking.status === "completed") {
     const report = document.createElement("a");
     report.href = route("report.html", { id: booking.id });
