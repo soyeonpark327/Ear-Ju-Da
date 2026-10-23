@@ -1,23 +1,119 @@
-import { demo, init, route, notice, escape, avatar } from "./ui.js";
+import { demo, init, route, notice, avatar, money } from "./ui.js?v=ai-ui-1";
 
-// AI 매칭 결과를 결과 화면에 전달하는 저장 키
+// AI 매칭 결과를 결과 화면(expert-booking)에 넘길 때 쓰는 저장 키
 const AI_KEY = "ear-ju-da:ai-match";
 init();
 const input = document.getElementById("concern");
 const send = document.getElementById("send");
-const conversation = document.getElementById("matching-conversation");
-const intro = document.querySelector(".matching-intro");
 const examples = [...document.querySelectorAll(".suggestions button")];
-let busy = false;
+let exampleKeyword = "";
+let submitting = false;
+const selectedFilters = {};
+const DRAFT_KEY = `ear-ju-da:matching-draft:${demo ? "demo" : "live"}`;
+let savedResult = null;
+let conversationHistory = [];
+function saveDraft() {
+  try {
+    sessionStorage.setItem(
+      DRAFT_KEY,
+      JSON.stringify({
+        concern: input.value,
+        filters: selectedFilters,
+        result: savedResult,
+        history: conversationHistory,
+      }),
+    );
+  } catch {
+    /* Storage is optional. */
+  }
+}
+function restoreDraft() {
+  if (supplied) return;
+  try {
+    const data = JSON.parse(sessionStorage.getItem(DRAFT_KEY) || "null");
+    if (!data || typeof data.concern !== "string") return;
+    input.value = data.concern.slice(0, 1000);
+    if (data.filters && typeof data.filters === "object")
+      Object.assign(selectedFilters, data.filters);
+    conversationHistory = Array.isArray(data.history)
+      ? data.history.filter(
+          (r) => typeof r?.concern === "string" && Array.isArray(r.matches),
+        )
+      : [];
+    renderHistory();
+    if (Array.isArray(data.result?.matches) && data.result.matches.length) {
+      savedResult = data.result;
+      renderResults(savedResult, false);
+    }
+  } catch {
+    /* Invalid or blocked storage must not stop matching. */
+  }
+}
+function renderResults(result, scroll = true) {
+  const source =
+    result.source === "ai"
+      ? "AI 추천"
+      : demo
+        ? "예시 키워드 검색"
+        : "키워드 검색";
+  document.getElementById("matching-concern").textContent = result.concern;
+  document.getElementById("matching-source").textContent = source;
+  document.getElementById("matching-explanation").textContent =
+    result.source === "ai"
+      ? "AI가 정리한 추천 근거예요. 실제 상담 가능 범위는 프로필에서 확인해주세요."
+      : `${result.fallback ? "AI 추천을 완료하지 못해 키워드로 찾았어요. 선택한 필터는 적용하지 못했어요. " : ""}문장 전체를 이해한 AI 추천이 아니라, 등록된 소개와 키워드가 일치한 결과예요.`;
+  const cards = document.getElementById("matching-cards");
+  cards.replaceChildren();
+  for (const match of result.matches) cards.append(buildCard(match, result));
+  renderHistory();
+  document.getElementById("matching-conversation").hidden = false;
+  document.getElementById("matching-results").hidden = false;
+  document.getElementById("matching-status").textContent =
+    "추천 근거와 상담 범위를 확인해주세요.";
+  if (scroll)
+    document
+      .getElementById("matching-results")
+      .scrollIntoView({ block: "start", behavior: "smooth" });
+}
+function scopeCaution(concern, match) {
+  const profile = `${match.headline || ""} ${(match.keywords || []).join(" ")} ${match.reason || ""}`;
+  if (
+    /지원금|지원사업|보조금/.test(concern) &&
+    /신청|처음/.test(concern) &&
+    /정산/.test(profile)
+  )
+    return "지원금 신청과 정산은 다른 업무예요. 정산 경력이 신청 자격·서류 상담까지 포함하는지는 예약 전에 확인해주세요.";
+  return "등록된 경력과 고민의 세부 분야가 다를 수 있어요. 상담 가능 범위를 먼저 확인해주세요.";
+}
+function finishResults(result) {
+  if (savedResult) conversationHistory.push(savedResult);
+  savedResult = result;
+  if (result.source === "ai") {
+    try {
+      sessionStorage.setItem(AI_KEY, JSON.stringify(result));
+    } catch {
+      /* optional */
+    }
+  }
+  if (result.source !== "ai") {
+    try {
+      sessionStorage.removeItem(AI_KEY);
+    } catch {
+      /* optional */
+    }
+  }
+  saveDraft();
+  renderResults(result);
+}
+
 const supplied = new URLSearchParams(location.search).get("keyword");
 if (supplied) input.value = supplied.slice(0, 1000);
 function update() {
-  send.disabled = busy || !input.value.trim();
-  send.setAttribute("aria-label", busy ? "베테랑을 찾는 중" : "베테랑 찾기");
+  send.disabled = submitting || !input.value.trim();
   examples.forEach((b) =>
     b.setAttribute(
       "aria-pressed",
-      String(input.value === b.textContent.trim()),
+      String(input.value.trim() === b.textContent.trim()),
     ),
   );
 }
@@ -25,17 +121,70 @@ examples.forEach(
   (b) =>
     (b.onclick = () => {
       input.value = b.textContent.trim();
+      exampleKeyword = b.dataset.keyword;
       update();
+      saveDraft();
       input.focus();
     }),
 );
-input.addEventListener("input", update);
+input.addEventListener("input", () => {
+  exampleKeyword = "";
+  saveDraft();
+  update();
+});
 document.getElementById("attach").onclick = () =>
   notice(
     "첨부 기능 준비 중",
     "현재는 글로 고민을 입력할 수 있어요. 첨부 파일은 아직 전송하지 않아요.",
   );
-function searchKeyword(text) {
+document.getElementById("matching-form").onsubmit = async (e) => {
+  e.preventDefault();
+  const text = input.value.trim();
+  if (!text || submitting) {
+    update();
+    return;
+  }
+  submitting = true;
+  // 1순위: Gemini AI 매칭. 실패하면 아래 키워드 매칭으로 넘어간다.
+  if (!demo) {
+    send.disabled = true;
+    input.readOnly = true;
+    setFilterBusy(true);
+    const statusEl = document.getElementById("matching-status");
+    statusEl.textContent =
+      "AI가 딱 맞는 베테랑을 찾고 있어요. 보통 2~4초 정도 걸려요…";
+    try {
+      const { aiMatch, AI_MATCH_KEY } = await import("../api/ai.js");
+      const result = await aiMatch(text, { ...selectedFilters });
+      if (result.filtered_count === 0) {
+        statusEl.textContent =
+          "조건에 맞는 베테랑이 없어요. 필터를 줄여보세요.";
+        clearResults();
+        submitting = false;
+        return;
+      }
+      if (result.matches?.length) {
+        try {
+          sessionStorage.setItem(
+            AI_MATCH_KEY,
+            JSON.stringify({ concern: text, ...result }),
+          );
+        } catch {
+          /* 저장이 안 돼도 1순위 베테랑 화면은 보여준다 */
+        }
+        finishResults({ concern: text, ...result, source: "ai" });
+        submitting = false;
+        return;
+      }
+      statusEl.textContent = "딱 맞는 베테랑을 찾지 못해 키워드로 찾아볼게요.";
+    } catch {
+      statusEl.textContent = "AI 연결이 원활하지 않아 키워드로 찾아볼게요.";
+    } finally {
+      input.readOnly = false;
+      setFilterBusy(false);
+      update();
+    }
+  }
   const rules = [
     [/노무|채용|직원|근로|급여|퇴직/, "노무"],
     [/납품|단가|거래처/, "납품"],
@@ -45,159 +194,272 @@ function searchKeyword(text) {
     [/마케팅|광고|홍보/, "마케팅"],
     [/수출|해외|무역/, "무역"],
   ];
-  let keyword = rules.find(([pattern]) => pattern.test(text))?.[1] || text;
+  let keyword =
+    exampleKeyword ||
+    rules.find(([pattern]) => pattern.test(text))?.[1] ||
+    text;
   if (demo) keyword = { 납품: "계약", 지원금: "자금" }[keyword] || keyword;
-  return keyword;
-}
-function scrollToLatest() {
-  conversation.scrollTop = conversation.scrollHeight;
-}
-function addUser(text) {
-  const p = document.createElement("p");
-  p.className = "user-message";
-  p.textContent = text;
-  conversation.append(p);
-}
-function addReply() {
-  const row = document.createElement("article");
-  row.className = "assistant-message";
-  row.innerHTML =
-    '<span class="assistant-avatar" aria-hidden="true">✦</span><div class="assistant-content"><p class="assistant-name">이어주다 AI</p><p class="assistant-bubble">관련 베테랑을 찾고 있어요…</p><div class="recommendations"></div></div>';
-  conversation.append(row);
-  return row;
-}
-function expertCard(expert) {
-  const card = document.createElement("article");
-  card.className = "matching-expert-card";
-  const photo = demo ? expert.avatar_url : avatar(expert.avatar_url);
-  const summary =
-    expert.career_summary ||
-    (expert.keywords || []).join(" · ") ||
-    expert.headline ||
-    "경력 정보는 프로필에서 확인해주세요.";
-  card.innerHTML = `<div class="recommendation-heading"><div class="recommendation-avatar">${photo ? `<img src="${escape(photo)}" alt="">` : `<span aria-hidden="true">${escape((expert.name || "베")[0])}</span>`}</div><div class="recommendation-person"><h2>${escape(expert.name || "베테랑")}</h2><p>${escape(expert.headline || "")}</p></div><p class="recommendation-score"><strong>${escape(demo ? expert.review_count : expert.rating || "—")}</strong><small>${demo ? "매칭 예시" : "평점"}</small></p></div><p class="recommendation-summary">${escape(summary)}</p><div class="recommendation-actions"><a class="profile-action" href="${escape(route("expert-booking.html", { id: expert.id }))}">프로필 보기</a><a class="booking-action" href="${escape(route("booking.html", { id: expert.id }))}">상담 예약</a></div>`;
-  const img = card.querySelector("img");
-  if (img)
-    img.onerror = () => {
-      const span = document.createElement("span");
-      span.textContent = (expert.name || "베")[0];
-      img.replaceWith(span);
-    };
-  return card;
-}
-async function findExperts(text, reply) {
-  busy = true;
-  update();
-  const bubble = reply.querySelector(".assistant-bubble");
-  const cards = reply.querySelector(".recommendations");
-  cards.replaceChildren();
-  bubble.textContent = "관련 베테랑을 찾고 있어요…";
-  conversation.setAttribute("aria-busy", "true");
-  scrollToLatest();
   try {
-    // 기존 AI 매칭을 먼저 시도하고 실패하면 대화형 키워드 검색을 사용한다.
-    if (!demo) {
-      bubble.textContent = "AI가 고민을 읽고 딱 맞는 베테랑을 찾고 있어요…";
-      try {
-        const { aiMatch } = await import("../api/ai.js");
-        const result = await aiMatch(text);
-        if (result.matches.length) {
-          try {
-            sessionStorage.setItem(AI_KEY, JSON.stringify({ concern: text, ...result }));
-          } catch {
-            // 저장이 불가능해도 첫 번째 베테랑의 프로필로 이동한다.
-          }
-          location.href = route("expert-booking.html", {
-            id: result.matches[0].expert_id,
-            ai: "1",
-          });
-          return;
-        }
-        bubble.textContent = "딱 맞는 베테랑을 찾지 못해 키워드로 찾아볼게요.";
-      } catch {
-        bubble.textContent = "AI 연결이 원활하지 않아 키워드로 찾아볼게요.";
-      }
-    }
-    const keyword = searchKeyword(text);
-    let rows;
-    if (demo) {
-      const data = await import("./demo-data.js");
-      rows = data.experts.filter((e) =>
-        `${e.name} ${e.headline} ${e.career_summary || ""} ${(e.keywords || []).join(" ")}`.includes(
-          keyword,
-        ),
-      );
-    } else {
-      const { getExperts } = await import("../api/experts.js");
-      rows = await getExperts({ keyword });
-      // Older cached API modules used exact keyword matching. Recheck the
-      // public list so a related compound keyword such as 지원금정산 is found.
-      if (!rows.length) {
-        const all = await getExperts();
-        const words = keyword
-          .toLocaleLowerCase("ko-KR")
-          .split(/\s+/)
-          .filter(Boolean);
-        rows = all.filter((e) => {
-          const searchable = [
-            e.name,
-            e.headline,
-            e.industry,
-            e.career_summary,
-            e.search_text,
-            ...(e.keywords || []),
-          ]
-            .filter(Boolean)
-            .join(" ")
-            .toLocaleLowerCase("ko-KR");
-          return words.every((word) => searchable.includes(word));
-        });
-      }
+    let rows = demo
+      ? (await import("./demo-data.js")).experts.filter((e) =>
+          `${e.name} ${e.headline} ${(e.keywords || []).join(" ")}`.includes(
+            keyword,
+          ),
+        )
+      : await (await import("../api/experts.js")).getExperts({ keyword });
+    if (!demo && !rows.length) {
+      const all = await (await import("../api/experts.js")).getExperts();
+      const words = keyword
+        .toLocaleLowerCase("ko-KR")
+        .split(/\s+/)
+        .filter(Boolean);
+      rows = all.filter((e) => {
+        const searchable = [
+          e.name,
+          e.headline,
+          e.industry,
+          e.career_summary,
+          e.search_text,
+          ...(e.keywords || []),
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .toLocaleLowerCase("ko-KR");
+        return words.every((word) => searchable.includes(word));
+      });
     }
     if (!rows.length) {
-      bubble.textContent =
-        "관련 베테랑을 아직 찾지 못했어요. 계약, 노무, 지원금처럼 분야를 바꿔서 적어주세요.";
-    } else {
-      bubble.textContent =
-        demo && keyword === "계약"
-          ? "납품 단가 분쟁을 많이 다뤄본 베테랑을 찾았어요."
-          : "입력한 내용의 키워드와 관련된 베테랑을 찾았어요.";
-      rows.slice(0, 3).forEach((e) => cards.append(expertCard(e)));
+      clearResults();
+      document.getElementById("matching-status").textContent =
+        "관련 베테랑이 없어요. 위의 계약·채용·지원금 예시를 선택하거나 필터를 줄여 다시 보내주세요.";
+      return;
     }
-  } catch (e) {
-    bubble.textContent = /fetch|network|load failed/i.test(e.message || "")
-      ? "서버에 연결하지 못했어요. 연결을 확인하고 다시 시도해주세요."
-      : e.message || "베테랑을 찾지 못했어요. 다시 시도해주세요.";
+    finishResults({
+      concern: text,
+      source: "keyword",
+      fallback: !demo,
+      matches: rows.slice(0, 3).map((e) => ({
+        ...e,
+        expert_id: e.id,
+        reason: `검색어 ‘${keyword}’로 등록된 소개·키워드를 검색해 찾았어요. 이 검색만으로 세부 업무 경력을 확인한 것은 아니에요.`,
+      })),
+    });
+  } catch {
+    const el = document.getElementById("matching-status");
+    el.textContent = "추천을 불러오지 못했어요. 입력 내용은 유지했어요. ";
     const retry = document.createElement("button");
     retry.type = "button";
-    retry.className = "matching-retry";
     retry.textContent = "다시 시도";
-    retry.onclick = () => {
-      if (!busy) findExperts(text, reply);
-    };
-    cards.append(retry);
+    retry.onclick = () =>
+      document.getElementById("matching-form").requestSubmit();
+    el.append(retry);
   } finally {
-    busy = false;
-    conversation.setAttribute("aria-busy", "false");
+    submitting = false;
+    input.readOnly = false;
+    setFilterBusy(false);
     update();
-    scrollToLatest();
+    saveDraft();
   }
-}
-document.getElementById("matching-form").onsubmit = (e) => {
-  e.preventDefault();
-  const text = input.value.trim();
-  if (!text || busy) {
-    update();
-    return;
-  }
-  intro.hidden = true;
-  conversation.hidden = false;
-  document.querySelector(".matching-main").classList.add("has-results");
-  input.value = "";
-  input.placeholder = "메시지를 입력하세요";
-  addUser(text);
-  const reply = addReply();
-  findExperts(text, reply);
 };
 update();
-window.addEventListener("pageshow", update);
+// Re-enable submission when returning from a result through browser history.
+window.addEventListener("pageshow", () => {
+  submitting = false;
+  input.readOnly = false;
+  setFilterBusy(false);
+  update();
+});
+
+function setFilterBusy(value) {
+  document
+    .querySelectorAll("#ai-filters button, .suggestions button")
+    .forEach((button) => (button.disabled = value));
+}
+function renderFilterGroup(containerId, key, values) {
+  const container = document.getElementById(containerId);
+  container.replaceChildren();
+  values.forEach((option) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "ai-filter-chip";
+    button.textContent = option.label;
+    button.setAttribute(
+      "aria-pressed",
+      String(selectedFilters[key] === option.value),
+    );
+    button.onclick = () => {
+      if (selectedFilters[key] === option.value) delete selectedFilters[key];
+      else selectedFilters[key] = option.value;
+      saveDraft();
+      [...container.children].forEach((child, index) =>
+        child.setAttribute(
+          "aria-pressed",
+          String(selectedFilters[key] === values[index].value),
+        ),
+      );
+    };
+    container.append(button);
+  });
+}
+async function loadFilters() {
+  // Demo mode must not call the AI/filter API or initialize its dependencies.
+  if (demo) return;
+  try {
+    const { getMatchFilterOptions, STAGES, BUDGETS } = await import(
+      "../api/ai.js"
+    );
+    const options = await getMatchFilterOptions();
+    renderFilterGroup(
+      "ai-filter-industry",
+      "industry",
+      options.industries.map((value) => ({ value, label: value })),
+    );
+    renderFilterGroup("ai-filter-stage", "stage", STAGES);
+    renderFilterGroup("ai-filter-budget", "max_price", BUDGETS);
+    const soon = document.getElementById("ai-filter-soon");
+    soon.setAttribute("aria-pressed", String(!!selectedFilters.available_soon));
+    soon.onclick = () => {
+      if (selectedFilters.available_soon) delete selectedFilters.available_soon;
+      else selectedFilters.available_soon = true;
+      saveDraft();
+      soon.setAttribute(
+        "aria-pressed",
+        String(!!selectedFilters.available_soon),
+      );
+    };
+    document.getElementById("ai-filters").hidden = false;
+    setFilterBusy(submitting);
+  } catch {
+    document.getElementById("ai-filters").hidden = true;
+    Object.keys(selectedFilters).forEach((key) => delete selectedFilters[key]);
+  }
+}
+loadFilters();
+
+document.getElementById("matching-new").onclick = () => {
+  savedResult = null;
+  conversationHistory = [];
+  document.getElementById("matching-history").replaceChildren();
+  document.getElementById("matching-conversation").hidden = true;
+  input.value = "";
+  exampleKeyword = "";
+  Object.keys(selectedFilters).forEach((key) => delete selectedFilters[key]);
+  document
+    .querySelectorAll("#ai-filters button")
+    .forEach((b) => b.setAttribute("aria-pressed", "false"));
+  document.getElementById("matching-results").hidden = true;
+  try {
+    sessionStorage.removeItem(AI_KEY);
+    sessionStorage.removeItem(DRAFT_KEY);
+  } catch {
+    /* optional */
+  }
+  document.getElementById("matching-status").textContent =
+    "새 고민을 입력해주세요.";
+  update();
+  input.focus();
+};
+restoreDraft();
+update();
+
+function clearResults() {
+  if (savedResult) conversationHistory.push(savedResult);
+  savedResult = null;
+  renderHistory();
+  document.getElementById("matching-results").hidden = true;
+  saveDraft();
+}
+
+// Mobile browsers resize the visual viewport when the software keyboard opens.
+window.visualViewport?.addEventListener("resize", () => {
+  if (document.activeElement === input)
+    input.scrollIntoView({ block: "nearest" });
+});
+
+function buildCard(match, result) {
+  const card = document.createElement("article");
+  card.className = "matching-result-card";
+  const imageUrl = demo ? match.avatar_url : avatar(match.avatar_url);
+  if (imageUrl) {
+    const img = document.createElement("img");
+    img.src = imageUrl;
+    img.alt = "";
+    img.onerror = () => img.remove();
+    card.append(img);
+  }
+  for (const [tag, text] of [
+    ["h3", match.name],
+    ["p", match.headline],
+    [
+      "p",
+      match.reason ||
+        "추천 근거를 받지 못했어요. 프로필에서 경력을 확인해주세요.",
+    ],
+  ]) {
+    const el = document.createElement(tag);
+    el.textContent = text;
+    card.append(el);
+  }
+  const caution = scopeCaution(result.concern, match);
+  if (caution) {
+    const p = document.createElement("p");
+    p.className = "matching-caution";
+    p.textContent = caution;
+    card.append(p);
+  }
+  if (!demo && Number.isFinite(Number(match.price_points))) {
+    const p = document.createElement("p");
+    p.textContent = `상담 ${money(match.price_points)}P`;
+    card.append(p);
+  }
+  const actions = document.createElement("div");
+  actions.className = "matching-result-actions";
+  for (const [label, path] of [
+    ["프로필 보기", "expert-booking.html"],
+    ["상담 예약", "booking.html"],
+  ]) {
+    const a = document.createElement("a");
+    a.textContent = label;
+    a.className = label === "상담 예약" ? "primary" : "outline";
+    a.href = route(path, {
+      id: match.expert_id,
+      ...(result.source === "ai" && path === "expert-booking.html"
+        ? { ai: "1" }
+        : {}),
+    });
+    a.onclick = () => {
+      try {
+        if (result.source === "ai")
+          sessionStorage.setItem(AI_KEY, JSON.stringify(result));
+        else sessionStorage.removeItem(AI_KEY);
+      } catch {
+        /* Storage is optional. */
+      }
+    };
+    actions.append(a);
+  }
+  card.append(actions);
+  return card;
+}
+
+function renderHistory() {
+  const host = document.getElementById("matching-history");
+  host.replaceChildren();
+  for (const item of conversationHistory) {
+    const section = document.createElement("section");
+    section.className = "matching-history-item";
+    const concern = document.createElement("p");
+    concern.className = "matching-concern";
+    concern.textContent = item.concern;
+    const title = document.createElement("h2");
+    title.textContent =
+      item.source === "ai"
+        ? "AI 추천"
+        : "키워드 검색 · 등록 정보가 일치한 결과예요";
+    section.append(concern, title);
+    for (const match of item.matches) section.append(buildCard(match, item));
+    host.append(section);
+  }
+  if (conversationHistory.length)
+    document.getElementById("matching-conversation").hidden = false;
+}

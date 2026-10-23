@@ -7,19 +7,24 @@
     <link rel="stylesheet" href="../css/reset.css" />
     <link rel="stylesheet" href="../css/variables.css" />
     <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
-    <link rel="stylesheet" href="../css/pages/expert-booking.css" />
+    <link rel="stylesheet" href="../css/pages/expert-booking.css?v=safety-2" />
   </head>
   <body>
     <a class="skip" href="#main">본문으로 이동</a>
     <div class="app">
       <header class="page-header">
         <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
-        <h1>AI 매칭 결과</h1>
+        <h1>베테랑 프로필</h1>
       </header>
       <main id="main">
         <p id="expert-load" class="status" role="status"></p>
         <div id="profile-content" hidden>
-          <section id="ai-reason" class="ai-reason" hidden aria-labelledby="ai-reason-title">
+          <section
+            id="ai-reason"
+            class="ai-reason"
+            hidden
+            aria-labelledby="ai-reason-title"
+          >
             <p class="ai-badge">✦ AI 추천</p>
             <p id="ai-summary" class="ai-summary"></p>
             <h2 id="ai-reason-title" class="sr-only">추천 이유</h2>
@@ -28,6 +33,24 @@
               <p>다른 추천 베테랑</p>
               <div id="ai-others-list"></div>
             </div>
+          </section>
+          <section
+            id="ai-notes"
+            class="ai-notes-section"
+            aria-labelledby="ai-notes-title"
+            hidden
+          >
+            <h2 id="ai-notes-title">📕 상담 전에 먼저 읽어보세요</h2>
+            <div id="ai-notes-list" class="ai-notes-list"></div>
+          </section>
+          <section
+            id="ai-questions"
+            class="ai-questions-section"
+            aria-labelledby="ai-questions-title"
+            hidden
+          >
+            <h2 id="ai-questions-title">❓ 이렇게 물어보세요</h2>
+            <ol id="ai-questions-list"></ol>
           </section>
           <section class="profile-section">
             <div class="profile-heading">
@@ -97,6 +120,9 @@
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
 
-    <script type="module" src="../js/pages/expert-booking.js?v=10"></script>
+    <script
+      type="module"
+      src="../js/pages/expert-booking.js?v=safety-2"
+    ></script>
   </body>
 </html>
