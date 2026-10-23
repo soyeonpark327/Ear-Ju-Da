@@ -7,6 +7,9 @@ import {
   normalizePhone,
   getAuthProviders,
   signInWithSocial,
+  isNaverEnabled,
+  signInWithNaver,
+  completeNaverLogin,
 } from "../api/auth.js";
 
 const $ = (id) => document.getElementById(id);
@@ -130,18 +133,15 @@ $("logout").onclick = async () => {
 };
 
 // ---------- 간편 로그인 (카카오·네이버·구글) ----------
-// Supabase에서 켠 방식만 버튼을 활성화한다. 네이버는 Supabase 기본 지원이 없어 준비 중.
+// Supabase에서 켠 방식만 버튼을 활성화한다. 네이버는 Edge Function이 배포·설정됐는지 따로 확인한다.
 (async () => {
   let enabled = {};
-  try {
-    enabled = await getAuthProviders();
-  } catch {
-    /* 설정을 못 불러오면 모두 비활성 */
-  }
+  const [providers, naver] = await Promise.all([getAuthProviders().catch(() => ({})), isNaverEnabled()]);
+  enabled = { ...providers, naver };
   const off = [];
   document.querySelectorAll("[data-provider]").forEach((button) => {
     const provider = button.dataset.provider;
-    const on = provider !== "naver" && enabled[provider] === true;
+    const on = enabled[provider] === true;
     button.disabled = !on;
     if (!on) off.push(button.dataset.label);
     button.onclick = async () => {
@@ -150,7 +150,9 @@ $("logout").onclick = async () => {
       status("social-status", "로그인 화면으로 이동하고 있어요…");
       try {
         // 로그인 후 이 화면으로 돌아와서(next 유지) 원래 보던 곳으로 보낸다
-        await signInWithSocial(provider, location.href.split("#")[0]);
+        const back = location.href.split("#")[0];
+        if (provider === "naver") signInWithNaver(back);
+        else await signInWithSocial(provider, back);
       } catch (err) {
         status("social-status", friendly(err.message));
         busy = false;
@@ -165,6 +167,19 @@ const returnParams = new URLSearchParams(location.hash.slice(1) || location.sear
 const fromSocial = returnParams.has("access_token") || returnParams.has("error_description");
 if (returnParams.has("error_description")) {
   status("social-status", friendly(returnParams.get("error_description")));
+}
+if (returnParams.has("naver_error")) {
+  status("social-status", returnParams.get("naver_error"));
+  history.replaceState(null, "", location.pathname + location.search);
+}
+// 네이버: Edge Function이 준 일회용 토큰으로 로그인을 마친다
+if (returnParams.has("naver_token_hash")) {
+  const tokenHash = returnParams.get("naver_token_hash");
+  history.replaceState(null, "", location.pathname + location.search);
+  status("social-status", "네이버 로그인을 마무리하고 있어요…");
+  completeNaverLogin(tokenHash)
+    .then(() => location.replace(next))
+    .catch((err) => status("social-status", friendly(err.message)));
 }
 
 // 이미 로그인한 상태면 안내만 보여준다

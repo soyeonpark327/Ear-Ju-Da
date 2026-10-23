@@ -62,6 +62,29 @@ export async function signInWithSocial(provider, redirectTo) {
   unwrap(await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } }));
 }
 
+// ---------- 네이버 로그인 (Edge Function: supabase/functions/naver-login) ----------
+const NAVER_FN = `${SUPABASE_URL}/functions/v1/naver-login`;
+
+/** 네이버 로그인을 쓸 수 있는지 (Edge Function 배포 + 네이버 키 설정 완료) */
+export async function isNaverEnabled() {
+  try {
+    const res = await fetch(`${NAVER_FN}/status`);
+    return res.ok && (await res.json()).enabled === true;
+  } catch {
+    return false;
+  }
+}
+
+/** 네이버 로그인 화면으로 이동. 로그인 후 redirectTo#naver_token_hash=... 로 돌아온다. */
+export function signInWithNaver(redirectTo) {
+  location.href = `${NAVER_FN}?redirect=${encodeURIComponent(redirectTo)}`;
+}
+
+/** 네이버에서 돌아온 token_hash로 로그인을 마친다 */
+export async function completeNaverLogin(tokenHash) {
+  return unwrap(await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'magiclink' }));
+}
+
 /**
  * 회원가입. 가입하면 profiles 행이 자동으로 만들어진다.
  * @param {{ email: string, password: string, name: string, role: 'youth' | 'veteran' }} params
