@@ -8,7 +8,7 @@ import {
   init,
   avatar,
 } from "./ui.js?v=engagement-2";
-import { initNotifications } from "./home-notifications.js?v=engagement-2";
+import { initNotifications } from "./home-notifications.js?v=fix-1";
 init();
 initNotifications();
 const categories = [
@@ -208,8 +208,13 @@ async function loadExperts(keyword = "") {
   }
 }
 document.querySelector("#more").onclick = () => {
+  const first = limit;
   limit += 3;
   renderExperts();
+  // 새로 붙은 첫 카드로 스크롤 (가로·세로 배치 모두)
+  const card = document.querySelector("#experts").children[first];
+  card?.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
+  card?.focus?.({ preventScroll: true });
 };
 document.querySelector("#less").onclick = () => {
   limit = 3;

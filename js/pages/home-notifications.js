@@ -75,5 +75,8 @@ export function initNotifications() {
   window.addEventListener("pageshow", (e) => {
     if (e.persisted) start();
   });
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && api && loggedIn) count();
+  });
   start();
 }
