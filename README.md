@@ -64,7 +64,7 @@ ES Modules를 쓰기 때문에 HTML 파일을 더블클릭해서 열면 동작�
 
 ## DB 설치·변경
 
-- **새로 설치**: SQL Editor에서 `schema.sql` → `policies.sql` → `functions.sql` → `migrations/007_certificates.sql`(Storage) → `migrations/009_notifications.sql`(알림함) → `migrations/010_points.sql`(포인트 내역) → `migrations/011_expert_dashboard.sql`(베테랑 대시보드) → `migrations/012_calendar.sql`(캘린더) → `migrations/013_reschedule.sql`(일정 변경) → `migrations/014_admin.sql`(관리자) → `seed.sql`
+- **새로 설치**: SQL Editor에서 `schema.sql` → `policies.sql` → `functions.sql` → `migrations/007_certificates.sql`(Storage) → `migrations/009_notifications.sql`(알림함) → `migrations/010_points.sql`(포인트 내역) → `migrations/011_expert_dashboard.sql`(베테랑 대시보드) → `migrations/012_calendar.sql`(캘린더) → `migrations/013_reschedule.sql`(일정 변경) → `migrations/014_admin.sql`(관리자) → `migrations/015_account.sql`(회원 탈퇴) → `seed.sql`
 - **운영 중인 DB 변경**: `supabase/migrations/`의 새 번호 파일만 실행 (001~006, 008은 schema·policies·functions에 이미 반영됨)
 - Edge Functions(`supabase/functions/`)는 대시보드에서 같은 이름으로 배포하고 **Verify JWT를 끈다**. 필요한 Secrets는 각 파일 맨 위 주석 참고
 
