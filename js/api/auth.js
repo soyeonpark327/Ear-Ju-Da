@@ -1,6 +1,89 @@
 // 회원가입, 로그인, 내 프로필
-import { supabase } from '../supabase.js';
+import { supabase, SUPABASE_URL, SUPABASE_ANON_KEY } from '../supabase.js';
 import { unwrap } from './_utils.js';
+
+// ---------- 이메일 또는 전화번호 ----------
+// 전화번호 로그인은 문자 인증 없이, 번호를 내부용 주소(01012345678@phone.invalid)로 바꿔 이메일처럼 쓴다.
+// .invalid는 실제로 존재할 수 없는 도메인이라 메일이 나가지 않는다.
+const PHONE_DOMAIN = 'phone.invalid';
+
+/** '010-1234-5678' → '01012345678'. 휴대폰 번호 형식이 아니면 null */
+export function normalizePhone(value) {
+  const digits = String(value ?? '').replace(/[\s-]/g, '').replace(/^\+?82/, '0');
+  return /^01[016789]\d{7,8}$/.test(digits) ? digits : null;
+}
+
+/** 입력값이 이메일이면 그대로, 휴대폰 번호면 내부용 주소로 바꾼다. 둘 다 아니면 throw */
+function toAuthEmail(id) {
+  const value = String(id ?? '').trim();
+  if (value.includes('@')) return value;
+  const phone = normalizePhone(value);
+  if (!phone) throw new Error('이메일 또는 휴대폰 번호(010-1234-5678)를 정확히 입력해주세요.');
+  return `${phone}@${PHONE_DOMAIN}`;
+}
+
+/**
+ * 이메일 또는 휴대폰 번호로 회원가입
+ * @param {{ id: string, password: string, name: string, role: 'youth' | 'veteran' }} params  id: 이메일 또는 휴대폰 번호
+ */
+export async function signUpWithId({ id, password, name, role }) {
+  const phone = normalizePhone(id);
+  return unwrap(await supabase.auth.signUp({
+    email: toAuthEmail(id),
+    password,
+    options: { data: { name, role, ...(phone && !String(id).includes('@') ? { phone } : {}) } },
+  }));
+}
+
+/** 이메일 또는 휴대폰 번호로 로그인 */
+export async function signInWithId(id, password) {
+  return unwrap(await supabase.auth.signInWithPassword({ email: toAuthEmail(id), password }));
+}
+
+
+// ---------- 소셜 로그인 ----------
+
+/**
+ * Supabase에서 켜져 있는 로그인 방식. 예) { email: true, google: false, kakao: true }
+ * 대시보드 Authentication > Sign In / Providers 설정을 그대로 읽는다.
+ */
+export async function getAuthProviders() {
+  const res = await fetch(`${SUPABASE_URL}/auth/v1/settings`, { headers: { apikey: SUPABASE_ANON_KEY } });
+  if (!res.ok) throw new Error('로그인 설정을 불러오지 못했어요.');
+  return (await res.json()).external ?? {};
+}
+
+/**
+ * 구글·카카오 로그인. 해당 서비스 로그인 화면으로 이동했다가 redirectTo 주소로 돌아온다.
+ * @param {'google' | 'kakao'} provider
+ * @param {string} redirectTo 돌아올 주소 (Supabase Redirect URLs에 등록돼 있어야 함)
+ */
+export async function signInWithSocial(provider, redirectTo) {
+  unwrap(await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } }));
+}
+
+// ---------- 네이버 로그인 (Edge Function: supabase/functions/naver-login) ----------
+const NAVER_FN = `${SUPABASE_URL}/functions/v1/naver-login`;
+
+/** 네이버 로그인을 쓸 수 있는지 (Edge Function 배포 + 네이버 키 설정 완료) */
+export async function isNaverEnabled() {
+  try {
+    const res = await fetch(`${NAVER_FN}/status`);
+    return res.ok && (await res.json()).enabled === true;
+  } catch {
+    return false;
+  }
+}
+
+/** 네이버 로그인 화면으로 이동. 로그인 후 redirectTo#naver_token_hash=... 로 돌아온다. */
+export function signInWithNaver(redirectTo) {
+  location.href = `${NAVER_FN}?redirect=${encodeURIComponent(redirectTo)}`;
+}
+
+/** 네이버에서 돌아온 token_hash로 로그인을 마친다 */
+export async function completeNaverLogin(tokenHash) {
+  return unwrap(await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'magiclink' }));
+}
 
 /**
  * 회원가입. 가입하면 profiles 행이 자동으로 만들어진다.

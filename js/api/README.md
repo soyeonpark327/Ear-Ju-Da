@@ -46,6 +46,11 @@ try {
 | --- | --- | --- |
 | `signUp({ email, password, name, role })` | 회원가입. `role`은 `'youth'` 또는 `'veteran'` | |
 | `signIn(email, password)` | 로그인 | |
+| `signUpWithId({ id, password, name, role })` | 회원가입. `id`는 **이메일 또는 휴대폰 번호** (`010-1234-5678`) | |
+| `signInWithId(id, password)` | 이메일 또는 휴대폰 번호로 로그인 | |
+| `normalizePhone(value)` | `'010-1234-5678'` → `'01012345678'`, 형식이 틀리면 `null` | 문자열 또는 `null` |
+| `getAuthProviders()` | Supabase에서 켜진 로그인 방식 | `{ email: true, google: false, kakao: true, ... }` |
+| `signInWithSocial(provider, redirectTo)` | 구글(`'google'`)·카카오(`'kakao'`) 로그인 화면으로 이동 | |
 | `signOut()` | 로그아웃 | |
 | `getCurrentUser()` | 로그인한 사용자 | `user` 또는 `null` |
 | `getMyProfile()` | 내 프로필 | `{ id, role, name, avatar_url, senior_mode, points }` 또는 `null` |

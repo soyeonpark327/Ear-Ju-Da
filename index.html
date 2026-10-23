@@ -3,10 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="refresh" content="0;url=pages/home.html" />
     <title>이어주다</title>
+    <!-- 배포 사이트는 vercel.json에서 바로 메인으로 보낸다. 이 파일은 Live Server 등 로컬용 -->
+    <script>
+      location.replace("pages/home.html");
+    </script>
   </head>
   <body>
-    <a href="pages/home.html">이어주다 시작하기</a>
+    <noscript><a href="pages/home.html">이어주다 메인으로 이동</a></noscript>
   </body>
 </html>
