@@ -153,13 +153,24 @@ else showBuyButton(note.price_points); // 구매 안 함 → 구매 버튼
 ```js
 {
   id, topic, price_points, created_at,
-  status,        // 'confirmed'(진행 중) | 'completed'(완료) | 'cancelled'(취소)
+  status,        // 'confirmed'(진행 중) | 'completed'(완료) | 'cancelled'(취소) | 'no_show'(노쇼)
+  no_show_by,    // status가 'no_show'일 때 불참한 쪽: 'youth' | 'expert' | 'both'
+  settled_at,    // 상담 후 자동 정리된 시각 (자동 완료·노쇼)
   youth_id, expert_id,
   slot:   { start_at, end_at },
   youth:  { name },
   expert: { headline, profiles: { name } }
 }
 ```
+
+**상담 후 자동 정리 (10분마다)**: 상담 종료 30분 뒤에도 `confirmed`이면 채팅 참여로 판단해요.
+| 채팅 기록 | 결과 | 포인트 |
+| --- | --- | --- |
+| 둘 다 보냄 | `completed` (자동 완료) | 베테랑에게 지급 |
+| 베테랑이 안 보냄 | `no_show` / `no_show_by: 'expert'`(청년만 보냄) 또는 `'both'` | 청년에게 전액 환불 |
+| 청년이 안 보냄 | `no_show` / `no_show_by: 'youth'` | 환불 없이 베테랑에게 지급 |
+
+페널티: 베테랑 노쇼 1회면 신뢰 등급 한 단계 하락, 2회 이상이면 `bronze`. 청년은 최근 30일 노쇼 2회 이상이면 `createBooking`이 "예약이 제한됐어요"로 throw.
 
 상담 완료 → 보고서 흐름:
 ```js

@@ -27,7 +27,12 @@ export function getChatWindow(booking, now = new Date()) {
   const closesAt = new Date(new Date(booking.slot.end_at).getTime() + CLOSE_AFTER_MIN * 60_000);
   const time = (d) => d.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', month: 'long', day: 'numeric', hour: 'numeric', minute: '2-digit' });
   if (booking.status !== 'confirmed') {
-    return { state: 'closed', opensAt, closesAt, message: booking.status === 'completed' ? '완료된 상담이에요. 대화는 계속 볼 수 있어요.' : '취소된 상담이에요.' };
+    const closedMessage = {
+      completed: '완료된 상담이에요. 대화는 계속 볼 수 있어요.',
+      cancelled: '취소된 상담이에요.',
+      no_show: '참여하지 않은 쪽이 있어 종료된 상담이에요.',
+    };
+    return { state: 'closed', opensAt, closesAt, message: closedMessage[booking.status] ?? '종료된 상담이에요.' };
   }
   if (now < opensAt) return { state: 'before', opensAt, closesAt, message: `${time(opensAt)}부터 채팅할 수 있어요.` };
   if (now > closesAt) return { state: 'closed', opensAt, closesAt, message: '상담 시간이 끝났어요. 대화는 계속 볼 수 있어요.' };
