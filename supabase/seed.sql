@@ -15,6 +15,9 @@
 delete from public.bookings
 where youth_id in (select id from auth.users where email like '%@example.com')
    or expert_id in (select id from auth.users where email like '%@example.com');
+delete from public.note_purchases
+where user_id in (select id from auth.users where email like '%@example.com')
+   or note_id in (select n.id from public.notes n join auth.users u on u.id = n.author_id where u.email like '%@example.com');
 delete from auth.users where email like '%@example.com';
 
 
@@ -72,6 +75,11 @@ begin
   insert into public.bookings (slot_id, youth_id, expert_id, topic, price_points, status, created_at)
   values (v_slot, p_youth, p_expert, p_topic, v_price, 'completed', pg_temp.kst(-p_days_ago - 3, 10))
   returning id into v_booking;
+  -- 지난 상담 수익을 베테랑에게 지급 (포인트 내역의 "상담 수익", 010 적용 전 DB에서는 건너뜀)
+  if to_regprocedure('public.set_point_reason(text,jsonb)') is not null then
+    perform public.set_point_reason('booking_payout', jsonb_build_object('booking_id', v_booking));
+    update public.profiles set points = points + v_price where id = p_expert;
+  end if;
   if p_rating is not null then
     insert into public.reviews (booking_id, youth_id, expert_id, rating, content, created_at)
     values (v_booking, p_youth, p_expert, p_rating, p_review, pg_temp.kst(-p_days_ago, 21));
@@ -99,10 +107,18 @@ declare
   v_booking bigint;
   v_slot    bigint;
   v_expert  uuid;
+  v_buy     record;
   d         integer;
 begin
   -- ---------- 포인트 ----------
-  update public.profiles set points = 50000 where id = v_kim;   -- 데모 중에 이것저것 사볼 수 있게 넉넉히
+  -- 데모 중에 이것저것 사볼 수 있게 넉넉히 (포인트 내역에는 "이벤트 보너스"로 기록 → 하루 충전 한도와 무관, 010 적용 전 DB에서도 동작)
+  if to_regprocedure('public.set_point_reason(text,jsonb)') is not null then
+    perform public.set_point_reason('bonus');
+  end if;
+  update public.profiles set points = 50000 where id = v_kim;
+  if to_regprocedure('public.set_point_reason(text,jsonb)') is not null then
+    perform public.set_point_reason('bonus');
+  end if;
   update public.profiles set points = 20000 where id = v_park;
 
   -- ---------- 베테랑 정보 ----------
@@ -212,6 +228,20 @@ E'1. 유동인구가 아니라 "내 손님"의 동선을 봐라\n역 앞 유동�
     (v_mk, v_han)
   ) as b(buyer, author) on n.author_id = b.author
   where n.is_published;
+
+  -- 위 구매들의 포인트 이동 (구매자 차감 → 작성자 판매 수익, 010 적용 전 DB에서는 건너뜀)
+  if to_regprocedure('public.set_point_reason(text,jsonb)') is not null then
+    for v_buy in
+      select np.user_id, np.note_id, np.price_points, n.author_id
+      from public.note_purchases np join public.notes n on n.id = np.note_id
+      where n.author_id in (v_lee, v_mk, v_choi, v_ys, v_jung, v_han)
+    loop
+      perform public.set_point_reason('note_purchase', jsonb_build_object('note_id', v_buy.note_id));
+      update public.profiles set points = points - v_buy.price_points where id = v_buy.user_id;
+      perform public.set_point_reason('note_sale', jsonb_build_object('note_id', v_buy.note_id));
+      update public.profiles set points = points + v_buy.price_points where id = v_buy.author_id;
+    end loop;
+  end if;
 
   -- ---------- 한 줄 조언 ----------
   insert into public.tips (expert_id, content, created_at) values

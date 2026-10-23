@@ -106,6 +106,7 @@ await registerExpert({ headline, industry, career_years, career_summary, keyword
 | 함수 | 설명 |
 | --- | --- |
 | `getMyExpert()` | 내 전문가 정보. `verification`이 `'pending'`이면 승인 대기 중 |
+| `getMyDashboard()` | **베테랑 대시보드**: 프로필·등급, 오늘/이번 주/예정/완료/노쇼 상담 수, 다음 상담, 지급 예정·누적·이번 달 수익, 노트 판매, 최근 후기 3개. 전문가 정보가 없으면 `{ registered: false }` |
 | `uploadCertificate(file)` | **경력 증명서 업로드** (PDF·JPG·PNG·WEBP·HEIC, 10MB 이하). 전문가 정보가 있으면 바로 연결, 반려 상태면 승인 대기로. 없으면 돌려받은 경로를 `registerExpert`의 `certificate_path`에 |
 | `getMyCertificateUrl()` | 내가 올린 증명서 보기 링크 (1분 유효), 없으면 `null` |
 | `registerExpert({ headline, industry, career_years, career_summary, keywords, price_points, certificate_path })` | 전문가 정보 처음 작성 (`certificate_path`는 `uploadCertificate()` 결과) |
@@ -282,3 +283,15 @@ render(await getUnreadCount());
 await subscribeNotifications(async () => render(await getUnreadCount()));
 ```
 
+
+## points.js: 포인트 충전(데모) · 내역
+
+| 함수 / 값 | 설명 | 돌려주는 값 |
+| --- | --- | --- |
+| `chargePoints(amount)` | 데모 충전 (실제 결제 없음). `5000` / `10000` / `30000`, 하루 최대 50,000P | 충전 후 잔액 |
+| `CHARGE_OPTIONS` | 충전 버튼 금액 | `[5000, 10000, 30000]` |
+| `getPointHistory({ limit })` | 내 포인트 내역 (최신순, 기본 50개) | `[{ id, amount, balance_after, type, label, ref: { booking_id?, note_id? }, created_at }]` |
+| `POINT_TYPE_LABELS` | 내역 종류 → 문구 | `{ booking_payout: '상담 수익', ... }` |
+
+- `amount`가 양수면 적립(+), 음수면 사용(-). `balance_after`는 그 직후 잔액이에요.
+- 포인트가 바뀌는 모든 곳(가입·충전·예약·환불·완료·노쇼·노트 구매·판매)이 자동으로 기록돼요.

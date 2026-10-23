@@ -74,6 +74,24 @@ export async function updateMyExpert(changes) {
   return unwrap(await supabase.from('experts').update(changes).eq('id', user.id).select().single());
 }
 
+/**
+ * 베테랑 대시보드 (본인). 한 번에 활동 요약을 돌려준다.
+ * @returns {Promise<{ registered: false } | {
+ *   registered: true,
+ *   profile: { name, headline, verification, has_certificate, trust_grade, trust_label, badges, rating, review_count, no_show_count },
+ *   bookings: { today, this_week, upcoming, completed, no_show },
+ *   next_booking: { id, start_at, end_at, topic, youth_name } | null,
+ *   points: { balance, pending, earned_total, earned_this_month },
+ *   notes: { published, drafts, sold_count, sales_total },
+ *   recent_reviews: Array<{ rating, content, created_at, youth_name }>
+ * }>}
+ *   registered가 false면 전문가 정보 등록 화면으로 안내. 승인 전이면 trust_grade 등은 null
+ *   points.pending: 진행 중 예약에 보관된 금액(상담 끝나면 지급 예정)
+ */
+export async function getMyDashboard() {
+  return unwrap(await supabase.rpc('get_my_expert_dashboard'));
+}
+
 // ---------- 경력 증명서 (비공개 Storage 버킷 certificates) ----------
 const CERT_BUCKET = 'certificates';
 const CERT_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/heic'];
