@@ -2322,3 +2322,41 @@ body.mobile-design {
   line-height: 0;
   transform: translateY(-1px);
 }
+
+/* 카테고리 아이콘: 모두 36px 칸에 맞춰 글씨 줄을 가지런히, 노무 아이콘은 작게 */
+.r-categories img,
+.r-categories .r-icon {
+  box-sizing: border-box;
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+}
+.r-categories .r-icon {
+  padding: 3px;
+}
+.r-categories img[src*="노무"] {
+  padding: 5px;
+}
+/* Ai 매칭: 글자와 별 사이 조금 더 띄우기 */
+.r-search button {
+  gap: 5px;
+}
+/* 하단 탭: 아이콘·글씨를 작고 촘촘하게 */
+.r-bottom-navigation {
+  height: 72px;
+  padding: 14px 13px 0;
+}
+.r-bottom-navigation a {
+  gap: 4px;
+  font-size: 11px;
+  line-height: 16px;
+}
+.r-bottom-navigation svg {
+  width: 19px;
+  height: 19px;
+}
+/* Ai 매칭 별: 글자 크기에 맞춰 작게 */
+.r-search .r-spark > .r-icon {
+  width: 15px;
+  height: 15px;
+}
