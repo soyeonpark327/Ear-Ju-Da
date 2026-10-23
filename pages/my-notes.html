@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>내 오답노트 관리 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/my-notes.css?v=1" />
+  </head>
+  <body class="my-notes-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="expert-dashboard.html" data-route aria-label="대시보드로 돌아가기">〈</a>
+        <h1>오답노트 관리</h1>
+      </header>
+      <main id="main" class="my-notes-main">
+        <p id="my-notes-status" class="status" role="status"></p>
+        <section id="my-notes-content" hidden>
+          <div class="my-notes-heading">
+            <div><h2>내가 쓴 오답노트</h2><p>경험을 정리해 다른 창업가와 나눠요.</p></div>
+            <a class="primary" href="note-editor.html" data-route>새 노트 쓰기</a>
+          </div>
+          <div id="my-notes-list" class="my-notes-list"></div>
+          <p id="my-notes-empty" class="my-notes-empty" hidden>아직 쓴 오답노트가 없어요.</p>
+          <section class="tips-panel" aria-labelledby="tips-title">
+            <h2 id="tips-title">한 줄 조언</h2>
+            <p class="tips-hint">짧은 조언으로 청년 창업가에게 경험을 나눠주세요.</p>
+            <form id="tip-form">
+              <label for="tip-content">조언 (최대 200자)</label>
+              <textarea id="tip-content" maxlength="200" rows="3" required placeholder="현장에서 배운 한 가지를 적어주세요."></textarea>
+              <div class="tip-submit-row"><span id="tip-count">0 / 200</span><button class="primary" type="submit">올리기</button></div>
+            </form>
+            <p id="tips-status" class="status" role="status"></p>
+            <ul id="tips-list" class="tips-list"></ul>
+            <p id="tips-empty" class="my-notes-empty" hidden>아직 등록한 한 줄 조언이 없어요.</p>
+          </section>
+        </section>
+      </main>
+    </div>
+    <dialog id="manage-confirm" aria-labelledby="manage-confirm-title">
+      <h2 id="manage-confirm-title"></h2><p id="manage-confirm-body"></p>
+      <form method="dialog" class="manage-confirm-actions">
+        <button id="manage-confirm-cancel" class="outline" type="button">취소</button>
+        <button id="manage-confirm-ok" class="primary" type="button">확인</button>
+      </form>
+    </dialog>
+    <dialog id="notice"><h2 id="notice-title">안내</h2><p id="notice-body"></p><form method="dialog"><button class="primary">확인</button></form></dialog>
+    <script type="module" src="../js/pages/my-notes.js?v=1"></script>
+  </body>
+</html>

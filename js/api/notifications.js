@@ -7,7 +7,7 @@ import { getCurrentUser } from './auth.js';
  * 내 알림 목록 (최신순)
  * @param {{ limit?: number, unreadOnly?: boolean }} [options]
  * @returns {Promise<Array<{ id, type, title, body, data: { booking_id?, note_id? }, read_at, created_at }>>}
- *   type: booking_new | booking_confirmed | booking_reminder | booking_cancelled | booking_completed
+ *   type: booking_new | booking_confirmed | booking_reminder | booking_cancelled | booking_rescheduled | booking_completed
  *         | booking_no_show | report_ready | note_sold | review_new | verification_changed
  */
 export async function getNotifications({ limit = 30, unreadOnly = false } = {}) {

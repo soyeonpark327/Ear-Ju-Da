@@ -46,11 +46,11 @@ export async function getMatchFilterOptions() {
  *   filtered_count가 0이면 필터에 맞는 베테랑이 없는 것 → 필터를 줄이라고 안내.
  *   실패하면 '...잠시 후 다시 시도해주세요.' 같은 메시지로 throw → 키워드 검색(getExperts)으로 대신 찾기
  */
-export async function aiMatch(concern, filters = {}) {
+export async function aiMatch(concern, filters = {}, images = []) {
   const res = await fetch(`${SUPABASE_URL}/functions/v1/ai-match`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY },
-    body: JSON.stringify({ concern, filters }),
+    body: JSON.stringify({ concern, filters, images }),
     signal: AbortSignal.timeout(40_000), // 오래 걸리면 포기하고 키워드 매칭으로
   });
   const data = await res.json().catch(() => ({}));

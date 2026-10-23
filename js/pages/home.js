@@ -7,8 +7,10 @@ import {
   status,
   init,
   avatar,
-} from "./ui.js?v=header-links-1";
+} from "./ui.js?v=engagement-2";
+import { initNotifications } from "./home-notifications.js?v=engagement-2";
 init();
+initNotifications();
 const categories = [
   "계약",
   "노무",
@@ -36,8 +38,9 @@ document.querySelector("#categories").innerHTML = categories
       `<a class="category" href="${escape(route("notes.html", { category: name }))}">${icons.has(name) ? `<img src="../assets/home/${name}.svg" alt="">` : `<span class="symbol" aria-hidden="true">${["◇", "◎", "✧"][i === 4 ? 0 : i === 7 ? 1 : 2]}</span>`}${name}</a>`,
   )
   .join("");
-document.querySelector("#notifications").onclick = () =>
-  notice("알림", "새로운 알림이 없어요.");
+document.querySelector("#reviews-nav").onclick = () => {
+  location.href = route("reviews.html");
+};
 let allExperts = [],
   limit = 3,
   request = 0;

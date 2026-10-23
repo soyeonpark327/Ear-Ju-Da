@@ -148,3 +148,16 @@
   min-height: 48px;
   margin-top: 12px;
 }
+.dash-schedule-link {
+  margin-top: 10px;
+  background: white;
+  min-height: 48px;
+}
+.dash-edit-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-size: 14px;
+  color: #076f84;
+  text-decoration: underline;
+}

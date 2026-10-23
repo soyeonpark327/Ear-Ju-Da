@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>오답노트 쓰기 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/my-notes.css?v=1" />
+  </head>
+  <body class="note-editor-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header"><a href="my-notes.html" data-route aria-label="오답노트 관리로 돌아가기">〈</a><h1 id="editor-heading">새 오답노트</h1></header>
+      <main id="main" class="note-editor-main">
+        <p id="editor-status" class="status" role="status"></p>
+        <form id="note-form" hidden>
+          <label for="note-title-input">제목 <span>필수 · 60자 이내</span></label>
+          <input id="note-title-input" maxlength="60" required />
+          <label for="note-summary-input">미리보기 요약 <span>필수 · 200자 이내</span></label>
+          <textarea id="note-summary-input" maxlength="200" rows="3" required></textarea>
+          <div class="editor-count"><span id="summary-count">0 / 200</span></div>
+          <label for="note-industry-input">분야 <span>선택</span></label>
+          <select id="note-industry-input">
+            <option value="">분야를 선택해주세요</option>
+            <option>제조</option><option>유통</option><option>세무</option><option>인사·노무</option><option>무역</option><option>외식</option><option>건설</option><option>금융</option><option>마케팅</option><option>IT</option><option>법무</option><option>기타</option>
+          </select>
+          <p class="editor-field-hint">분야를 고르지 않으면 ‘기타’로 저장돼요.</p>
+          <label for="note-keywords-input">키워드 <span>쉼표로 구분 · 최대 6개</span></label>
+          <input id="note-keywords-input" maxlength="120" placeholder="예: 납품 계약, 단가 협상" />
+          <label for="note-price-input">가격</label>
+          <select id="note-price-input"></select>
+          <div class="editor-body-heading"><label for="note-body-input">유료 본문 <span>필수</span></label><p>실제로 겪은 실패 상황 → 원인 → 어떻게 극복했는지 → 체크리스트 순서로 정리해보세요.</p></div>
+          <textarea id="note-body-input" class="note-body-input" rows="14" required placeholder="실패 상황부터 차근차근 적어주세요."></textarea>
+          <div class="editor-count"><span id="body-count">0자</span></div>
+          <p id="editor-form-status" class="status" role="status"></p>
+          <div class="editor-actions"><button id="save-draft" class="outline" type="button">임시 저장</button><button id="publish-note" class="primary" type="button">공개하기</button></div>
+          <a id="view-note" class="outline full view-note" hidden>노트 보기</a>
+          <button id="delete-note" class="editor-delete" type="button" hidden></button>
+        </form>
+      </main>
+    </div>
+    <dialog id="editor-confirm" aria-labelledby="editor-confirm-title">
+      <h2 id="editor-confirm-title"></h2><p id="editor-confirm-body"></p>
+      <div class="editor-confirm-actions"><button id="editor-confirm-cancel" class="outline" type="button">취소</button><button id="editor-confirm-ok" class="primary" type="button">확인</button></div>
+    </dialog>
+    <dialog id="notice"><h2 id="notice-title">안내</h2><p id="notice-body"></p><form method="dialog"><button class="primary">확인</button></form></dialog>
+    <script type="module" src="../js/pages/note-editor.js?v=1"></script>
+  </body>
+</html>

@@ -5,11 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>메인 | 이어주다</title>
     <link rel="stylesheet" href="../css/reset.css" />
-    <link rel="stylesheet" href="../css/variables.css" />
-    <link
-      rel="stylesheet"
-      href="../css/pages/home-notes.css?v=header-links-1"
-    />
+    <link rel="stylesheet" href="../css/variables.css?v=engagement-2" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=engagement-2" />
   </head>
   <body class="home-page">
     <a class="skip" href="#main">본문으로 이동</a>
@@ -26,9 +23,32 @@
             hidden
             >대시보드</a
           ><a id="account" class="account" href="login.html">로그인</a
-          ><button id="notifications" aria-label="알림">♧</button>
+          ><button
+            id="senior-toggle"
+            type="button"
+            class="account"
+            aria-pressed="false"
+          >
+            큰 글씨</button
+          ><button id="notifications" type="button" aria-label="알림">
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              aria-hidden="true"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+              <path d="M10 21h4" />
+            </svg>
+          </button>
         </div>
       </header>
+      <p id="senior-status" class="status" role="status"></p>
       <main id="main">
         <section class="home-top">
           <h1 class="sr-only">베테랑의 경험을 청년 창업가에게</h1>
@@ -76,7 +96,7 @@
       </main>
       <nav class="bottom-nav" aria-label="바로가기">
         <button id="reserve-nav"><span>▤</span>예약하기</button
-        ><button data-coming="후기 보기"><span>☆</span>후기 보기</button
+        ><button id="reviews-nav"><span>☆</span>후기 보기</button
         ><a href="#experts"><span>☷</span>베테랑 찾기</a>
       </nav>
     </div>
@@ -85,6 +105,6 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <script type="module" src="../js/pages/home.js?v=header-links-1"></script>
+    <script type="module" src="../js/pages/home.js?v=engagement-2"></script>
   </body>
 </html>

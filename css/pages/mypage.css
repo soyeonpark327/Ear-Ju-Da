@@ -1,0 +1,241 @@
+.my-main {
+  padding: 24px;
+}
+.my-main > div > * + * {
+  margin-top: 18px;
+}
+.my-profile {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.my-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e6f9fd, #efebff) center / cover;
+  font-size: 22px;
+  font-weight: 800;
+  color: #076f84;
+}
+.my-who {
+  flex: 1;
+  min-width: 0;
+}
+.my-who h2 {
+  font-size: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.my-who p {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: #5b5f6e;
+}
+.my-role {
+  padding: 2px 8px;
+  border-radius: 10px;
+  background: var(--panel);
+  font-weight: 700;
+  color: var(--ink);
+}
+.my-profile .outline {
+  flex: none;
+  min-height: 44px;
+  padding: 8px 12px;
+}
+.my-name-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  color: #5b5f6e;
+}
+.my-name-form input,
+#my-delete-confirm {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  font: inherit;
+  font-size: 15px;
+}
+.my-two {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.my-two button {
+  min-height: 48px;
+}
+.my-points {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 20px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, #e6f9fd, #f3f0ff);
+}
+.my-points span:first-child {
+  font-size: 14px;
+  color: #5b5f6e;
+}
+.my-points strong {
+  flex: 1;
+  text-align: right;
+  font-size: 20px;
+}
+.my-menu {
+  border-top: 1px solid var(--line);
+}
+.my-menu a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  padding: 0 4px;
+  border-bottom: 1px solid var(--line);
+  font-size: 16px;
+  font-weight: 600;
+}
+.my-menu a::after {
+  content: "›";
+  color: var(--muted);
+  font-size: 20px;
+}
+.my-menu small {
+  margin-left: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.my-card {
+  padding: 18px 20px;
+  border: 1.5px solid var(--line);
+  border-radius: 20px;
+}
+.my-card h2 {
+  font-size: 16px;
+}
+.my-hint {
+  margin-top: 4px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #5b5f6e;
+}
+.my-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.my-switch {
+  flex: none;
+  position: relative;
+  width: 56px;
+  height: 32px;
+  border-radius: 16px;
+  background: #d5d7df;
+  transition: background 0.2s;
+}
+.my-switch span {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: white;
+  box-shadow: 0 1px 3px #0003;
+  transition: transform 0.2s;
+}
+.my-switch[aria-checked="true"] {
+  background: var(--cyan);
+}
+.my-switch[aria-checked="true"] span {
+  transform: translateX(24px);
+}
+.my-switch:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.my-logout {
+  min-height: 48px;
+}
+.my-danger {
+  padding: 4px 0;
+  font-size: 14px;
+  color: #5b5f6e;
+}
+.my-danger summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.my-danger-list {
+  margin: 8px 0 14px;
+  padding-left: 18px;
+  list-style: disc;
+  line-height: 1.7;
+}
+.my-delete {
+  min-height: 48px;
+  color: #c4262e;
+  border-color: #f2c5c8;
+}
+.my-delete-fill {
+  background: #d0454c;
+  color: white;
+}
+.my-delete-fill:disabled {
+  opacity: 0.45;
+}
+#my-delete-dialog .my-hint {
+  display: block;
+  margin-bottom: 8px;
+}
+.my-avatar img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.my-home {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  margin-top: 16px;
+}
+.fav-title {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+.my-menu .fav-empty,
+.fav-blocks .fav-empty {
+  padding: 14px 4px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.fav-blocks li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  border-bottom: 1px solid var(--line);
+}
+.fav-blocks .outline {
+  min-height: 40px;
+  padding: 6px 12px;
+}

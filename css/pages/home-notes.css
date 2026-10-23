@@ -806,3 +806,31 @@ dialog form button {
   font-size: 12px;
   padding: 0 8px;
 }
+#notifications {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 44px;
+  min-height: 44px;
+}
+#notifications.has-unread::after {
+  content: "";
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ef3f49;
+  border: 2px solid white;
+}
+#senior-toggle[aria-pressed="true"] {
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+#senior-status {
+  margin: 0 24px;
+}
+#senior-status:empty {
+  display: none;
+}

@@ -42,6 +42,20 @@ export async function cancelBooking(bookingId) {
   unwrap(await supabase.rpc('cancel_booking', { p_booking_id: bookingId }));
 }
 
+/** 한 예약당 일정 변경 가능 횟수 */
+export const MAX_RESCHEDULE = 2;
+
+/**
+ * 예약 일정 변경 (청년만, 상담 시작 전, 한 예약당 2번까지)
+ * 같은 베테랑의 빈 시간으로 옮긴다. 포인트·채팅방은 그대로, 원래 시간은 다시 예약 가능해진다.
+ * 실패하면 '이미 예약된 시간이에요. 다른 시간을 골라 주세요.' 같은 메시지로 throw
+ * @param {number} bookingId
+ * @param {number} newSlotId  getSlots(booking.expert_id)에서 고른 시간 id
+ */
+export async function rescheduleBooking(bookingId, newSlotId) {
+  unwrap(await supabase.rpc('reschedule_booking', { p_booking_id: bookingId, p_new_slot_id: newSlotId }));
+}
+
 /**
  * AI 전략 보고서 만들기 (Gemini). 완료된 상담의 청년·베테랑만 가능, 상담당 하나.
  * 이미 있으면 새로 만들지 않고 그대로 돌려준다. 보통 몇 초 걸린다.
@@ -75,9 +89,30 @@ export async function getReport(bookingId) {
 export async function getReviews(expertId) {
   return unwrap(await supabase
     .from('reviews')
-    .select('id, rating, content, created_at, youth:profiles(name)')
+    .select('id, booking_id, rating, content, created_at, youth:profiles(name)')
     .eq('expert_id', expertId)
     .order('created_at', { ascending: false }));
+}
+
+/** 이 상담에 내가 쓴 후기 (안 썼으면 null) — 후기 쓰기 버튼을 보여줄지 정할 때 */
+export async function getMyReview(bookingId) {
+  return unwrap(await supabase
+    .from('reviews')
+    .select('id, rating, content, created_at')
+    .eq('booking_id', bookingId)
+    .maybeSingle());
+}
+
+/**
+ * 전체 최근 후기 (모든 베테랑, 최신순) — "후기 보기" 화면용
+ * @returns {Promise<Array<{ id, rating, content, created_at, expert_id, youth: { name }, expert: { headline, industry, profiles: { name } } }>>}
+ */
+export async function getRecentReviews({ limit = 20 } = {}) {
+  return unwrap(await supabase
+    .from('reviews')
+    .select('id, rating, content, created_at, expert_id, youth:profiles(name), expert:experts(headline, industry, profiles(name))')
+    .order('created_at', { ascending: false })
+    .limit(limit));
 }
 
 /** 후기 작성 (완료된 상담의 청년만, 상담 1건당 1개) */

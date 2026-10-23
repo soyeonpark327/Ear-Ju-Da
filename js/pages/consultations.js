@@ -1,11 +1,11 @@
-import { init, status } from "./ui.js";
+import { init, status } from "./ui.js?v=engagement-2";
 import {
   $,
   services,
   card,
   loginRequired,
   isParticipant,
-} from "./consultation-ui.js";
+} from "./consultation-ui.js?v=engagement-2";
 init();
 let rows = [],
   me,

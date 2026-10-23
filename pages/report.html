@@ -8,9 +8,13 @@
     />
     <title>상담 보고서 | 이어주다</title>
     <link rel="stylesheet" href="../css/reset.css" />
-    <link rel="stylesheet" href="../css/variables.css" />
-    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
-    <link rel="stylesheet" href="../css/pages/consultations.css?v=1" />
+    <link rel="stylesheet" href="../css/variables.css?v=engagement-2" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=engagement-2" />
+    <link
+      rel="stylesheet"
+      href="../css/pages/consultations.css?v=engagement-2"
+    />
+    <link rel="stylesheet" href="../css/pages/reviews.css?v=engagement-2" />
   </head>
   <body class="consultation-page">
     <a class="skip" href="#main">본문으로 이동</a>
@@ -43,6 +47,11 @@
             AI 보고서 만들기
           </button>
         </section>
+        <section
+          id="report-review"
+          class="review-slot"
+          aria-label="내 상담 후기"
+        ></section>
         <p id="report-status" class="status" role="status"></p>
         <article id="report-content" hidden>
           <p class="consultation-report-eyebrow">상담을 실행으로 이어가세요</p>
@@ -72,6 +81,6 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <script type="module" src="../js/pages/report.js?v=1"></script>
+    <script type="module" src="../js/pages/report.js?v=engagement-2"></script>
   </body>
 </html>

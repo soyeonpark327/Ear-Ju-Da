@@ -1,4 +1,4 @@
-import { demo, init, route, notice, avatar, money } from "./ui.js?v=ai-ui-1";
+import { demo, init, route, notice, avatar, money } from "./ui.js?v=engagement-2";
 
 // AI 매칭 결과를 결과 화면(expert-booking)에 넘길 때 쓰는 저장 키
 const AI_KEY = "ear-ju-da:ai-match";
@@ -8,6 +8,58 @@ const send = document.getElementById("send");
 const examples = [...document.querySelectorAll(".suggestions button")];
 let exampleKeyword = "";
 let submitting = false;
+let attachment = null;
+let preparingPhoto = false;
+const photoInput = document.getElementById("matching-photo");
+const photoPreview = document.getElementById("photo-preview");
+function removePhoto() {
+  attachment = null;
+  photoInput.value = "";
+  photoPreview.hidden = true;
+  document.getElementById("photo-thumbnail").removeAttribute("src");
+  update();
+}
+document.getElementById("photo-remove").onclick = removePhoto;
+photoInput.onchange = async () => {
+  const file = photoInput.files[0];
+  if (!file) return;
+  if (!["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size > 5 * 1024 * 1024) {
+    notice("사진을 확인해주세요", "JPG, PNG, WebP 사진을 5MB 이하로 선택해주세요.");
+    photoInput.value = "";
+    return;
+  }
+  preparingPhoto = true;
+  update();
+  const url = URL.createObjectURL(file);
+  try {
+    const image = new Image();
+    image.src = url;
+    await image.decode();
+    const scale = Math.min(1, 1600 / Math.max(image.naturalWidth, image.naturalHeight));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#fff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.drawImage(image, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
+    const data = dataUrl.split(",")[1];
+    if (data.length > 2_000_000) throw new Error("사진이 너무 커요. 더 작은 사진을 선택해주세요.");
+    attachment = { mimeType: "image/jpeg", data };
+    document.getElementById("photo-thumbnail").src = dataUrl;
+    document.getElementById("photo-name").textContent = file.name;
+    photoPreview.hidden = false;
+    document.getElementById("matching-status").textContent = "사진을 첨부했어요. 전송하면 AI가 사진과 고민을 함께 확인해요.";
+  } catch {
+    notice("사진을 읽지 못했어요", "다른 JPG, PNG 또는 WebP 사진으로 다시 선택해주세요.");
+  } finally {
+    URL.revokeObjectURL(url);
+    preparingPhoto = false;
+    photoInput.value = "";
+    update();
+  }
+};
 const selectedFilters = {};
 const DRAFT_KEY = `ear-ju-da:matching-draft:${demo ? "demo" : "live"}`;
 let savedResult = null;
@@ -109,7 +161,9 @@ function finishResults(result) {
 const supplied = new URLSearchParams(location.search).get("keyword");
 if (supplied) input.value = supplied.slice(0, 1000);
 function update() {
-  send.disabled = submitting || !input.value.trim();
+  send.disabled = submitting || preparingPhoto || (!input.value.trim() && !attachment);
+  document.getElementById("attach").disabled = submitting || preparingPhoto;
+  document.getElementById("photo-remove").disabled = submitting || preparingPhoto;
   examples.forEach((b) =>
     b.setAttribute(
       "aria-pressed",
@@ -132,16 +186,16 @@ input.addEventListener("input", () => {
   saveDraft();
   update();
 });
-document.getElementById("attach").onclick = () =>
-  notice(
-    "첨부 기능 준비 중",
-    "현재는 글로 고민을 입력할 수 있어요. 첨부 파일은 아직 전송하지 않아요.",
-  );
+document.getElementById("attach").onclick = () => photoInput.click();
 document.getElementById("matching-form").onsubmit = async (e) => {
   e.preventDefault();
-  const text = input.value.trim();
-  if (!text || submitting) {
+  const text = input.value.trim() || (attachment ? "첨부 사진의 창업 관련 고민을 확인하고 맞는 베테랑을 추천해주세요." : "");
+  if (!text || submitting || preparingPhoto) {
     update();
+    return;
+  }
+  if (demo && attachment) {
+    notice("사진 분석은 실제 모드에서 가능해요", "데모에서는 사진을 전송하지 않아요. 실제 매칭 화면에서 다시 시도해주세요.");
     return;
   }
   submitting = true;
@@ -154,8 +208,8 @@ document.getElementById("matching-form").onsubmit = async (e) => {
     statusEl.textContent =
       "AI가 딱 맞는 베테랑을 찾고 있어요. 보통 2~4초 정도 걸려요…";
     try {
-      const { aiMatch, AI_MATCH_KEY } = await import("../api/ai.js");
-      const result = await aiMatch(text, { ...selectedFilters });
+      const { aiMatch, AI_MATCH_KEY } = await import("../api/ai.js?v=photo-1");
+      const result = await aiMatch(text, { ...selectedFilters }, attachment ? [attachment] : []);
       if (result.filtered_count === 0) {
         statusEl.textContent =
           "조건에 맞는 베테랑이 없어요. 필터를 줄여보세요.";
@@ -176,8 +230,19 @@ document.getElementById("matching-form").onsubmit = async (e) => {
         submitting = false;
         return;
       }
+      if (attachment) {
+        clearResults();
+        statusEl.textContent = "사진과 고민에 맞는 베테랑을 찾지 못했어요. 설명을 추가해 다시 보내주세요.";
+        submitting = false;
+        return;
+      }
       statusEl.textContent = "딱 맞는 베테랑을 찾지 못해 키워드로 찾아볼게요.";
     } catch {
+      if (attachment) {
+        statusEl.textContent = "사진 분석을 완료하지 못했어요. 사진과 입력은 유지했으니 다시 전송해주세요.";
+        submitting = false;
+        return;
+      }
       statusEl.textContent = "AI 연결이 원활하지 않아 키워드로 찾아볼게요.";
     } finally {
       input.readOnly = false;
@@ -342,6 +407,7 @@ document.getElementById("matching-new").onclick = () => {
   document.getElementById("matching-history").replaceChildren();
   document.getElementById("matching-conversation").hidden = true;
   input.value = "";
+  removePhoto();
   exampleKeyword = "";
   Object.keys(selectedFilters).forEach((key) => delete selectedFilters[key]);
   document
