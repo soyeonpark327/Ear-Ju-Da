@@ -16,7 +16,7 @@ const icons = {
   like: '<path d="M7 10v11H3V10h4Zm0 0 5-8c3 0 3 2 2 7h6l-2 12H7"/>',
   back: '<path d="m14 5-6 7 6 7"/>',
   arrow: '<path d="M12 19V5m-6 6 6-6 6 6"/>',
-  bell: '<path d="M6 9a6 6 0 0 1 12 0c0 6 3 6 3 8H3c0-2 3-2 3-8m6 10a2 2 0 0 1-4 0"/>',
+  bell: '<path d="M6 9a6 6 0 0 1 12 0c0 6 3 6 3 8H3c0-2 3-2 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
   calendar:
     '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6m10-6v6M3 11h18m-13 4h1m3 0h1m3 0h1m-9 3h1m3 0h1"/>',
   chat: '<path d="M4 4h16v13H9l-5 4V4Z M8 8h8M8 12h6"/>',
