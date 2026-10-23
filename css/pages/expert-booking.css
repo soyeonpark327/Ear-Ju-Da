@@ -288,3 +288,51 @@
   font-size: 13px;
   font-weight: 600;
 }
+.ai-notes-section,
+.ai-questions-section {
+  margin: 20px 24px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: #fff;
+}
+.ai-notes-section h2,
+.ai-questions-section h2 {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+.ai-notes-list {
+  display: grid;
+  gap: 10px;
+}
+.ai-notes-card {
+  display: block;
+  min-height: 44px;
+  padding: 14px;
+  background: var(--panel);
+  border-radius: 16px;
+  overflow-wrap: anywhere;
+}
+.ai-notes-card h3 {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.ai-notes-card p {
+  font-size: 13px;
+  line-height: 1.7;
+}
+.ai-notes-card .ai-notes-meta {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 5px 0 8px;
+}
+#ai-questions-list {
+  list-style: decimal;
+  padding-left: 22px;
+  font-size: 14px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+#ai-questions-list li + li {
+  margin-top: 8px;
+}

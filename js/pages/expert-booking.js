@@ -7,7 +7,7 @@ import {
   init,
   avatar,
   route,
-} from "./ui.js";
+} from "./ui.js?v=ai-ui-1";
 init();
 const $ = (id) => document.getElementById(id);
 let id = new URLSearchParams(location.search).get("id");
@@ -156,11 +156,18 @@ function renderAiReason() {
   } catch {
     return;
   }
-  const match = result?.matches?.find((m) => m.expert_id === id);
+  const match = (Array.isArray(result?.matches) ? result.matches : []).find(
+    (m) => String(m.expert_id) === String(id),
+  );
   if (!match) return;
-  $("ai-summary").textContent = result.summary ? `“${result.summary}” 고민에 맞춘 추천이에요` : "";
+  renderAiPreparation(result);
+  $("ai-summary").textContent = result.summary
+    ? `“${result.summary}” 고민에 맞춘 추천이에요`
+    : "";
   $("ai-reason-text").textContent = match.reason;
-  const others = result.matches.filter((m) => m.expert_id !== id);
+  const others = result.matches.filter(
+    (m) => String(m.expert_id) !== String(id),
+  );
   $("ai-others").hidden = !others.length;
   $("ai-others-list").replaceChildren(
     ...others.map((m) => {
@@ -224,7 +231,9 @@ async function load() {
     // 신뢰 등급 → 경력 → 뱃지(경력 연수와 겹치는 것 제외) → 키워드
     $("expert-tags").innerHTML = [
       ...(expert.trust_label
-        ? [`<li class="trust trust-${escape(expert.trust_grade)}">${escape(expert.trust_label)}</li>`]
+        ? [
+            `<li class="trust trust-${escape(expert.trust_grade)}">${escape(expert.trust_label)}</li>`,
+          ]
         : []),
       ...[
         `경력 ${expert.career_years || 0}년`,
@@ -278,3 +287,39 @@ $("reserve").onclick = () => {
     location.href = route("booking.html", { id, date: selectedDate });
 };
 load();
+
+function renderAiPreparation(result) {
+  const notes = Array.isArray(result.notes)
+    ? result.notes.filter((n) => n && n.note_id != null).slice(0, 2)
+    : [];
+  $("ai-notes-list").replaceChildren(
+    ...notes.map((note) => {
+      const link = document.createElement("a");
+      link.className = "ai-notes-card";
+      link.href = route("note-detail.html", { id: note.note_id });
+      const title = document.createElement("h3");
+      title.textContent = note.title || "추천 오답노트";
+      const meta = document.createElement("p");
+      meta.className = "ai-notes-meta";
+      meta.textContent = `${note.author_name || "베테랑"} · ${money(note.price_points)} P`;
+      const reason = document.createElement("p");
+      reason.textContent = note.reason || "";
+      link.append(title, meta, reason);
+      return link;
+    }),
+  );
+  $("ai-notes").hidden = !notes.length;
+  const questions = Array.isArray(result.questions)
+    ? result.questions
+        .filter((q) => typeof q === "string" && q.trim())
+        .slice(0, 3)
+    : [];
+  $("ai-questions-list").replaceChildren(
+    ...questions.map((question) => {
+      const li = document.createElement("li");
+      li.textContent = question;
+      return li;
+    }),
+  );
+  $("ai-questions").hidden = !questions.length;
+}

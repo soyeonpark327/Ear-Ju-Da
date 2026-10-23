@@ -1,4 +1,4 @@
-import { demo, money, escape, notice, status, init, goLogin } from "./ui.js";
+import { demo, money, escape, notice, status, init, goLogin } from "./ui.js?v=ai-ui-1";
 init();
 const $ = (id) => document.getElementById(id),
   params = new URLSearchParams(location.search);
@@ -263,3 +263,31 @@ $("confirm-booking").onclick = async () => {
   }
 };
 load();
+
+// This is AI_MATCH_KEY from the API contract. Read storage without importing
+// ai.js, so loading a demo booking never initializes backend modules.
+function fillAiQuestions() {
+  const topic = $("booking-topic");
+  const expertId = params.get("id");
+  if (!expertId || topic.value.trim()) return;
+  try {
+    const result = JSON.parse(
+      sessionStorage.getItem("ear-ju-da:ai-match") || "null",
+    );
+    if (
+      !Array.isArray(result?.matches) ||
+      !result.matches.some((match) => String(match.expert_id) === expertId)
+    )
+      return;
+    const questions = Array.isArray(result.questions)
+      ? result.questions
+          .filter((q) => typeof q === "string" && q.trim())
+          .slice(0, 3)
+      : [];
+    if (questions.length)
+      topic.value = questions.map((q, i) => `${i + 1}. ${q}`).join("\n");
+  } catch {
+    /* Missing/blocked/malformed storage leaves user input untouched. */
+  }
+}
+fillAiQuestions();

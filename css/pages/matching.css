@@ -149,3 +149,57 @@
     min-height: 130px;
   }
 }
+.ai-filter-panel {
+  width: 100%;
+  max-width: 390px;
+  text-align: left;
+  margin-top: 24px;
+  padding: 16px;
+  background: #ffffffc9;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+.ai-filter-group {
+  border: 0;
+  padding: 0;
+  margin: 0 0 14px;
+  min-width: 0;
+}
+.ai-filter-group legend {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.ai-filter-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ai-filter-chip {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.ai-filter-chip[aria-pressed="true"] {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: var(--ink);
+}
+.ai-filter-chip:disabled {
+  cursor: wait;
+}
+.matching-intro:has(.ai-filter-panel:not([hidden])) {
+  justify-content: flex-start;
+  padding-top: 28px;
+  min-height: 0;
+  overflow-y: auto;
+}
+.matching-intro:has(.ai-filter-panel:not([hidden])) .suggestions {
+  margin-top: 18px;
+}
