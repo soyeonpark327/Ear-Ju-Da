@@ -18,9 +18,9 @@ body.mobile-design {
   color: var(--ink);
 }
 .mobile-design .app {
-  width: 402px;
-  max-width: none;
-  min-height: 874px;
+  width: 100%;
+  max-width: 402px;
+  min-height: 100vh;
   margin: 0 auto;
   background: #fff;
   overflow: visible;
@@ -2214,7 +2214,8 @@ body.mobile-design {
   left: 50%;
   transform: translateX(-50%);
   box-sizing: border-box;
-  width: 402px;
+  width: 100%;
+  max-width: 402px;
   height: 100px;
   padding: 23px 13px 0;
   display: grid;
