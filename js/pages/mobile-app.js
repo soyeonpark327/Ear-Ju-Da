@@ -66,13 +66,40 @@ async function confirmAction(message, label = "확인") {
     ),
   );
 }
+function expertPortrait(e) {
+  const supplied = {
+    "이승호 위원": "lee",
+    이승호: "lee",
+    이정훈: "lee",
+    "박정미 대표": "park",
+    박정미: "park",
+    박미경: "park",
+    "정광일 노무사": "jung",
+    정광일: "jung",
+    정성호: "jung",
+  }[e.name];
+  return (
+    e.avatar_url ||
+    (supplied
+      ? new URL(
+          `../assets/home/expert-${supplied}.png?v=portraits-1`,
+          location.href,
+        ).href
+      : null)
+  );
+}
 function image(url, cls = "") {
   const host = document.createElement("span");
   host.className = cls || "r-avatar";
   let safe;
   try {
     const u = new URL(url);
-    if (u.protocol === "https:") safe = u.href;
+    if (
+      u.protocol === "https:" ||
+      (u.origin === location.origin &&
+        u.pathname.includes("/assets/home/expert-"))
+    )
+      safe = u.href;
   } catch {}
   if (safe) {
     const img = document.createElement("img");
@@ -118,7 +145,7 @@ function expertCard(e, reason = null) {
   const a = document.createElement("a");
   a.className = "r-expert";
   a.href = href("expert-booking", { id: e.id });
-  a.append(image(e.avatar_url, "r-live-portrait"));
+  a.append(image(expertPortrait(e), "r-live-portrait"));
   const info = document.createElement("div");
   info.className = "r-expert-info";
   info.append(text("h3", e.name), text("p", e.headline, "r-sub"));
@@ -162,91 +189,24 @@ function remember(e) {
   } catch {}
 }
 async function home() {
-  const [expertsApi, notesApi] = await Promise.all([
-    import("../api/experts.js"),
-    import("../api/notes.js"),
-  ]);
-  const results = await Promise.allSettled([
-    expertsApi.getExperts(),
-    notesApi.getNotes({ sort: "popular" }),
-  ]);
-  const box = $("#r-experts");
-  let limit = 3;
-  const rows = results[0].status === "fulfilled" ? results[0].value : [];
-  const more = $("#r-more");
-  function render() {
-    box.replaceChildren(
-      ...rows.slice(0, limit).map((e) => {
-        const a = expertCard(e);
-        a.onclick = () => remember(e);
-        return a;
-      }),
-    );
-    if (!rows.length)
-      errorPanel(
-        box,
-        results[0].status === "rejected"
-          ? "베테랑을 불러오지 못했어요."
-          : "등록된 베테랑이 없어요.",
-        () => location.reload(),
-      );
-    more.hidden = rows.length <= 3;
-    more.setAttribute("aria-expanded", String(limit > 3));
-    more.innerHTML = `베테랑 ${limit > 3 ? "접기" : "더보기"} ${icon("down")}`;
-  }
-  render();
-  more.onclick = () => {
-    limit = limit > 3 ? 3 : rows.length;
-    render();
-  };
-  $('.r-search input[name="demo"]').remove();
-  $(".r-search").onsubmit = (e) => {
-    e.preventDefault();
+  // The approved home is editorial content: never replace its copy or portraits
+  // with the database ranking, ratings or browsing history.
+  $('.r-search input[name="demo"]')?.remove();
+  $(".r-search").onsubmit = (event) => {
+    event.preventDefault();
     location.href = href("matching", {
       keyword: $('.r-search input[name="keyword"]').value.trim(),
     });
   };
-  const recent = $(".r-recent>div");
-  recent.replaceChildren();
-  try {
-    const saved = JSON.parse(localStorage.getItem("earjuda-recent") || "[]");
-    for (const r of saved) {
-      const a = text("a", r.name);
-      a.href = href("expert-booking", { id: r.id });
-      recent.append(a);
-    }
-  } catch {}
-  if (!recent.children.length)
-    recent.append(text("p", "아직 둘러본 베테랑이 없어요."));
-  const popular = $(".r-popular ol");
-  popular.replaceChildren();
-  if (results[1].status === "fulfilled") {
-    for (const [i, n] of results[1].value.slice(0, 3).entries()) {
-      const li = document.createElement("li");
-      li.append(text("b", i + 1));
-      const cover = document.createElement("img");
-      cover.className = "r-paper-cover";
-      cover.src =
-        "../assets/home/paper-" + ["contract", "business", "tax"][i] + ".jpg";
-      cover.alt = "";
-      li.append(cover);
-      const info = document.createElement("div");
-      info.append(
-        text("strong", n.author?.profiles?.name || "베테랑"),
-        text("p", n.title),
-        text("small", money(n.price_points) + "P"),
-      );
-      const a = text("a", "읽어보기");
-      a.href = href("note-detail", { id: n.id });
-      li.append(info, a);
-      popular.append(li);
-    }
-    if (!popular.children.length)
-      popular.append(text("li", "등록된 오답노트가 없어요."));
-  } else
-    errorPanel(popular, "오답노트를 불러오지 못했어요.", () =>
-      location.reload(),
-    );
+  $$(".r-expert").forEach((card) => {
+    card.href = href("expert-booking", { id: "preview-lee" });
+  });
+  $$(".r-popular li>a").forEach((card) => {
+    card.href = href("note-detail", { id: "preview-contract" });
+  });
+  $("#r-more").onclick = () => {
+    location.href = href("experts");
+  };
 }
 async function loadExpert() {
   const api = await import("../api/experts.js");
@@ -259,7 +219,7 @@ async function loadExpert() {
 function fillProfile(e) {
   $(".r-profile-intro h2").textContent = e.name;
   $(".r-profile-intro p").textContent = e.headline;
-  changeImage($(".r-profile-intro>img"), e.avatar_url);
+  changeImage($(".r-profile-intro>img"), expertPortrait(e));
   const years = Number(e.career_years || 0);
   const current = new Date().getFullYear();
   const axis = $(".r-experience>div");
@@ -272,6 +232,20 @@ function fillProfile(e) {
   );
 }
 async function profile() {
+  if (params.get("id") === "preview-lee") {
+    document.body.classList.add("r-profile-preview");
+    if (params.get("calendar") === "1") {
+      const { bindReferenceCalendar } = await import(
+        "./mobile-views.js?v=booking-fix-2"
+      );
+      bindReferenceCalendar();
+    }
+    $(".r-tip-count").onclick = () => say("현재 공개된 답변을 보고 있어요.");
+    const reviews = $(".r-profile-actions a:last-child");
+    if (reviews) reviews.href = "veteran-reviews.html";
+    return;
+  }
+
   const { api, e, id } = await loadExpert();
   fillProfile(e);
   const results = await Promise.allSettled([api.getTips(id), api.getSlots(id)]);
@@ -372,6 +346,39 @@ async function profile() {
   };
 }
 async function booking() {
+  if (["preview-lee", "demo-lee"].includes(params.get("id"))) {
+    const { bindBookingSelection } = await import(
+      "./mobile-views.js?v=booking-fix-2"
+    );
+    bindBookingSelection(() => say("예약 내용을 확인해주세요."));
+    const selected = params.get("date");
+    if (selected) {
+      const date = new Date(selected + "T12:00:00+09:00");
+      const day = date.getDate();
+      const strip = $$(".r-date-strip button");
+      if (!strip.some((button) => Number(button.dataset.date) === day)) {
+        strip.forEach((button, i) => {
+          const d = new Date(date);
+          d.setDate(day + i);
+          button.dataset.date = String(d.getDate());
+          button.querySelector("span").textContent = "일월화수목금토"[
+            d.getDay()
+          ];
+          button.querySelector("b").textContent = d.getDate();
+        });
+      }
+      const button = strip.find(
+        (button) => Number(button.dataset.date) === day,
+      );
+      if (button) button.click();
+    }
+    $("#r-book-submit").onclick = () =>
+      say(
+        "선택한 날짜·시간·상담 방식을 확인했어요. 이 프로필은 미리보기이므로 실제 예약이나 포인트 결제는 실행하지 않아요.",
+      );
+    return;
+  }
+
   const { api, e, id } = await loadExpert();
   const [slots, auth] = await Promise.all([
     api.getSlots(id),
@@ -505,7 +512,7 @@ function matchCard(e, result) {
   card.className = "r-match-card";
   const person = document.createElement("div");
   person.className = "r-match-person";
-  person.append(image(e.avatar_url));
+  person.append(image(expertPortrait(e)));
   const info = document.createElement("div");
   info.append(text("h2", e.name), text("small", e.headline));
   person.append(info);
@@ -768,8 +775,7 @@ async function notes() {
   function filter(category) {
     publishedCards.forEach((card, i) => {
       card.hidden =
-        category !== "계약" &&
-        published[i].industry !== category &&
+        (category === "계약" || published[i].industry !== category) &&
         !(published[i].keywords || []).includes(category);
     });
     cards.forEach((card, i) => {
@@ -1250,9 +1256,9 @@ export async function startApp() {
     }[page];
     if (!run) throw Error("화면을 찾을 수 없어요.");
     await run();
-    document.body.classList.add("mobile-live");
+    if (page !== "home") document.body.classList.add("mobile-live");
     const { applyFinalMetrics } = await import(
-      "./mobile-design-tokens.js?v=nav-font-1"
+      "./mobile-design-tokens.js?v=recent-pills-1"
     );
     await applyFinalMetrics().catch(() => {});
   } catch (error) {

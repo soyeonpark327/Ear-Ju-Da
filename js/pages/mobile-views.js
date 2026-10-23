@@ -1,4 +1,4 @@
-import { applyFinalMetrics } from "./mobile-design-tokens.js?v=nav-font-1";
+import { applyFinalMetrics } from "./mobile-design-tokens.js?v=recent-pills-1";
 // Exact supplied examples are isolated from authenticated production data.
 const params = new URLSearchParams(location.search);
 const page = location.pathname.split("/").pop().replace(".html", "");
@@ -8,13 +8,15 @@ const link = (name, query = "") => {
     .join("&");
   return `${name}.html${suffix ? "?" + suffix : ""}`;
 };
-const portrait = (who = "lee") => `../assets/home/expert-${who}.png`;
+const portrait = (who = "lee") =>
+  `../assets/home/expert-${who}.png?v=portraits-1`;
 const icons = {
   spark:
     '<path fill="currentColor" stroke="none" d="M10.2 3.3Q12-2 13.8 3.3L16 8L21 10.2Q26 12 21 13.8L16 16L13.8 21Q12 26 10.2 21L8 16L3 13.8Q-2 12 3 10.2L8 8Z"/><path fill="currentColor" stroke="none" d="m22 0 .6 1.4L24 2l-1.4.6L22 4l-.6-1.4L20 2l1.4-.6Z"/>',
+  like: '<path d="M7 10v11H3V10h4Zm0 0 5-8c3 0 3 2 2 7h6l-2 12H7"/>',
   back: '<path d="m14 5-6 7 6 7"/>',
   arrow: '<path d="M12 19V5m-6 6 6-6 6 6"/>',
-  bell: '<path d="M6 9a6 6 0 0 1 12 0c0 6 3 6 3 8H3c0-2 3-2 3-8m6 10a2 2 0 0 1-4 0"/>',
+  bell: '<path d="M6 9a6 6 0 0 1 12 0c0 6 3 6 3 8H3c0-2 3-2 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>',
   calendar:
     '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 2v6m10-6v6M3 11h18m-13 4h1m3 0h1m3 0h1m-9 3h1m3 0h1"/>',
   chat: '<path d="M4 4h16v13H9l-5 4V4Z M8 8h8M8 12h6"/>',
@@ -85,7 +87,7 @@ const bottomNavigation = () => {
       '<path d="M8 2v4m5-4v4m5-4v4M19 17l-5 5H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v9l-2 2Zm-5 5v-5a2 2 0 0 1 2-2h5M7 10h10M7 14h5"/>',
     ],
     [
-      "consultations",
+      "expert-booking",
       "상담",
       '<path d="M21.5 11.5a10 10 0 0 1-14.8 8.8L2 22l1.6-4.8A10 10 0 1 1 21.5 11.5Z"/>',
     ],
@@ -95,10 +97,10 @@ const bottomNavigation = () => {
       '<circle cx="12" cy="7" r="5"/><path d="M3 22a9 9 0 0 1 18 0"/>',
     ],
   ];
-  return `<nav class="r-bottom-navigation" aria-label="하단 메뉴">${items.map(([target, label, paths]) => `<a href="${link(target)}"${target === page ? ' aria-current="page"' : ""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg><span>${label}</span></a>`).join("")}</nav>`;
+  return `<nav class="r-bottom-navigation" aria-label="하단 메뉴">${items.map(([target, label, paths]) => `<a href="${link(target, target === "expert-booking" ? "id=preview-lee" : "")}"${target === page ? ' aria-current="page"' : ""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg><span>${label}</span></a>`).join("")}</nav>`;
 };
 function home() {
-  return `${statusbar()}<header class="r-home-header"><a href="${link("notifications")}" aria-label="알림">${icon("bell")}</a></header><main id="main"><div class="r-home-top"><form class="r-search" action="matching.html"><input name="demo" value="1" type="hidden"/><label>${icon("search")}<input name="keyword" placeholder="무슨 문제를 겪고 계신가요?" aria-label="고민 검색"/></label><button>Ai 매칭 <span class="r-spark">${icon("spark")}</span></button></form><nav class="r-categories">${["계약", "노무", "세무", "자금", "판로", "마케팅", "인허가", "해외진출", "데이터", "지식재산"].map((n, i) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${[0, 1, 2, 3, 5, 6, 8].includes(i) ? `<img src="../assets/home/${n}.svg" alt=""/>` : icon(["", "", "", "", "box", "", "", "globe", "", "bulb"][i])}<span>${n}</span></a>`).join("")}</nav></div><section class="r-home-experts"><h2>경력으로 증명된 베테랑</h2><div id="r-experts">${people.map(expertCard).join("")}</div><button class="r-more" id="r-more" aria-expanded="false">베테랑 더보기 ${icon("down")}</button></section><section class="r-recent"><h2>내가 둘러본 베테랑</h2><div>${["마케팅", "인허가", "지식재산", "창업", "경제", "자금", "해외진출"].map((n) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${n}</a>`).join("")}</div></section><section class="r-popular"><h2>가장 많이 열람된 <a href="${link("notes")}">오답노트</a></h2><ol>${[
+  return `${statusbar()}<header class="r-home-header"><a class="r-home-logo" href="${link("home")}" aria-label="Ear-ju-da 홈"></a><a href="${link("notifications")}" aria-label="알림">${icon("bell")}</a></header><main id="main"><div class="r-home-top"><form class="r-search" action="matching.html"><input name="demo" value="1" type="hidden"/><label>${icon("search")}<input name="keyword" placeholder="무슨 문제를 겪고 계신가요?" aria-label="고민 검색"/></label><button>Ai 매칭 <span class="r-spark">${icon("spark")}</span></button></form><nav class="r-categories">${["계약", "노무", "세무", "자금", "판로", "마케팅", "인허가", "해외진출", "데이터", "지식재산"].map((n, i) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${[0, 1, 2, 3, 5, 6, 8].includes(i) ? `<img src="../assets/home/${n}.svg" alt=""/>` : i === 4 ? '<svg class="r-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#66bdcc" d="m12 2 10 5-10 5L2 7Z"/><path fill="#45adc0" d="m2 7 10 5v10L2 17Z"/><path fill="#339eae" d="m12 12 10-5v10l-10 5Z"/></svg>' : i === 9 ? '<svg class="r-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 17C8 14 4 13 4 9a8 8 0 0 1 16 0c0 4-4 5-4 8H8Zm0 2h8v2H8Zm2 3h4v2h-4Z"/><path d="m9 8 3 2 3-2" fill="none" stroke="#08768b" stroke-width="1.6"/></svg>' : icon("globe")}<span>${n}</span></a>`).join("")}</nav></div><section class="r-home-experts"><h2>경력으로 증명된 베테랑</h2><div id="r-experts">${people.map(expertCard).join("")}</div><button class="r-more" id="r-more" aria-expanded="false">베테랑 더보기 ${icon("down")}</button></section><section class="r-recent"><h2>내가 둘러본 베테랑</h2><div>${["마케팅", "인허가", "지식재산", "창업", "경제", "자금", "해외진출"].map((n) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${n}</a>`).join("")}</div></section><section class="r-popular"><h2>가장 많이 열람된 <a href="${link("notes")}">오답노트</a></h2><ol>${[
     {
       name: "김수현",
       title: "사업 망하기 전에 읽었어야 할 오답노트",
@@ -126,7 +128,7 @@ function home() {
 }
 function profile() {
   const cal = params.get("calendar") === "1";
-  return `${statusbar()}${header("예약하기")}<main id="main" class="r-profile">${expertIntro()}${cal ? calendar() : `<div class="r-profile-actions"><a href="${link("expert-booking", "id=demo-lee&calendar=1")}">${icon("calendar")} 날짜 선택</a><a href="${link("reviews", "expert=demo-lee")}">${icon("chat")} 후기 보기</a></div>`}</main>`;
+  return `${statusbar()}${header(params.get("id") === "preview-lee" ? "상담하기" : "예약하기")}<main id="main" class="r-profile">${expertIntro()}${cal ? calendar() : `<div class="r-profile-actions"><a href="${link("expert-booking", `id=${params.get("id") === "preview-lee" ? "preview-lee" : "demo-lee"}&calendar=1`)}">${icon("calendar")} 날짜 선택</a><a href="veteran-reviews.html">${icon("chat")} 후기 보기</a></div>`}</main>`;
 }
 function calendar() {
   return `<section class="r-calendar-section"><h2>${icon("calendar")} 날짜와 시간을 선택해주세요</h2><div class="r-month"><button id="r-prev-month" aria-label="이전 달">‹</button><b id="r-month-label">2026년 10월</b><button id="r-next-month" aria-label="다음 달">›</button></div><div class="r-weekdays">${"일월화수목금토"
@@ -134,7 +136,7 @@ function calendar() {
     .map((n) => `<span>${n}</span>`)
     .join(
       "",
-    )}</div><div class="r-calendar" id="r-calendar"></div><a class="r-primary" id="r-reserve" href="${link("booking", "id=demo-lee&date=2026-10-24")}">상담 예약하기</a></section>`;
+    )}</div><div class="r-calendar" id="r-calendar"></div><a class="r-primary" id="r-reserve" href="${link("booking", `id=${params.get("id") === "preview-lee" ? "preview-lee" : "demo-lee"}&date=2026-10-24`)}">상담 예약하기</a></section>`;
 }
 function booking() {
   return `${statusbar()}${header("예약하기")}<main id="main" class="r-booking"><div class="r-date-strip">${["토", "일", "월", "화", "수"].map((n, i) => `<button class="${i === 2 ? "selected" : ""}" data-date="${24 + i}" aria-pressed="${i === 2}"><span>${n}</span><b>${24 + i}</b></button>`).join("")}</div><h2 id="r-day-heading">목요일</h2><div class="r-times"><button aria-pressed="true">14:00</button><button aria-pressed="false">16:00</button><button disabled>18:00 마감</button></div><div class="r-modes"><button class="r-mode selected" data-mode="call" aria-pressed="true"><span class="r-mode-icon">${icon("phone")}</span><span><b>1시간 1:1 통화 상담</b><small>자료를 공유하고 베테랑의 피드백까지</small></span><strong>12,000P</strong><i>추천</i></button><button class="r-mode" data-mode="chat" aria-pressed="false"><span class="r-mode-icon">${icon("chat")}</span><span><b>1시간 1:1 채팅 상담</b><small>채팅으로 편하게 질문</small></span><strong>10,000P</strong></button></div><div class="r-policies"><p>${icon("shield")}<span>결제한 포인트는 <b>상담이 끝난 뒤</b>에 베테랑에게 전달됩니다. 그 전까지는 플랫폼이 보관합니다.</span></p><p><span class="r-red-cross">×</span><span>상대방이 응답하지 않을 경우 <b>포인트는 환급되지 않으며, 신뢰 등급이 하락</b>합니다.</span></p></div><footer class="r-booking-footer"><button class="r-primary" id="r-book-submit">목요일 14:00으로 예약하기</button><p>보유 포인트 <b>31,500P</b></p></footer></main>`;
@@ -194,7 +196,9 @@ function mypage() {
       ([n, p]) =>
         `<a ${p === "support" ? 'data-action="support"' : `href="${link(p)}"`}>${n}${icon("chevron")}</a>`,
     )
-    .join("")}<button data-action="logout">로그아웃</button></nav></main>`;
+    .join(
+      "",
+    )}<button data-action="logout">로그아웃</button></nav></main>${bottomNavigation()}`;
 }
 export function renderReference({ live = false } = {}) {
   document.body.className = "mobile-design mobile-ui r-page-" + page;
@@ -242,95 +246,14 @@ export function renderReference({ live = false } = {}) {
       );
     };
   }
-  if (page === "expert-booking" && params.get("calendar") === "1") {
-    let month = 9;
-    const year = 2026;
-    function draw() {
-      document.getElementById("r-month-label").textContent =
-        `${year}년 ${month + 1}월`;
-      const start = new Date(year, month, 1).getDay(),
-        count = new Date(year, month + 1, 0).getDate(),
-        prev = new Date(year, month, 0).getDate();
-      document.getElementById("r-calendar").innerHTML = Array.from(
-        { length: Math.ceil((start + count) / 7) * 7 },
-        (_, i) => {
-          const d = i - start + 1;
-          return `<button ${d < 24 || d > count ? "disabled" : ""} class="${d === 24 ? "selected" : ""} ${d === 23 ? "today" : ""}" data-day="${d}" aria-pressed="${d === 24}">${d < 1 ? prev + d : d > count ? d - count : d}${d === 23 ? "<small>오늘</small>" : ""}</button>`;
-        },
-      ).join("");
-      document.querySelectorAll("#r-calendar button:not(:disabled)").forEach(
-        (b) =>
-          (b.onclick = () => {
-            document.querySelectorAll("#r-calendar button").forEach((x) => {
-              x.classList.remove("selected");
-              x.setAttribute("aria-pressed", "false");
-            });
-            b.classList.add("selected");
-            b.setAttribute("aria-pressed", "true");
-            document.getElementById("r-reserve").href = link(
-              "booking",
-              `id=demo-lee&date=${year}-${String(month + 1).padStart(2, "0")}-${b.dataset.day}`,
-            );
-          }),
-      );
-    }
-    draw();
-    document.getElementById("r-prev-month").onclick = () => {
-      month = Math.max(0, month - 1);
-      draw();
-    };
-    document.getElementById("r-next-month").onclick = () => {
-      month = Math.min(11, month + 1);
-      draw();
-    };
-  }
-  if (page === "booking") {
-    let day = "목요일",
-      time = "14:00";
-    const update = () =>
-      (document.getElementById("r-book-submit").textContent =
-        `${day} ${time}으로 예약하기`);
-    document.querySelectorAll(".r-date-strip button").forEach(
-      (b, i) =>
-        (b.onclick = () => {
-          document.querySelectorAll(".r-date-strip button").forEach((x) => {
-            x.classList.remove("selected");
-            x.setAttribute("aria-pressed", "false");
-          });
-          b.classList.add("selected");
-          b.setAttribute("aria-pressed", "true");
-          day = ["토요일", "일요일", "월요일", "화요일", "수요일"][i];
-          document.getElementById("r-day-heading").textContent = day;
-          update();
-        }),
-    );
-    document.querySelectorAll(".r-times button:not(:disabled)").forEach(
-      (b) =>
-        (b.onclick = () => {
-          document
-            .querySelectorAll(".r-times button")
-            .forEach((x) => x.setAttribute("aria-pressed", "false"));
-          b.setAttribute("aria-pressed", "true");
-          time = b.textContent;
-          update();
-        }),
-    );
-    document.querySelectorAll(".r-mode").forEach(
-      (b) =>
-        (b.onclick = () => {
-          document.querySelectorAll(".r-mode").forEach((x) => {
-            x.classList.remove("selected");
-            x.setAttribute("aria-pressed", "false");
-          });
-          b.classList.add("selected");
-          b.setAttribute("aria-pressed", "true");
-        }),
-    );
-    document.getElementById("r-book-submit").onclick = () =>
+  if (page === "expert-booking" && params.get("calendar") === "1")
+    bindReferenceCalendar();
+  if (page === "booking")
+    bindBookingSelection(() =>
       say(
         "시안 확인용 예약입니다. 실제 예약이나 포인트 결제는 실행하지 않아요.",
-      );
-  }
+      ),
+    );
   if (page === "notes")
     document.querySelectorAll(".r-note-filters button").forEach(
       (b) =>
@@ -422,4 +345,95 @@ export function renderReference({ live = false } = {}) {
   }
   applyFinalMetrics().catch(() => {});
   return true;
+}
+
+export function bindReferenceCalendar() {
+  let month = 9;
+  const year = 2026;
+  function draw() {
+    document.getElementById("r-month-label").textContent =
+      `${year}년 ${month + 1}월`;
+    const start = new Date(year, month, 1).getDay(),
+      count = new Date(year, month + 1, 0).getDate(),
+      prev = new Date(year, month, 0).getDate();
+    document.getElementById("r-calendar").innerHTML = Array.from(
+      { length: Math.ceil((start + count) / 7) * 7 },
+      (_, i) => {
+        const d = i - start + 1;
+        return `<button ${d < 24 || d > count ? "disabled" : ""} class="${d === 24 ? "selected" : ""} ${d === 23 ? "today" : ""}" data-day="${d}" aria-pressed="${d === 24}">${d < 1 ? prev + d : d > count ? d - count : d}${d === 23 ? "<small>오늘</small>" : ""}</button>`;
+      },
+    ).join("");
+    document.querySelectorAll("#r-calendar button:not(:disabled)").forEach(
+      (b) =>
+        (b.onclick = () => {
+          document.querySelectorAll("#r-calendar button").forEach((x) => {
+            x.classList.remove("selected");
+            x.setAttribute("aria-pressed", "false");
+          });
+          b.classList.add("selected");
+          b.setAttribute("aria-pressed", "true");
+          document.getElementById("r-reserve").href = link(
+            "booking",
+            `id=${params.get("id") === "preview-lee" ? "preview-lee" : "demo-lee"}&date=${year}-${String(month + 1).padStart(2, "0")}-${b.dataset.day}`,
+          );
+        }),
+    );
+    document
+      .querySelector("#r-calendar button.selected:not(:disabled)")
+      ?.click();
+  }
+  draw();
+  document.getElementById("r-prev-month").onclick = () => {
+    month = Math.max(0, month - 1);
+    draw();
+  };
+  document.getElementById("r-next-month").onclick = () => {
+    month = Math.min(11, month + 1);
+    draw();
+  };
+}
+
+export function bindBookingSelection(onSubmit) {
+  let day = "목요일",
+    time = "14:00";
+  const update = () =>
+    (document.getElementById("r-book-submit").textContent =
+      `${day} ${time}으로 예약하기`);
+  document.querySelectorAll(".r-date-strip button").forEach(
+    (b, i) =>
+      (b.onclick = () => {
+        document.querySelectorAll(".r-date-strip button").forEach((x) => {
+          x.classList.remove("selected");
+          x.setAttribute("aria-pressed", "false");
+        });
+        b.classList.add("selected");
+        b.setAttribute("aria-pressed", "true");
+        day = b.querySelector("span").textContent + "요일";
+        document.getElementById("r-day-heading").textContent = day;
+        update();
+      }),
+  );
+  document.querySelectorAll(".r-times button:not(:disabled)").forEach(
+    (b) =>
+      (b.onclick = () => {
+        document
+          .querySelectorAll(".r-times button")
+          .forEach((x) => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        time = b.textContent;
+        update();
+      }),
+  );
+  document.querySelectorAll(".r-mode").forEach(
+    (b) =>
+      (b.onclick = () => {
+        document.querySelectorAll(".r-mode").forEach((x) => {
+          x.classList.remove("selected");
+          x.setAttribute("aria-pressed", "false");
+        });
+        b.classList.add("selected");
+        b.setAttribute("aria-pressed", "true");
+      }),
+  );
+  document.getElementById("r-book-submit").onclick = () => onSubmit();
 }

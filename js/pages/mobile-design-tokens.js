@@ -26,7 +26,7 @@ export async function applyFinalMetrics() {
   for (const element of candidates) {
     // Navigation labels have their own shared sizing. A page heading with
     // the same words must never resize the persistent navigation.
-    if (element.closest(".r-bottom-navigation")) continue;
+    if (element.closest(".r-bottom-navigation, .r-recent a")) continue;
     const value = normalize(element.textContent || "");
     if (!value) continue;
     const spec = specs.find((x) => normalize(x.text) === value);
