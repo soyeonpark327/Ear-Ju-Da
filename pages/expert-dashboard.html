@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>베테랑 대시보드 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/expert-dashboard.css?v=1" />
+  </head>
+  <body class="dash-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
+        <h1>베테랑 대시보드</h1>
+      </header>
+      <main id="main" class="dash-main">
+        <p id="dash-status" class="status" role="status"></p>
+        <div id="dash-content" hidden>
+          <p id="dash-banner" class="dash-banner" hidden></p>
+
+          <section class="dash-hello" aria-labelledby="dash-name">
+            <h2 id="dash-name"></h2>
+            <p class="dash-meta"><span id="dash-trust"></span><span id="dash-rating"></span></p>
+            <p id="dash-noshow" class="dash-noshow" hidden></p>
+          </section>
+
+          <section class="dash-next" aria-labelledby="dash-next-title">
+            <h2 id="dash-next-title">다음 상담</h2>
+            <div id="dash-next-body"></div>
+          </section>
+
+          <section aria-label="상담 현황">
+            <ul class="dash-stats">
+              <li><span>오늘 상담</span><strong id="dash-today"></strong></li>
+              <li><span>이번 주 상담</span><strong id="dash-week"></strong></li>
+              <li><span>완료한 상담</span><strong id="dash-completed"></strong></li>
+              <li><span>이번 달 수익</span><strong id="dash-month"></strong></li>
+            </ul>
+          </section>
+
+          <section class="dash-card" aria-labelledby="dash-money-title">
+            <h2 id="dash-money-title">수익</h2>
+            <dl class="dash-list">
+              <div><dt>지급 예정</dt><dd id="dash-pending"></dd></div>
+              <div><dt>누적 수익</dt><dd id="dash-earned"></dd></div>
+              <div><dt>보유 포인트</dt><dd id="dash-balance"></dd></div>
+            </dl>
+            <p class="dash-hint">지급 예정 포인트는 상담이 끝나면 지급돼요.</p>
+            <a href="points.html" data-route class="outline full dash-link">포인트 내역 보기</a>
+          </section>
+
+          <section class="dash-card" aria-labelledby="dash-notes-title">
+            <h2 id="dash-notes-title">오답노트</h2>
+            <dl class="dash-list">
+              <div><dt>공개 중</dt><dd id="dash-notes-published"></dd></div>
+              <div><dt>작성 중</dt><dd id="dash-notes-drafts"></dd></div>
+              <div><dt>판매</dt><dd id="dash-notes-sold"></dd></div>
+            </dl>
+          </section>
+
+          <section class="dash-card" aria-labelledby="dash-reviews-title">
+            <h2 id="dash-reviews-title">최근 후기</h2>
+            <ul id="dash-reviews" class="dash-reviews"></ul>
+            <p id="dash-reviews-empty" class="dash-empty" hidden>아직 후기가 없어요.</p>
+          </section>
+        </div>
+      </main>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/expert-dashboard.js?v=1"></script>
+  </body>
+</html>
