@@ -1252,7 +1252,7 @@ export async function startApp() {
     await run();
     document.body.classList.add("mobile-live");
     const { applyFinalMetrics } = await import(
-      "./mobile-design-tokens.js?v=app-2"
+      "./mobile-design-tokens.js?v=nav-font-1"
     );
     await applyFinalMetrics().catch(() => {});
   } catch (error) {
