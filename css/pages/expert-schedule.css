@@ -1,0 +1,252 @@
+.sch-main {
+  padding: 24px;
+}
+.sch-main section + section {
+  margin-top: 24px;
+}
+.sch-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sch-month-nav h2 {
+  font-size: 18px;
+}
+.sch-month-nav button {
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: 12px;
+  font-size: 22px;
+}
+.sch-month-nav button:disabled {
+  opacity: 0.3;
+}
+.sch-weekdays,
+.sch-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.sch-weekdays {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+.sch-weekdays li:first-child {
+  color: #d0454c;
+}
+.sch-grid {
+  margin-top: 6px;
+}
+.sch-grid button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-height: 52px;
+  padding: 6px 0;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.sch-grid button.sch-other {
+  color: #c4c6d0;
+}
+.sch-grid button.sch-past {
+  color: #a7aab6;
+}
+.sch-grid button.sch-today {
+  background: var(--panel);
+}
+.sch-grid button[aria-selected="true"] {
+  background: var(--ink);
+  color: white;
+}
+.sch-dots {
+  display: flex;
+  gap: 3px;
+  height: 6px;
+}
+.sch-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+.sch-open {
+  background: var(--cyan);
+}
+.sch-booked {
+  background: #7b61ff;
+}
+.sch-done {
+  background: #b9bcc8;
+}
+.sch-legend {
+  display: flex;
+  gap: 14px;
+  margin-top: 10px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.sch-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.sch-card {
+  padding: 20px;
+  border: 1.5px solid var(--line);
+  border-radius: 22px;
+}
+.sch-card h2 {
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+.sch-day-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.sch-slot-main {
+  flex: 1;
+  min-width: 0;
+}
+.sch-slot-time {
+  font-weight: 700;
+}
+.sch-slot-state {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #e6f9fd;
+  color: #076f84;
+}
+.sch-slot-state.is-confirmed {
+  background: #efebff;
+  color: #4b35c4;
+}
+.sch-slot-state.is-completed,
+.sch-slot-state.is-no_show {
+  background: var(--panel);
+  color: #5b5f6e;
+}
+.sch-slot-who {
+  margin-top: 3px;
+  font-size: 13px;
+  color: #5b5f6e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sch-day-list .outline {
+  flex: none;
+  min-height: 44px;
+  padding: 10px 14px;
+}
+.sch-empty,
+.sch-hint {
+  color: var(--muted);
+  font-size: 14px;
+}
+.sch-hint {
+  margin-bottom: 14px;
+  line-height: 1.6;
+}
+.sch-add {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 16px;
+}
+.sch-add .primary {
+  grid-column: 1 / -1;
+  min-height: 48px;
+}
+.sch-add label,
+.sch-row label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: #5b5f6e;
+}
+.sch-card select {
+  min-height: 44px;
+  padding: 0 10px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  background: white;
+  font-size: 15px;
+  color: var(--ink);
+}
+.sch-days {
+  border: 0;
+  padding: 0;
+  margin: 0 0 14px;
+}
+.sch-days legend {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #5b5f6e;
+}
+#sch-weekly-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+#sch-weekly-days label {
+  position: relative;
+}
+#sch-weekly-days input {
+  position: absolute;
+  opacity: 0;
+}
+#sch-weekly-days span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  font-weight: 600;
+}
+#sch-weekly-days input:checked + span {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: white;
+}
+#sch-weekly-days input:focus-visible + span {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+.sch-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+#sch-weekly .primary {
+  min-height: 48px;
+  margin-top: 4px;
+}
+.sch-confirm-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.sch-confirm-actions button {
+  min-height: 48px;
+}
+.sch-setup-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 48px;
+  margin-top: 12px;
+}

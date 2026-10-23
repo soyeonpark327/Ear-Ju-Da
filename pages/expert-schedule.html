@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>상담 일정 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/expert-schedule.css?v=1" />
+  </head>
+  <body class="sch-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="expert-dashboard.html" data-route aria-label="대시보드로 돌아가기">〈</a>
+        <h1>상담 일정</h1>
+      </header>
+      <main id="main" class="sch-main">
+        <p id="sch-status" class="status" role="status"></p>
+        <div id="sch-content" hidden>
+          <section aria-labelledby="sch-month">
+            <div class="sch-month-nav">
+              <button type="button" id="sch-prev" aria-label="이전 달">‹</button>
+              <h2 id="sch-month"></h2>
+              <button type="button" id="sch-next" aria-label="다음 달">›</button>
+            </div>
+            <ol class="sch-weekdays" aria-hidden="true">
+              <li>일</li><li>월</li><li>화</li><li>수</li><li>목</li><li>금</li><li>토</li>
+            </ol>
+            <div id="sch-grid" class="sch-grid" role="grid" aria-labelledby="sch-month"></div>
+            <p class="sch-legend">
+              <span><i class="sch-dot sch-open"></i>예약 가능</span>
+              <span><i class="sch-dot sch-booked"></i>예약됨</span>
+              <span><i class="sch-dot sch-done"></i>지난 상담</span>
+            </p>
+          </section>
+
+          <section class="sch-card" aria-labelledby="sch-day-title">
+            <h2 id="sch-day-title"></h2>
+            <ul id="sch-day-list" class="sch-day-list"></ul>
+            <p id="sch-day-empty" class="sch-empty" hidden>이 날은 열어 둔 시간이 없어요.</p>
+            <form id="sch-add" class="sch-add">
+              <label>시작 <select id="sch-add-start"></select></label>
+              <label>길이 <select id="sch-add-length"></select></label>
+              <button type="submit" class="primary">시간 열기</button>
+            </form>
+            <p id="sch-add-status" class="status" role="status"></p>
+          </section>
+
+          <section class="sch-card" aria-labelledby="sch-weekly-title">
+            <h2 id="sch-weekly-title">매주 반복 일정</h2>
+            <p class="sch-hint">고른 요일마다 같은 시간을 오늘부터 한 번에 열어요. 이미 연 시간과 겹치면 건너뛰어요.</p>
+            <form id="sch-weekly">
+              <fieldset class="sch-days">
+                <legend>요일</legend>
+                <div id="sch-weekly-days"></div>
+              </fieldset>
+              <div class="sch-row">
+                <label>시작 <select id="sch-weekly-start"></select></label>
+                <label>끝 <select id="sch-weekly-end"></select></label>
+              </div>
+              <div class="sch-row">
+                <label>한 번 길이 <select id="sch-weekly-length"></select></label>
+                <label>기간
+                  <select id="sch-weekly-weeks">
+                    <option value="2">2주</option>
+                    <option value="4" selected>4주</option>
+                    <option value="8">8주</option>
+                    <option value="12">12주</option>
+                  </select>
+                </label>
+              </div>
+              <button type="submit" class="primary full">반복 일정 만들기</button>
+            </form>
+            <p id="sch-weekly-status" class="status" role="status"></p>
+          </section>
+        </div>
+      </main>
+    </div>
+    <dialog id="sch-confirm" aria-labelledby="sch-confirm-title">
+      <h2 id="sch-confirm-title">이 시간을 닫을까요?</h2>
+      <p id="sch-confirm-text"></p>
+      <div class="sch-confirm-actions">
+        <button type="button" id="sch-confirm-cancel" class="outline">취소</button
+        ><button type="button" id="sch-confirm-ok" class="primary">닫기</button>
+      </div>
+    </dialog>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/expert-schedule.js?v=1"></script>
+  </body>
+</html>
