@@ -1,4 +1,4 @@
-import { demo, init, money, route, status } from "./ui.js";
+import { demo, init, money, route, status } from "./ui.js?v=engagement-2";
 import {
   $,
   services,
@@ -6,7 +6,7 @@ import {
   showBookingContext,
   isParticipant,
   loginRequired,
-} from "./consultation-ui.js";
+} from "./consultation-ui.js?v=engagement-2";
 init();
 const id = new URLSearchParams(location.search).get("id");
 const messages = new Map();

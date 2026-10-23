@@ -1,4 +1,4 @@
-import { demo, money, notice, status, init, goLogin } from "./ui.js";
+import { demo, money, notice, status, init, goLogin } from "./ui.js?v=engagement-2";
 init();
 const id = new URLSearchParams(location.search).get("id");
 const button = document.querySelector("#purchase");

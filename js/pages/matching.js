@@ -1,4 +1,4 @@
-import { demo, init, route, notice, avatar, money } from "./ui.js?v=ai-ui-1";
+import { demo, init, route, notice, avatar, money } from "./ui.js?v=engagement-2";
 
 // AI 매칭 결과를 결과 화면(expert-booking)에 넘길 때 쓰는 저장 키
 const AI_KEY = "ear-ju-da:ai-match";

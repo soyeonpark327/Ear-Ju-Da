@@ -1,3 +1,4 @@
+import { reviewApi, reviewCard } from "./review-form.js?v=engagement-2";
 import {
   demo,
   money,
@@ -7,7 +8,7 @@ import {
   init,
   avatar,
   route,
-} from "./ui.js?v=ai-ui-1";
+} from "./ui.js?v=engagement-2";
 init();
 const $ = (id) => document.getElementById(id);
 let id = new URLSearchParams(location.search).get("id");
@@ -246,6 +247,7 @@ async function load() {
     status("expert-load", "");
     document.title = `${expert.name} 상담 예약 | 이어주다`;
     loadSlots();
+    loadReviews();
     try {
       tips = demo
         ? [
@@ -322,4 +324,19 @@ function renderAiPreparation(result) {
     }),
   );
   $("ai-questions").hidden = !questions.length;
+}
+
+async function loadReviews() {
+  status("expert-reviews-status", "후기를 불러오고 있어요.");
+  try {
+    const rows = await (await reviewApi()).getReviews(id);
+    $("expert-reviews-list").replaceChildren(...rows.map(reviewCard));
+    status("expert-reviews-status", rows.length ? "" : "아직 후기가 없어요.");
+  } catch (e) {
+    status(
+      "expert-reviews-status",
+      e.message || "후기를 불러오지 못했어요.",
+      loadReviews,
+    );
+  }
 }

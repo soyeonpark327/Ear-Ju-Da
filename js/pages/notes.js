@@ -1,4 +1,4 @@
-import { demo, money, escape, route, status, init } from "./ui.js";
+import { demo, money, escape, route, status, init } from "./ui.js?v=engagement-2";
 init();
 const filters = [
   "전체",

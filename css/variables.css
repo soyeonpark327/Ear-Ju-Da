@@ -11,7 +11,9 @@
   --color-danger: #e5484d;
 
   /* Font */
-  --font-family: "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", sans-serif;
+  --font-family:
+    "Pretendard", -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo",
+    sans-serif;
   --font-size-sm: 14px;
   --font-size-md: 16px;
   --font-size-lg: 20px;
@@ -31,4 +33,83 @@
   --font-size-md: 20px;
   --font-size-lg: 26px;
   --font-size-xl: 34px;
+}
+/* Shared accessibility overrides: protected screen files need no changes. */
+html.senior-mode body {
+  font-size: var(--font-size-md) !important;
+}
+html.senior-mode :is(p, li, label, legend, input, textarea, select, button, a) {
+  font-size: var(--font-size-md) !important;
+  line-height: 1.6 !important;
+  overflow-wrap: anywhere;
+}
+html.senior-mode :is(h1, h2, h3) {
+  font-size: var(--font-size-lg) !important;
+  line-height: 1.5 !important;
+  overflow-wrap: anywhere;
+}
+html.senior-mode small {
+  font-size: var(--font-size-sm) !important;
+}
+html.senior-mode
+  :is(
+    button,
+    input:not([type="checkbox"]):not([type="radio"]),
+    select,
+    .account,
+    .primary,
+    .outline,
+    .category
+  ) {
+  min-height: 48px !important;
+  height: auto !important;
+  white-space: normal !important;
+}
+html.senior-mode :is(.app, main, section, article, fieldset, form) {
+  min-width: 0;
+}
+html.senior-mode :is(input, textarea, select) {
+  max-width: 100%;
+}
+html.senior-mode dialog {
+  width: min(440px, calc(100% - 24px));
+  max-height: 90dvh;
+  overflow: auto;
+}
+html.senior-mode .header-actions {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+html.senior-mode :is(.expert-info, .profile-heading > div, .mode > span) {
+  min-width: 0;
+}
+html.senior-mode .category {
+  gap: 8px;
+}
+html.senior-mode .matching-composer {
+  grid-template-columns: 48px minmax(0, 1fr) 48px;
+}
+html.senior-mode :is(#send, #attach) {
+  width: 48px !important;
+}
+html.senior-mode .bottom-nav :is(button, a) {
+  min-height: 48px;
+  white-space: normal;
+}
+html.senior-mode .calendar button {
+  min-width: 0;
+}
+html.senior-mode .review-stars {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+html.senior-mode .review-stars button {
+  padding: 6px 0;
+  min-width: 0;
+}
+html:not(.senior-mode) button {
+  min-height: 44px !important;
+}
+html.senior-mode .categories {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
 }

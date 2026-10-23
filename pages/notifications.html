@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>알림함 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css?v=engagement-2" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=engagement-2" />
+    <link
+      rel="stylesheet"
+      href="../css/pages/notifications.css?v=engagement-2"
+    />
+  </head>
+  <body>
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
+        <h1>알림함</h1>
+      </header>
+      <main id="main" class="notifications-main">
+        <button id="notifications-all" class="outline" type="button" disabled>
+          모두 읽음
+        </button>
+        <p id="notifications-status" class="status" role="status"></p>
+        <div id="notifications-list"></div>
+      </main>
+    </div>
+    <script
+      type="module"
+      src="../js/pages/notifications.js?v=engagement-2"
+    ></script>
+  </body>
+</html>

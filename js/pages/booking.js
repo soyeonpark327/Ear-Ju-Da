@@ -8,7 +8,7 @@ import {
   goLogin,
   avatar,
   route,
-} from "./ui.js?v=ai-ui-1";
+} from "./ui.js?v=engagement-2";
 init();
 const $ = (id) => document.getElementById(id),
   params = new URLSearchParams(location.search);
