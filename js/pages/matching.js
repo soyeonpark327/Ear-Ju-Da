@@ -54,7 +54,7 @@ document.getElementById("matching-form").onsubmit = async (e) => {
     input.readOnly = true;
     setFilterBusy(true);
     const statusEl = document.getElementById("matching-status");
-    statusEl.textContent = "AI가 고민을 읽고 딱 맞는 베테랑을 찾고 있어요…";
+    statusEl.textContent = "AI가 딱 맞는 베테랑을 찾고 있어요. 보통 2~4초 정도 걸려요…";
     try {
       const { aiMatch, AI_MATCH_KEY } = await import("../api/ai.js");
       const result = await aiMatch(text, { ...selectedFilters });
