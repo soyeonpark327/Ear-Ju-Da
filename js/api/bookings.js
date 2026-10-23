@@ -89,9 +89,30 @@ export async function getReport(bookingId) {
 export async function getReviews(expertId) {
   return unwrap(await supabase
     .from('reviews')
-    .select('id, rating, content, created_at, youth:profiles(name)')
+    .select('id, booking_id, rating, content, created_at, youth:profiles(name)')
     .eq('expert_id', expertId)
     .order('created_at', { ascending: false }));
+}
+
+/** 이 상담에 내가 쓴 후기 (안 썼으면 null) — 후기 쓰기 버튼을 보여줄지 정할 때 */
+export async function getMyReview(bookingId) {
+  return unwrap(await supabase
+    .from('reviews')
+    .select('id, rating, content, created_at')
+    .eq('booking_id', bookingId)
+    .maybeSingle());
+}
+
+/**
+ * 전체 최근 후기 (모든 베테랑, 최신순) — "후기 보기" 화면용
+ * @returns {Promise<Array<{ id, rating, content, created_at, expert_id, youth: { name }, expert: { headline, industry, profiles: { name } } }>>}
+ */
+export async function getRecentReviews({ limit = 20 } = {}) {
+  return unwrap(await supabase
+    .from('reviews')
+    .select('id, rating, content, created_at, expert_id, youth:profiles(name), expert:experts(headline, industry, profiles(name))')
+    .order('created_at', { ascending: false })
+    .limit(limit));
 }
 
 /** 후기 작성 (완료된 상담의 청년만, 상담 1건당 1개) */

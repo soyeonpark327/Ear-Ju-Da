@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>베테랑 프로필 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/expert-setup.css?v=1" />
+  </head>
+  <body class="setup-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="expert-dashboard.html" data-route aria-label="대시보드로 돌아가기">〈</a>
+        <h1 id="setup-title">베테랑 프로필 등록</h1>
+      </header>
+      <main id="main" class="setup-main">
+        <p id="setup-status" class="status" role="status"></p>
+        <div id="setup-content" hidden>
+          <p id="setup-banner" class="setup-banner" hidden></p>
+          <ol id="setup-steps" class="setup-steps" aria-label="등록 순서">
+            <li><strong>1</strong>경력 정보 작성</li>
+            <li><strong>2</strong>경력 증명서 올리기</li>
+            <li><strong>3</strong>관리자 확인</li>
+          </ol>
+
+          <form id="setup-form" class="setup-form" novalidate>
+            <label for="setup-headline">한 줄 소개 <em>필수</em></label>
+            <input id="setup-headline" maxlength="40" required placeholder="예) 자동차 부품사 구매팀 30년" />
+
+            <div class="setup-row">
+              <div>
+                <label for="setup-industry">분야 <em>필수</em></label>
+                <select id="setup-industry" required></select>
+              </div>
+              <div>
+                <label for="setup-years">경력 연수 <em>필수</em></label>
+                <input id="setup-years" type="number" inputmode="numeric" min="1" max="60" required placeholder="30" />
+              </div>
+            </div>
+
+            <label for="setup-summary">상세 경력</label>
+            <textarea id="setup-summary" rows="5" maxlength="1000" placeholder="회사·부서·기간과 주로 해결했던 일을 줄마다 적어 주세요.&#10;예) 1994~2024 자동차 부품사 구매팀 (팀장 12년)&#10;협력사 200여 곳과 납품 계약·단가 협상"></textarea>
+
+            <label for="setup-keywords">키워드</label>
+            <input id="setup-keywords" maxlength="80" placeholder="예) 납품계약, 단가협상, 협력사관리" />
+            <p class="setup-hint">쉼표로 나눠 최대 6개. 청년이 검색하면 이 키워드로 찾아요.</p>
+
+            <label for="setup-price">상담 1회 가격</label>
+            <select id="setup-price"></select>
+
+            <fieldset class="setup-cert">
+              <legend>경력 증명서 <em id="setup-cert-required">필수</em></legend>
+              <p class="setup-hint">경력증명서·재직증명서·4대보험 가입내역 등 회사명과 근무 기간이 보이는 서류. PDF 또는 사진, 10MB 이하. 관리자만 볼 수 있어요.</p>
+              <input id="setup-file" type="file" accept=".pdf,image/jpeg,image/png,image/webp,image/heic" />
+              <p id="setup-file-name" class="setup-file-name"></p>
+              <button type="button" id="setup-cert-view" class="outline" hidden>올린 증명서 보기</button>
+            </fieldset>
+
+            <p id="setup-form-status" class="status" role="status"></p>
+            <button type="submit" id="setup-submit" class="primary full">등록하고 승인 요청하기</button>
+          </form>
+        </div>
+      </main>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/expert-setup.js?v=1"></script>
+  </body>
+</html>

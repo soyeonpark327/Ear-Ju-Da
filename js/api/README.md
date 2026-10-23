@@ -100,12 +100,12 @@ if (me?.senior_mode) document.documentElement.classList.add('senior-mode');
 const input = document.querySelector('#certificate'); // <input type="file" accept=".pdf,image/*">
 const path = await uploadCertificate(input.files[0]);
 await registerExpert({ headline, industry, career_years, career_summary, keywords, price_points, certificate_path: path });
-// 관리자가 Supabase에서 확인 후 verification을 'approved'로 바꾸면 목록에 노출
+// 관리자가 admin.html에서 승인하면 목록에 노출 (반려되면 experts.rejection_reason에 사유)
 ```
 
 | 함수 | 설명 |
 | --- | --- |
-| `getMyExpert()` | 내 전문가 정보. `verification`이 `'pending'`이면 승인 대기 중 |
+| `getMyExpert()` | 내 전문가 정보. `verification`이 `'pending'`이면 승인 대기 중, `'rejected'`면 `rejection_reason`에 반려 사유 |
 | `getMyDashboard()` | **베테랑 대시보드**: 프로필·등급, 오늘/이번 주/예정/완료/노쇼 상담 수, 다음 상담, 지급 예정·누적·이번 달 수익, 노트 판매, 최근 후기 3개. 전문가 정보가 없으면 `{ registered: false }` |
 | `uploadCertificate(file)` | **경력 증명서 업로드** (PDF·JPG·PNG·WEBP·HEIC, 10MB 이하). 전문가 정보가 있으면 바로 연결, 반려 상태면 승인 대기로. 없으면 돌려받은 경로를 `registerExpert`의 `certificate_path`에 |
 | `getMyCertificateUrl()` | 내가 올린 증명서 보기 링크 (1분 유효), 없으면 `null` |
@@ -120,8 +120,9 @@ await registerExpert({ headline, industry, career_years, career_summary, keyword
 | `groupByDay(slots)` | 일정을 한국 날짜별로 묶기 `{ '2026-11-03': [...] }` (달력 칸 채울 때) |
 | `WEEKDAYS` | `['일', '월', ..., '토']` (번호는 JS `getDay()`와 같음) |
 
+| `addTip(content)` / `deleteTip(tipId)` | 한 줄 조언 작성 (승인된 베테랑만, 200자 이내) / 삭제 |
+
 > 시간 규칙: 같은 베테랑의 시간은 겹칠 수 없고, 앞으로 90일 안, 길이 30분~3시간. 어기면 이유가 담긴 에러가 난다 (예: "11월 3일 14:00에 이미 열어 둔 상담 시간과 겹쳐요.")
-| `addTip(content)` / `deleteTip(tipId)` | 한 줄 조언 작성 / 삭제 |
 
 ## notes.js: 오답 노트
 
@@ -155,7 +156,9 @@ else showBuyButton(note.price_points); // 구매 안 함 → 구매 버튼
 | `rescheduleBooking(bookingId, newSlotId)` | **일정 변경** (청년만, 시작 전, 한 예약당 `MAX_RESCHEDULE`=2번). 같은 베테랑의 빈 시간(`getSlots(booking.expert_id)`)으로 옮김. 포인트·채팅방 그대로, 양쪽에 알림 | |
 | `getReport(bookingId)` | AI 보고서 | `{ summary, checklist: [], risks: [] }` 또는 `null` |
 | `generateReport(bookingId)` | **AI 전략 보고서 만들기** (Gemini가 채팅 대화를 읽고 정리). 완료된 상담의 청년·베테랑만, 상담당 하나 (이미 있으면 그대로 반환) | `{ booking_id, summary, checklist: [], risks: [], created_at }` |
-| `getReviews(expertId)` | 후기 목록 | `[{ id, rating, content, created_at, youth: { name } }]` |
+| `getReviews(expertId)` | 베테랑 한 명의 후기 목록 | `[{ id, booking_id, rating, content, created_at, youth: { name } }]` |
+| `getMyReview(bookingId)` | 이 상담에 내가 쓴 후기 (후기 쓰기 버튼 표시 여부) | 후기 또는 `null` |
+| `getRecentReviews({ limit })` | 전체 최근 후기 ("후기 보기" 화면) | `[{ id, rating, content, created_at, expert_id, youth: { name }, expert: { headline, industry, profiles: { name } } }]` |
 | `addReview(bookingId, rating, content)` | 후기 작성 (완료된 상담만, 1~5점) | |
 
 예약 객체 형태:
@@ -303,3 +306,17 @@ await subscribeNotifications(async () => render(await getUnreadCount()));
 
 - `amount`가 양수면 적립(+), 음수면 사용(-). `balance_after`는 그 직후 잔액이에요.
 - 포인트가 바뀌는 모든 곳(가입·충전·예약·환불·완료·노쇼·노트 구매·판매)이 자동으로 기록돼요.
+
+## admin.js: 관리자 (경력 인증 승인)
+
+`profiles.is_admin`이 `true`인 계정만 동작해요 (데모: `admin@example.com`). 화면은 `pages/admin.html`.
+
+| 함수 | 설명 | 돌려주는 값 |
+| --- | --- | --- |
+| `isAdmin()` | 지금 로그인한 사람이 관리자인가 | `true` / `false` |
+| `getAdminStats()` | 관리자 첫 화면 숫자 | `{ users, youth, veterans, experts_pending, experts_approved, bookings_upcoming, bookings_completed, bookings_no_show, notes_published, note_sales }` |
+| `getExpertsForReview(status)` | 심사 목록 (`'pending'` 기본 / `'approved'` / `'rejected'` / `null` 전체) | `[{ id, name, email, headline, industry, career_years, career_summary, keywords, price_points, verification, rejection_reason, certificate_path, created_at, reviewed_at }]` |
+| `setVerification(expertId, status, reason)` | 승인(`'approved'`) / 반려(`'rejected'`, 사유 필수) / 대기(`'pending'`). 베테랑에게 알림 | |
+| `getCertificateUrl(path)` | 증명서 보기 링크 (1분 유효) | 문자열 |
+
+관리자 지정은 SQL Editor에서만: `update public.profiles set is_admin = true where id = (select id from auth.users where email = '...');`
