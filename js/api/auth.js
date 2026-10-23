@@ -115,6 +115,27 @@ export async function signOut() {
 }
 
 /**
+ * 회원 탈퇴 (되돌릴 수 없음). 진행 중인 상담이 있으면 '진행 중인 상담이 있어요…'로 throw
+ * 활동 기록이 없으면 계정을 완전히 지우고, 상담·후기·판매 기록이 있으면 이름을 '탈퇴한 회원'으로 바꿔 익명 처리한다.
+ * 남은 포인트는 소멸. 끝나면 로그아웃된다.
+ * @returns {Promise<'deleted' | 'anonymized'>}
+ */
+export async function deleteMyAccount() {
+  const user = await getCurrentUser();
+  if (!user) throw new Error('로그인이 필요합니다.');
+  // 탈퇴할 수 없는 상태면 파일을 지우기 전에 멈춘다 (DB 함수도 한 번 더 확인함)
+  const { count } = await supabase.from('bookings').select('id', { count: 'exact', head: true })
+    .eq('status', 'confirmed').or(`youth_id.eq.${user.id},expert_id.eq.${user.id}`);
+  if (count > 0) throw new Error('진행 중인 상담이 있어요. 예약을 취소하거나 상담을 마친 뒤 탈퇴해 주세요.');
+  // 경력 증명서 파일 삭제 (베테랑, 본인 폴더)
+  const { data: files } = await supabase.storage.from('certificates').list(user.id);
+  if (files?.length) await supabase.storage.from('certificates').remove(files.map((f) => `${user.id}/${f.name}`));
+  const result = unwrap(await supabase.rpc('delete_my_account'));
+  await supabase.auth.signOut({ scope: 'local' });
+  return result;
+}
+
+/**
  * 역할 선택 (구글·카카오·네이버 가입자만, 한 번만). getMyProfile()의 role_confirmed가 false일 때 사용
  * @param {'youth' | 'veteran'} role
  */
