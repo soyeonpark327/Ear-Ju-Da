@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
+    <title>상담 보고서 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/consultations.css?v=1" />
+  </head>
+  <body class="consultation-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a
+          href="consultations.html"
+          data-route
+          aria-label="내 상담으로 돌아가기"
+          >〈</a
+        >
+        <h1>상담 보고서</h1>
+      </header>
+      <main id="main" class="consultation-main">
+        <p id="report-load" class="status" role="status"></p>
+        <div id="report-context" class="consultation-card" hidden>
+          <span id="report-booking-status" class="consultation-badge"></span>
+          <h2 id="report-person"></h2>
+          <p id="report-schedule"></p>
+          <p id="report-topic" class="consultation-topic"></p>
+          <a id="report-chat" class="outline">상담 대화 보기</a>
+        </div>
+        <section id="report-create" class="consultation-card" hidden>
+          <h2>나만의 전략 보고서</h2>
+          <p>
+            AI가 완료된 상담 대화를 읽고 핵심 조언, 실행할 일, 주의할 점을
+            정리해요.
+          </p>
+          <button id="report-generate" class="primary" type="button">
+            AI 보고서 만들기
+          </button>
+        </section>
+        <p id="report-status" class="status" role="status"></p>
+        <article id="report-content" hidden>
+          <p class="consultation-report-eyebrow">상담을 실행으로 이어가세요</p>
+          <h2>나만의 전략 보고서</h2>
+          <p id="report-created-at"></p>
+          <section class="consultation-card">
+            <h3>핵심 조언</h3>
+            <p id="report-summary"></p>
+          </section>
+          <section class="consultation-card">
+            <h3>바로 실행할 일</h3>
+            <ul id="report-checklist"></ul>
+          </section>
+          <section class="consultation-card">
+            <h3>주의할 점</h3>
+            <ul id="report-risks"></ul>
+          </section>
+          <p class="consultation-disclaimer">
+            AI가 정리한 내용이에요. 중요한 결정 전에는 원래 상담 내용과 함께
+            확인해주세요.
+          </p>
+        </article>
+      </main>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/report.js?v=1"></script>
+  </body>
+</html>

@@ -752,3 +752,17 @@ dialog form button {
   padding: 7px 10px;
   font-size: 12px;
 }
+/* Keep consultation navigation readable with long signed-in account names. */
+.home-page .home-header {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.home-page .header-actions {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+.home-page #account {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}

@@ -7,6 +7,7 @@ import {
   init,
   goLogin,
   avatar,
+  route,
 } from "./ui.js?v=ai-ui-1";
 init();
 const $ = (id) => document.getElementById(id),
@@ -302,6 +303,11 @@ $("confirm-booking").onclick = async () => {
     $("booking-times").replaceChildren();
     $("chat-mode").disabled = true;
     status("booking-message", `예약이 완료됐어요. 예약 번호: ${id}`);
+    const chatLink = document.createElement("a");
+    chatLink.className = "outline";
+    chatLink.textContent = "상담 채팅방 보기";
+    chatLink.href = route("chat.html", { id });
+    $("booking-message").append(document.createElement("br"), chatLink);
   } catch (e) {
     $("booking-confirm").close();
     if (/포인트|잔액/.test(e.message || "")) {
