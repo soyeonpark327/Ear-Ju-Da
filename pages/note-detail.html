@@ -8,8 +8,14 @@
     <link rel="stylesheet" href="../css/variables.css?v=engagement-2" />
     <link rel="stylesheet" href="../css/pages/home-notes.css?v=engagement-2" />
     <link rel="stylesheet" href="../css/pages/note-detail.css?v=engagement-2" />
+    <link
+      rel="stylesheet"
+      href="../css/pages/reference-design.css?v=reference-1"
+    />
   </head>
-  <body>
+  <body
+    data-reference-scripts="[&quot;../js/pages/note-detail.js&quot;, &quot;../js/pages/social-actions.js?v=1&quot;]"
+  >
     <a class="skip" href="#main">본문으로 이동</a>
     <div class="app">
       <header class="page-header">
@@ -78,5 +84,9 @@
         </button>
       </div>
     </dialog>
+    <script
+      type="module"
+      src="../js/pages/reference-shell.js?v=reference-1"
+    ></script>
   </body>
 </html>
