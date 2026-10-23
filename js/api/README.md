@@ -59,6 +59,7 @@ try {
 | `getMyProfile()` | 내 프로필 | `{ id, role, role_confirmed, name, avatar_url, senior_mode, points }` 또는 `null`. `role_confirmed`가 `false`면 소셜 가입 후 역할을 아직 안 고른 상태 |
 | `chooseMyRole(role)` | 소셜 가입자의 역할 선택 (`'youth'` / `'veteran'`, 한 번만) | |
 | `updateMyProfile({ name, avatar_url, senior_mode })` | 내 프로필 수정 (바꿀 값만) | 수정된 프로필 |
+| `deleteMyAccount()` | **회원 탈퇴** (되돌릴 수 없음). 진행 중인 상담이 있으면 throw. 활동 기록이 없으면 완전 삭제(`'deleted'`), 상담·후기·판매 기록이 있으면 이름을 "탈퇴한 회원"으로 익명 처리(`'anonymized'`). 남은 포인트 소멸, 끝나면 로그아웃 | `'deleted'` / `'anonymized'` |
 | `onAuthChange((user) => {})` | 로그인/로그아웃될 때마다 호출 | 구독 해제 함수 |
 
 ```js
