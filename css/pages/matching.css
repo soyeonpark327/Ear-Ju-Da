@@ -299,3 +299,9 @@
 #matching-conversation > #matching-new {
   margin: 0 24px 24px;
 }
+
+.photo-preview { grid-column: 1 / -1; display: flex; align-items: center; gap: 12px; min-width: 0; }
+.photo-preview[hidden] { display: none; }
+.photo-preview img { width: 64px; height: 64px; border-radius: 10px; object-fit: cover; }
+#photo-name { flex: 1; overflow-wrap: anywhere; font-size: 13px; }
+#photo-remove { min-height: 44px; padding: 8px; }
