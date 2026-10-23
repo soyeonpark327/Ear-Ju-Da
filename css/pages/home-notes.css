@@ -689,8 +689,15 @@ dialog form button {
   max-width: 110px;
   overflow: hidden;
 }
-.home-page #more {
+.home-page .expert-actions {
+  display: flex;
+  gap: 8px;
   margin-top: 10px;
+}
+.home-page .expert-actions #more,
+.home-page .expert-actions #less {
+  flex: 1;
+  margin-top: 0;
   padding: 8px;
 }
 .home-page .recent .chips {
