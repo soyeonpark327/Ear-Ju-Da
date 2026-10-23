@@ -106,6 +106,7 @@ await registerExpert({ headline, industry, career_years, career_summary, keyword
 | 함수 | 설명 |
 | --- | --- |
 | `getMyExpert()` | 내 전문가 정보. `verification`이 `'pending'`이면 승인 대기 중 |
+| `getMyDashboard()` | **베테랑 대시보드**: 프로필·등급, 오늘/이번 주/예정/완료/노쇼 상담 수, 다음 상담, 지급 예정·누적·이번 달 수익, 노트 판매, 최근 후기 3개. 전문가 정보가 없으면 `{ registered: false }` |
 | `uploadCertificate(file)` | **경력 증명서 업로드** (PDF·JPG·PNG·WEBP·HEIC, 10MB 이하). 전문가 정보가 있으면 바로 연결, 반려 상태면 승인 대기로. 없으면 돌려받은 경로를 `registerExpert`의 `certificate_path`에 |
 | `getMyCertificateUrl()` | 내가 올린 증명서 보기 링크 (1분 유효), 없으면 `null` |
 | `registerExpert({ headline, industry, career_years, career_summary, keywords, price_points, certificate_path })` | 전문가 정보 처음 작성 (`certificate_path`는 `uploadCertificate()` 결과) |

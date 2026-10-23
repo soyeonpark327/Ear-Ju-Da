@@ -21,7 +21,9 @@ begin
   if tg_op = 'INSERT' then
     update public.notes set purchase_count = purchase_count + 1 where id = new.note_id;
   elsif tg_op = 'DELETE' then
-    update public.notes set purchase_count = greatest(purchase_count - 1, 0) where id = old.note_id;
+    -- 계정 삭제로 노트까지 연쇄 삭제되는 중이면(작성자가 이미 없음) 건너뛴다
+    update public.notes n set purchase_count = greatest(n.purchase_count - 1, 0)
+    where n.id = old.note_id and exists (select 1 from public.experts e where e.id = n.author_id);
   end if;
   return null;
 end;
