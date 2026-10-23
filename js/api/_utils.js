@@ -9,7 +9,13 @@ export function unwrap({ data, error }) {
   throw new Error(error.message);
 }
 
-// 검색어에서 Supabase 필터 문법을 깨뜨리는 문자를 뺀다.
+// 검색어에서 Supabase 필터 문법을 깨뜨리는 문자와 '#'을 뺀다.
 export function cleanKeyword(keyword) {
-  return (keyword ?? '').replace(/[,(){}%*"\\]/g, '').trim();
+  return (keyword ?? '').replace(/[,(){}%*"\\#]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+// 검색어를 띄어쓰기 단위로 나눈다. 예) '#제조공정 #납품계약' → ['제조공정', '납품계약']
+export function splitKeywords(keyword) {
+  const kw = cleanKeyword(keyword);
+  return kw ? kw.split(' ') : [];
 }
