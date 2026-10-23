@@ -156,7 +156,9 @@ else showBuyButton(note.price_points); // 구매 안 함 → 구매 버튼
 | `rescheduleBooking(bookingId, newSlotId)` | **일정 변경** (청년만, 시작 전, 한 예약당 `MAX_RESCHEDULE`=2번). 같은 베테랑의 빈 시간(`getSlots(booking.expert_id)`)으로 옮김. 포인트·채팅방 그대로, 양쪽에 알림 | |
 | `getReport(bookingId)` | AI 보고서 | `{ summary, checklist: [], risks: [] }` 또는 `null` |
 | `generateReport(bookingId)` | **AI 전략 보고서 만들기** (Gemini가 채팅 대화를 읽고 정리). 완료된 상담의 청년·베테랑만, 상담당 하나 (이미 있으면 그대로 반환) | `{ booking_id, summary, checklist: [], risks: [], created_at }` |
-| `getReviews(expertId)` | 후기 목록 | `[{ id, rating, content, created_at, youth: { name } }]` |
+| `getReviews(expertId)` | 베테랑 한 명의 후기 목록 | `[{ id, booking_id, rating, content, created_at, youth: { name } }]` |
+| `getMyReview(bookingId)` | 이 상담에 내가 쓴 후기 (후기 쓰기 버튼 표시 여부) | 후기 또는 `null` |
+| `getRecentReviews({ limit })` | 전체 최근 후기 ("후기 보기" 화면) | `[{ id, rating, content, created_at, expert_id, youth: { name }, expert: { headline, industry, profiles: { name } } }]` |
 | `addReview(bookingId, rating, content)` | 후기 작성 (완료된 상담만, 1~5점) | |
 
 예약 객체 형태:
