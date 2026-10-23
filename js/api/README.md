@@ -180,3 +180,45 @@ function render(msg) {
 new Date(slot.start_at).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' });
 // → '2026. 11. 1. 오후 2:00'
 ```
+
+## ai.js: AI 기능 (Gemini)
+
+| 함수 / 값 | 설명 | 돌려주는 값 |
+| --- | --- | --- |
+| `aiMatch(concern, filters)` | 고민 문장으로 **베테랑 최대 3명 + 먼저 읽을 오답노트 최대 2개 + 상담 준비 질문 3개** 추천 | 아래 참고 |
+| `getMatchFilterOptions()` | 필터 칩 선택지 | `{ industries: ['무역', '세무', ...], stages: [...], budgets: [...] }` |
+| `STAGES` | 창업 단계 | `[{ value: 'pre', label: '예비 창업' }, { value: 'early', label: '1~3년 차' }, { value: 'growth', label: '3년 차 이상' }]` |
+| `BUDGETS` | 상담 예산 | `[{ value: 2000, label: '2,000P 이하' }, ...]` |
+| `AI_MATCH_KEY` | 결과를 다음 화면에 넘길 sessionStorage 키 | `'ear-ju-da:ai-match'` |
+
+`filters` (모두 선택, 생략 가능)
+
+| 키 | 값 | 의미 |
+| --- | --- | --- |
+| `industry` | `'제조'` 등 (`getMatchFilterOptions().industries` 중 하나) | 이 분야 베테랑만 |
+| `stage` | `'pre'` / `'early'` / `'growth'` | AI가 단계에 맞춰 추천 이유·질문 눈높이 조정 |
+| `max_price` | `3000` | 상담 1회 이 포인트 이하 베테랑만 |
+| `available_soon` | `true` | 7일 안에 빈 상담 시간이 있는 베테랑만 |
+
+돌려주는 값
+```js
+{
+  summary: '납품 단가 인하 압박',          // 고민 요약
+  keywords: ['단가협상'],
+  matches: [{ expert_id, reason, name, headline, avatar_url, industry, career_years, price_points, rating, trust_grade, trust_label }],
+  notes: [{ note_id, reason, title, summary, price_points, author_name }],
+  questions: ['단가 조정 기준을 숫자로 어떻게 정하나요?', ...],
+  filtered_count: 6                         // 필터를 통과한 베테랑 수. 0이면 "필터를 줄여보세요" 안내
+}
+```
+
+```js
+import { aiMatch, AI_MATCH_KEY } from '../api/ai.js';
+
+try {
+  const result = await aiMatch('공장이 갑자기 단가를 깎자고 해요', { industry: '제조', stage: 'early' });
+  sessionStorage.setItem(AI_MATCH_KEY, JSON.stringify({ concern, ...result })); // 결과·예약 화면에서 다시 읽기
+} catch (e) {
+  // AI 장애 시: 키워드 검색(getExperts)으로 대신 찾기
+}
+```
