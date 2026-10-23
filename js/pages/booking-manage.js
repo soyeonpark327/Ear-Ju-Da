@@ -62,8 +62,7 @@ function render(slots = []) {
   $("bm-topic").textContent = booking.topic;
   $("bm-points").textContent = booking.status === "confirmed" ? `${money(booking.price_points)}P` : "-";
   $("bm-count").textContent = `${used} / ${MAX}회`;
-  $("bm-chat").href = demo ? "#" : route("chat.html", { id: booking.id });
-  $("bm-chat").onclick = demo ? (e) => (e.preventDefault(), notice("예시 화면", "실제 서비스에서는 채팅방으로 이동해요.")) : null;
+  $("bm-chat").href = route("chat.html", { id: demo ? "demo-active" : booking.id });
 
   $("bm-locked").hidden = active;
   if (!active) {
