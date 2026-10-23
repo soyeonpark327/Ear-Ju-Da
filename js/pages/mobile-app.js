@@ -242,11 +242,7 @@ async function profile() {
     }
     $(".r-tip-count").onclick = () => say("현재 공개된 답변을 보고 있어요.");
     const reviews = $(".r-profile-actions a:last-child");
-    if (reviews)
-      reviews.onclick = (event) => {
-        event.preventDefault();
-        say("아직 등록된 후기가 없어요.");
-      };
+    if (reviews) reviews.href = "veteran-reviews.html";
     return;
   }
 

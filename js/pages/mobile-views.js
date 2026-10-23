@@ -13,6 +13,7 @@ const portrait = (who = "lee") =>
 const icons = {
   spark:
     '<path fill="currentColor" stroke="none" d="M10.2 3.3Q12-2 13.8 3.3L16 8L21 10.2Q26 12 21 13.8L16 16L13.8 21Q12 26 10.2 21L8 16L3 13.8Q-2 12 3 10.2L8 8Z"/><path fill="currentColor" stroke="none" d="m22 0 .6 1.4L24 2l-1.4.6L22 4l-.6-1.4L20 2l1.4-.6Z"/>',
+  like: '<path d="M7 10v11H3V10h4Zm0 0 5-8c3 0 3 2 2 7h6l-2 12H7"/>',
   back: '<path d="m14 5-6 7 6 7"/>',
   arrow: '<path d="M12 19V5m-6 6 6-6 6 6"/>',
   bell: '<path d="M6 9a6 6 0 0 1 12 0c0 6 3 6 3 8H3c0-2 3-2 3-8m6 10a2 2 0 0 1-4 0"/>',
@@ -127,7 +128,7 @@ function home() {
 }
 function profile() {
   const cal = params.get("calendar") === "1";
-  return `${statusbar()}${header(params.get("id") === "preview-lee" ? "상담하기" : "예약하기")}<main id="main" class="r-profile">${expertIntro()}${cal ? calendar() : `<div class="r-profile-actions"><a href="${link("expert-booking", `id=${params.get("id") === "preview-lee" ? "preview-lee" : "demo-lee"}&calendar=1`)}">${icon("calendar")} 날짜 선택</a><a href="${link("reviews", "expert=demo-lee")}">${icon("chat")} 후기 보기</a></div>`}</main>`;
+  return `${statusbar()}${header(params.get("id") === "preview-lee" ? "상담하기" : "예약하기")}<main id="main" class="r-profile">${expertIntro()}${cal ? calendar() : `<div class="r-profile-actions"><a href="${link("expert-booking", `id=${params.get("id") === "preview-lee" ? "preview-lee" : "demo-lee"}&calendar=1`)}">${icon("calendar")} 날짜 선택</a><a href="veteran-reviews.html">${icon("chat")} 후기 보기</a></div>`}</main>`;
 }
 function calendar() {
   return `<section class="r-calendar-section"><h2>${icon("calendar")} 날짜와 시간을 선택해주세요</h2><div class="r-month"><button id="r-prev-month" aria-label="이전 달">‹</button><b id="r-month-label">2026년 10월</b><button id="r-next-month" aria-label="다음 달">›</button></div><div class="r-weekdays">${"일월화수목금토"
@@ -195,7 +196,9 @@ function mypage() {
       ([n, p]) =>
         `<a ${p === "support" ? 'data-action="support"' : `href="${link(p)}"`}>${n}${icon("chevron")}</a>`,
     )
-    .join("")}<button data-action="logout">로그아웃</button></nav></main>${bottomNavigation()}`;
+    .join(
+      "",
+    )}<button data-action="logout">로그아웃</button></nav></main>${bottomNavigation()}`;
 }
 export function renderReference({ live = false } = {}) {
   document.body.className = "mobile-design mobile-ui r-page-" + page;
