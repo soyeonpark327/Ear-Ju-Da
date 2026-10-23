@@ -87,6 +87,22 @@ p {
   min-width: 44px;
   min-height: 44px;
 }
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.account {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1.5px solid var(--line);
+  border-radius: 22px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
 .home-top {
   padding: 8px 24px 26px;
   border-bottom: 1px solid var(--line);

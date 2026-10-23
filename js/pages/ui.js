@@ -14,6 +14,15 @@ export function route(path, values = {}) {
   Object.entries(values).forEach(([k, v]) => url.searchParams.set(k, v));
   return url.href;
 }
+// 로그인 화면 주소. 로그인 후 지금 보던 화면으로 돌아온다.
+export function loginUrl() {
+  const url = new URL("login.html", location.href);
+  url.searchParams.set("next", location.pathname + location.search);
+  return url.href;
+}
+export function goLogin() {
+  location.href = loginUrl();
+}
 export function notice(title, body) {
   document.querySelector("#notice-title").textContent = title;
   document.querySelector("#notice-body").textContent = body;
@@ -46,6 +55,7 @@ export function init() {
             "이 화면은 준비 중이에요. 베테랑과 오답노트를 먼저 둘러보세요.",
           )),
     );
+  renderAccount();
   if (demo) {
     const banner = document.createElement("p");
     banner.className = "demo-banner";
@@ -55,6 +65,22 @@ export function init() {
     a.textContent = "실제 서비스 보기";
     banner.append(a);
     document.querySelector(".app").prepend(banner);
+  }
+}
+// 헤더의 #account 링크: 로그인 전엔 "로그인", 후엔 "이름 · 포인트"
+async function renderAccount() {
+  const el = document.getElementById("account");
+  if (!el) return;
+  el.href = loginUrl();
+  if (demo) return;
+  try {
+    const me = await (await import("../api/auth.js")).getMyProfile();
+    if (me) {
+      el.textContent = `${me.name} · ${money(me.points)}P`;
+      el.setAttribute("aria-label", `내 계정: ${me.name}, 보유 포인트 ${money(me.points)}P`);
+    }
+  } catch {
+    // 연결 실패 시 "로그인" 그대로 둔다
   }
 }
 export function avatar(url) {

@@ -1,4 +1,4 @@
-import { demo, money, notice, status, init } from "./ui.js";
+import { demo, money, notice, status, init, goLogin } from "./ui.js";
 init();
 const id = new URLSearchParams(location.search).get("id");
 const button = document.querySelector("#purchase");
@@ -73,10 +73,7 @@ button.onclick = async () => {
   try {
     const { getCurrentUser } = await import("../api/auth.js");
     if (!(await getCurrentUser())) {
-      notice(
-        "로그인이 필요해요",
-        "로그인 후 포인트로 오답노트를 구매할 수 있어요. 로그인 화면은 준비 중이에요.",
-      );
+      goLogin();
       return;
     }
     await api.purchaseNote(id);
