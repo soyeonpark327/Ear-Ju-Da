@@ -102,7 +102,14 @@ declare
   d         integer;
 begin
   -- ---------- 포인트 ----------
-  update public.profiles set points = 50000 where id = v_kim;   -- 데모 중에 이것저것 사볼 수 있게 넉넉히
+  -- 데모 중에 이것저것 사볼 수 있게 넉넉히 (포인트 내역에는 "이벤트 보너스"로 기록 → 하루 충전 한도와 무관, 010 적용 전 DB에서도 동작)
+  if to_regprocedure('public.set_point_reason(text,jsonb)') is not null then
+    perform public.set_point_reason('bonus');
+  end if;
+  update public.profiles set points = 50000 where id = v_kim;
+  if to_regprocedure('public.set_point_reason(text,jsonb)') is not null then
+    perform public.set_point_reason('bonus');
+  end if;
   update public.profiles set points = 20000 where id = v_park;
 
   -- ---------- 베테랑 정보 ----------

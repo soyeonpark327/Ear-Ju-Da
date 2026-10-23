@@ -29,12 +29,14 @@ begin
     raise exception '이미 구매한 노트입니다.';
   end if;
 
+  perform public.set_point_reason('note_purchase', jsonb_build_object('note_id', p_note_id));
   update public.profiles set points = points - v_note.price_points
   where id = auth.uid() and points >= v_note.price_points;
   if not found then
     raise exception '포인트가 부족합니다.';
   end if;
 
+  perform public.set_point_reason('note_sale', jsonb_build_object('note_id', p_note_id));
   update public.profiles set points = points + v_note.price_points
   where id = v_note.author_id;
 
@@ -92,17 +94,19 @@ begin
     raise exception '승인되지 않은 베테랑입니다.';
   end if;
 
-  update public.profiles set points = points - v_price
-  where id = auth.uid() and points >= v_price;
-  if not found then
-    raise exception '포인트가 부족합니다.';
-  end if;
-
   update public.availability_slots set is_booked = true where id = p_slot_id;
 
   insert into public.bookings (slot_id, youth_id, expert_id, topic, price_points)
   values (p_slot_id, auth.uid(), v_slot.expert_id, trim(p_topic), v_price)
   returning id into v_booking_id;
+
+  -- 포인트가 부족하면 예외 → 위의 예약 생성도 함께 취소된다
+  perform public.set_point_reason('booking_hold', jsonb_build_object('booking_id', v_booking_id));
+  update public.profiles set points = points - v_price
+  where id = auth.uid() and points >= v_price;
+  if not found then
+    raise exception '포인트가 부족합니다.';
+  end if;
 
   return v_booking_id;
 end;
@@ -130,6 +134,7 @@ begin
   end if;
 
   update public.bookings set status = 'completed' where id = p_booking_id;
+  perform public.set_point_reason('booking_payout', jsonb_build_object('booking_id', p_booking_id));
   update public.profiles set points = points + v_booking.price_points
   where id = v_booking.expert_id;
 end;
@@ -163,6 +168,7 @@ begin
   end if;
 
   update public.bookings set status = 'cancelled' where id = p_booking_id;
+  perform public.set_point_reason('booking_refund', jsonb_build_object('booking_id', p_booking_id));
   update public.profiles set points = points + v_booking.price_points
   where id = v_booking.youth_id;
   update public.availability_slots set is_booked = false where id = v_booking.slot_id;
@@ -237,16 +243,19 @@ begin
     if v_youth_spoke and v_expert_spoke then
       -- 상담은 했는데 완료 버튼만 안 누름 → 자동 완료
       update public.bookings set status = 'completed', settled_at = now() where id = b.id;
+      perform public.set_point_reason('booking_payout', jsonb_build_object('booking_id', b.id));
       update public.profiles set points = points + b.price_points where id = b.expert_id;
     elsif not v_expert_spoke then
       -- 베테랑 불참 → 청년에게 전액 환불
       update public.bookings
       set status = 'no_show', no_show_by = case when v_youth_spoke then 'expert' else 'both' end, settled_at = now()
       where id = b.id;
+      perform public.set_point_reason('booking_refund', jsonb_build_object('booking_id', b.id));
       update public.profiles set points = points + b.price_points where id = b.youth_id;
     else
       -- 청년 불참 → 환불 없이 베테랑에게 지급
       update public.bookings set status = 'no_show', no_show_by = 'youth', settled_at = now() where id = b.id;
+      perform public.set_point_reason('booking_payout', jsonb_build_object('booking_id', b.id));
       update public.profiles set points = points + b.price_points where id = b.expert_id;
     end if;
     v_count := v_count + 1;
