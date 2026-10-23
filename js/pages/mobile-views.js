@@ -76,6 +76,27 @@ const people = [
     summary: "제조업 현장을 이해하는 노무·산업안전 전문가",
   },
 ];
+const bottomNavigation = () => {
+  const items = [
+    ["home", "홈", '<path d="m3 10 9-8 9 8v12h-6v-8H9v8H3Z"/>'],
+    [
+      "notes",
+      "오답노트",
+      '<path d="M8 2v4m5-4v4m5-4v4M19 17l-5 5H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v9l-2 2Zm-5 5v-5a2 2 0 0 1 2-2h5M7 10h10M7 14h5"/>',
+    ],
+    [
+      "consultations",
+      "상담",
+      '<path d="M21.5 11.5a10 10 0 0 1-14.8 8.8L2 22l1.6-4.8A10 10 0 1 1 21.5 11.5Z"/>',
+    ],
+    [
+      "mypage",
+      "마이",
+      '<circle cx="12" cy="7" r="5"/><path d="M3 22a9 9 0 0 1 18 0"/>',
+    ],
+  ];
+  return `<nav class="r-bottom-navigation" aria-label="하단 메뉴">${items.map(([target, label, paths]) => `<a href="${link(target)}"${target === "home" ? ' aria-current="page"' : ""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg><span>${label}</span></a>`).join("")}</nav>`;
+};
 function home() {
   return `${statusbar()}<header class="r-home-header"><a href="${link("notifications")}" aria-label="알림">${icon("bell")}</a></header><main id="main"><div class="r-home-top"><form class="r-search" action="matching.html"><input name="demo" value="1" type="hidden"/><label>${icon("search")}<input name="keyword" placeholder="무슨 문제를 겪고 계신가요?" aria-label="고민 검색"/></label><button>Ai 매칭 <span class="r-spark">${icon("spark")}</span></button></form><nav class="r-categories">${["계약", "노무", "세무", "자금", "판로", "마케팅", "인허가", "해외진출", "데이터", "지식재산"].map((n, i) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${[0, 1, 2, 3, 5, 6, 8].includes(i) ? `<img src="../assets/home/${n}.svg" alt=""/>` : icon(["", "", "", "", "box", "", "", "globe", "", "bulb"][i])}<span>${n}</span></a>`).join("")}</nav></div><section class="r-home-experts"><h2>경력으로 증명된 베테랑</h2><div id="r-experts">${people.map(expertCard).join("")}</div><button class="r-more" id="r-more" aria-expanded="false">베테랑 더보기 ${icon("down")}</button></section><section class="r-recent"><h2>내가 둘러본 베테랑</h2><div>${["마케팅", "인허가", "지식재산", "창업", "경제", "자금", "해외진출"].map((n) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${n}</a>`).join("")}</div></section><section class="r-popular"><h2>가장 많이 열람된 <a href="${link("notes")}">오답노트</a></h2><ol>${[
     {
@@ -101,7 +122,7 @@ function home() {
       (n, i) =>
         `<li><b>${i + 1}</b><img src="../assets/home/paper-${n.paper}.jpg" alt=""/><div><strong>${n.name}</strong><p>${n.title}</p><small>총 ${n.count}명 열람</small></div><a href="${link("note-detail", "id=demo-contract")}">읽어보기</a></li>`,
     )
-    .join("")}</ol></section></main>`;
+    .join("")}</ol></section></main>${bottomNavigation()}`;
 }
 function profile() {
   const cal = params.get("calendar") === "1";

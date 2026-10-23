@@ -2200,3 +2200,50 @@ body.mobile-design {
   width: 24px;
   height: 24px;
 }
+
+/* Supplied 804 × 200 bottom bar, displayed at the 402px design width. */
+.r-page-home .r-app {
+  padding-bottom: 100px;
+}
+.r-bottom-navigation {
+  position: fixed;
+  z-index: 30;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  box-sizing: border-box;
+  width: 402px;
+  height: 100px;
+  padding: 23px 13px 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: #fff;
+  border-top: 1px solid #d4d6e2;
+}
+.r-bottom-navigation a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #000;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+}
+.r-bottom-navigation svg {
+  width: 24px;
+  height: 24px;
+  flex: none;
+}
+.r-bottom-navigation a:focus-visible {
+  outline: 2px solid #21c3df;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+@media (max-width: 401px) {
+  .r-bottom-navigation {
+    left: 0;
+    transform: none;
+  }
+}
