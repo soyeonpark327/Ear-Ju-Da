@@ -48,6 +48,9 @@ function setMode(value) {
   $("tab-signup").setAttribute("aria-selected", String(signup));
   $("signup-fields").hidden = !signup;
   $("password-hint").hidden = !signup;
+  $("confirm-wrap").hidden = !signup;
+  $("password-confirm").value = "";
+  updateConfirmHint();
   $("demo-box").hidden = signup;
   $("password").autocomplete = signup ? "new-password" : "current-password";
   $("page-title").textContent = signup ? "회원가입" : "로그인";
@@ -58,27 +61,46 @@ function setMode(value) {
 $("tab-login").onclick = () => setMode("login");
 $("tab-signup").onclick = () => setMode("signup");
 
+// 회원가입: 비밀번호 확인 칸 아래에 일치 여부를 바로 보여준다
+function updateConfirmHint() {
+  const hint = $("confirm-hint");
+  const confirm = $("password-confirm").value;
+  const same = confirm && confirm === $("password").value;
+  hint.className = "hint" + (confirm ? (same ? " confirm-ok" : " confirm-bad") : "");
+  hint.textContent = confirm ? (same ? "비밀번호가 일치해요." : "비밀번호가 일치하지 않아요.") : "";
+}
+$("password").addEventListener("input", updateConfirmHint);
+$("password-confirm").addEventListener("input", updateConfirmHint);
+
+// 칸별 문제. 문제가 없으면 null
+function problem(input) {
+  const value = input.value.trim();
+  const signup = mode === "signup";
+  const labels = { name: "이름을", email: "이메일 또는 휴대폰 번호를", password: "비밀번호를", "password-confirm": "비밀번호를 한 번 더" };
+  if (!value) return `${labels[input.id]} 입력해주세요.`;
+  if (input.id === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && !normalizePhone(value))
+    return "이메일 또는 휴대폰 번호를 확인해주세요.";
+  if (input.id === "password" && signup && value.length < 6) return "비밀번호는 6자 이상 입력해주세요.";
+  if (input.id === "password-confirm" && input.value !== $("password").value) return "비밀번호가 일치하지 않아요.";
+  return null;
+}
+
 function validate() {
-  const fields = [$("email"), $("password")];
-  if (mode === "signup") fields.unshift($("name"));
-  let firstInvalid = null;
+  const fields =
+    mode === "signup"
+      ? [$("name"), $("email"), $("password"), $("password-confirm")]
+      : [$("email"), $("password")];
+  let first = null;
   for (const input of fields) {
-    const value = input.value.trim();
-    const bad =
-      !value ||
-      (input.id === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && !normalizePhone(value)) ||
-      (input.id === "password" && mode === "signup" && value.length < 6);
-    input.setAttribute("aria-invalid", String(bad));
-    if (bad && !firstInvalid) firstInvalid = input;
+    const message = problem(input);
+    input.setAttribute("aria-invalid", String(Boolean(message)));
+    if (message && !first) first = { input, message };
   }
-  if (firstInvalid) {
-    firstInvalid.focus();
-    const label = { name: "이름을", email: "이메일 또는 휴대폰 번호를", password: "비밀번호를" }[firstInvalid.id];
-    status("auth-status", firstInvalid.id === "password" && mode === "signup" && firstInvalid.value
-      ? "비밀번호는 6자 이상 입력해주세요."
-      : `${label} 확인해주세요.`);
+  if (first) {
+    first.input.focus();
+    status("auth-status", first.message);
   }
-  return !firstInvalid;
+  return !first;
 }
 
 $("auth-form").onsubmit = async (e) => {

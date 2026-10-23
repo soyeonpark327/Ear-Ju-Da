@@ -66,6 +66,16 @@
             required
           />
           <p id="password-hint" class="hint" hidden>6자 이상 입력해주세요.</p>
+          <div id="confirm-wrap" hidden>
+            <label class="field-label" for="password-confirm">비밀번호 확인</label>
+            <input
+              id="password-confirm"
+              name="password-confirm"
+              type="password"
+              autocomplete="new-password"
+            />
+            <p id="confirm-hint" class="hint" aria-live="polite"></p>
+          </div>
 
           <p id="auth-status" class="status" role="status"></p>
           <button id="submit" type="submit" class="primary full">로그인</button>

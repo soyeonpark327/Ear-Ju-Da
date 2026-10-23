@@ -85,6 +85,12 @@ fieldset .field-label:first-child {
   color: var(--muted);
   margin-top: 6px;
 }
+#confirm-hint.confirm-ok {
+  color: #0b7a8f;
+}
+#confirm-hint.confirm-bad {
+  color: #c4262e;
+}
 #auth-form .status:not(:empty) {
   color: #c4262e;
 }
