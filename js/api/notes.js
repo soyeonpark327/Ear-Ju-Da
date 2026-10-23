@@ -1,6 +1,6 @@
 // 오답 노트
 import { supabase } from '../supabase.js';
-import { unwrap, cleanKeyword } from './_utils.js';
+import { unwrap, splitKeywords } from './_utils.js';
 import { getCurrentUser } from './auth.js';
 
 // 노트와 함께 작성자 이름·소개를 가져온다. 결과: note.author = { headline, profiles: { name } }
@@ -9,11 +9,13 @@ const NOTE_WITH_AUTHOR = '*, author:experts(headline, profiles(name))';
 /**
  * 공개된 노트 목록 (최신순). 본문(body)은 포함되지 않는다.
  * @param {{ keyword?: string, industry?: string }} [filter]
+ *   keyword: 제목·미리보기·업종에 포함되거나 키워드와 일치하는 단어. 띄어쓰기로 여러 단어를 넣으면 모두 만족하는 노트만 찾는다.
  */
 export async function getNotes({ keyword, industry } = {}) {
   let query = supabase.from('notes').select(NOTE_WITH_AUTHOR).eq('is_published', true);
-  const kw = cleanKeyword(keyword);
-  if (kw) query = query.or(`keywords.cs.{${kw}},title.ilike.*${kw}*`);
+  for (const word of splitKeywords(keyword)) {
+    query = query.or(`title.ilike.*${word}*,summary.ilike.*${word}*,industry.ilike.*${word}*,keywords.cs.{${word}}`);
+  }
   if (industry) query = query.eq('industry', industry);
   return unwrap(await query.order('created_at', { ascending: false }));
 }

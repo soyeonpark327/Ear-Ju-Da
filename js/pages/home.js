@@ -84,11 +84,11 @@ function renderRecent() {
 }
 function openExpert(e) {
   remember(e);
-  notice(
-    e.name,
-    `${e.headline || ""}\n경력 ${e.career_years || 0}년 · 평점 ${e.rating || "-"}\n${e.career_summary || (e.keywords || []).join(" · ")}\n\n상담 예약 화면은 준비 중이에요.`,
-  );
+  location.href = route("expert-booking.html", { id: e.id });
 }
+document.querySelector("#reserve-nav").onclick = () => {
+  location.href = route("booking.html");
+};
 function renderExperts() {
   const box = document.querySelector("#experts");
   box.replaceChildren();
@@ -112,6 +112,8 @@ function renderExperts() {
 }
 async function loadExperts(keyword = "") {
   const version = ++request;
+  allExperts = [];
+
   status("expert-status", "베테랑을 불러오고 있어요.");
   document.querySelector("#experts").replaceChildren();
   document.querySelector("#more").hidden = true;
@@ -151,10 +153,9 @@ document.querySelector("#more").onclick = () => {
 };
 document.querySelector("#search-form").onsubmit = (e) => {
   e.preventDefault();
-  loadExperts(document.querySelector("#keyword").value.trim());
-  document
-    .querySelector("#experts")
-    .scrollIntoView({ block: "start", behavior: "smooth" });
+  location.href = route("expert-booking.html", {
+    keyword: document.querySelector("#keyword").value.trim(),
+  });
 };
 async function loadNotes() {
   status("note-status", "오답노트를 불러오고 있어요.");

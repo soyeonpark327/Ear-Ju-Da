@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>매칭 결과 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/expert-booking.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
+        <h1>AI 매칭 결과</h1>
+      </header>
+      <main id="main">
+        <p id="expert-load" class="status" role="status"></p>
+        <div id="profile-content" hidden>
+          <section class="profile-section">
+            <div class="profile-heading">
+              <div id="expert-avatar"></div>
+              <div>
+                <h2 id="expert-name"></h2>
+                <p id="expert-headline"></p>
+              </div>
+            </div>
+            <div class="experience">
+              <h3>현장에서 보낸 시간</h3>
+              <div
+                class="experience-bars"
+                id="experience-bars"
+                aria-hidden="true"
+              ></div>
+              <p id="career-summary"></p>
+            </div>
+            <ul class="expert-tags" id="expert-tags"></ul>
+            <div class="tips-heading">
+              <h2>누군가의 <em>질문</em>, 모두의 <em>답</em></h2>
+              <button id="more-tips" hidden></button>
+            </div>
+            <p id="tips-status" class="status" role="status"></p>
+            <div id="tips"></div>
+          </section>
+          <section class="booking-section">
+            <h2>▦ 날짜와 시간을 선택해주세요</h2>
+            <p class="timezone">
+              한국 시간(KST) 기준 · 예약 가능한 날짜만 선택할 수 있어요.
+            </p>
+            <p id="slots-status" class="status" role="status"></p>
+            <div class="month-nav">
+              <button id="previous-month" aria-label="이전 달">‹</button>
+              <h3 id="month-label" aria-live="polite"></h3>
+              <button id="next-month" aria-label="다음 달">›</button>
+            </div>
+            <div class="weekdays" aria-hidden="true">
+              <span>일</span><span>월</span><span>화</span><span>수</span
+              ><span>목</span><span>금</span><span>토</span>
+            </div>
+            <div
+              id="calendar"
+              class="calendar"
+              role="group"
+              aria-label="예약 날짜"
+            ></div>
+            <p id="selected-date" class="selected-date" role="status">
+              날짜를 선택해주세요.
+            </p>
+            <div
+              id="times"
+              class="times"
+              role="group"
+              aria-label="상담 시간"
+            ></div>
+            <button id="reserve" class="primary full" type="button" disabled>
+              상담 예약하기
+            </button>
+          </section>
+        </div>
+      </main>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+
+    <script type="module" src="../js/pages/expert-booking.js?v=5"></script>
+  </body>
+</html>

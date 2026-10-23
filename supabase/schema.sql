@@ -180,7 +180,9 @@ select
   e.keywords,
   e.price_points,
   coalesce(round(avg(r.rating), 1), 0) as rating,
-  count(r.id) as review_count
+  count(r.id) as review_count,
+  -- 검색용: 이름·소개·업종·경력·키워드를 한 줄로 합친 값 (getExperts가 부분 검색에 사용)
+  concat_ws(' ', p.name, e.headline, e.industry, e.career_summary, array_to_string(e.keywords, ' ')) as search_text
 from public.experts e
 join public.profiles p on p.id = e.id
 left join public.reviews r on r.expert_id = e.id

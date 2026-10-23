@@ -1,6 +1,6 @@
 // 베테랑 목록·상세, 상담 가능 시간, 한 줄 조언
 import { supabase } from '../supabase.js';
-import { unwrap, cleanKeyword } from './_utils.js';
+import { unwrap, splitKeywords } from './_utils.js';
 import { getCurrentUser } from './auth.js';
 
 // ---------- 청년이 보는 화면 ----------
@@ -8,13 +8,13 @@ import { getCurrentUser } from './auth.js';
 /**
  * 승인된 베테랑 목록 (평점 높은 순)
  * @param {{ keyword?: string, industry?: string }} [filter]
- *   keyword: 키워드 또는 소개 문구에 포함된 단어 (예: '납품계약')
+ *   keyword: 이름·소개·업종·경력·키워드 중 어디에든 포함된 단어 (예: '계약', '이정훈', '#제조공정 #납품계약')
+ *            띄어쓰기로 여러 단어를 넣으면 모두 포함된 베테랑만 찾는다.
  * @returns {Promise<Array<{ id, name, avatar_url, headline, industry, career_years, keywords, price_points, rating, review_count }>>}
  */
 export async function getExperts({ keyword, industry } = {}) {
   let query = supabase.from('expert_cards').select('*');
-  const kw = cleanKeyword(keyword);
-  if (kw) query = query.or(`keywords.cs.{${kw}},headline.ilike.*${kw}*`);
+  for (const word of splitKeywords(keyword)) query = query.ilike('search_text', `%${word}%`);
   if (industry) query = query.eq('industry', industry);
   return unwrap(await query.order('rating', { ascending: false }).order('review_count', { ascending: false }));
 }

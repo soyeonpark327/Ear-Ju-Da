@@ -68,7 +68,7 @@ if (me?.senior_mode) document.documentElement.classList.add('senior-mode');
 
 | 함수 | 설명 | 돌려주는 값 |
 | --- | --- | --- |
-| `getExperts({ keyword, industry })` | 승인된 베테랑 목록 (평점순). 둘 다 생략 가능 | `[{ id, name, avatar_url, headline, industry, career_years, keywords, price_points, rating, review_count }]` |
+| `getExperts({ keyword, industry })` | 승인된 베테랑 목록 (평점순). 둘 다 생략 가능. `keyword`는 이름·소개·업종·경력·키워드 **부분 검색** (`'계약'`, `'이정훈'`, `'#제조공정 #납품계약'`), 띄어쓰기로 여러 단어면 모두 포함된 것만 | `[{ id, name, avatar_url, headline, industry, career_years, keywords, price_points, rating, review_count }]` |
 | `getExpert(id)` | 베테랑 상세 | 위 정보 + `career_summary`, 없으면 `null` |
 | `getSlots(expertId)` | 예약 가능한 시간 | `[{ id, start_at, end_at }]` |
 | `getTips(expertId)` | 한 줄 조언 | `[{ id, content, created_at }]` |
@@ -89,7 +89,7 @@ if (me?.senior_mode) document.documentElement.classList.add('senior-mode');
 
 | 함수 | 설명 | 돌려주는 값 |
 | --- | --- | --- |
-| `getNotes({ keyword, industry })` | 공개된 노트 목록 (최신순) | `[{ id, title, summary, industry, keywords, price_points, created_at, author: { headline, profiles: { name } } }]` |
+| `getNotes({ keyword, industry })` | 공개된 노트 목록 (최신순). `keyword`는 제목·미리보기·업종 부분 검색 + 키워드 일치 | `[{ id, title, summary, industry, keywords, price_points, created_at, author: { headline, profiles: { name } } }]` |
 | `getNote(noteId)` | 노트 하나 (미리보기) | 위와 같은 형태, 없으면 `null` |
 | `getNoteBody(noteId)` | 유료 본문 | 구매했으면 문자열, 아니면 `null` |
 | `purchaseNote(noteId)` | 구매 (포인트 차감) | |
