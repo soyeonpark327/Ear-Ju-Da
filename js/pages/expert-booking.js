@@ -6,10 +6,11 @@ import {
   status,
   init,
   avatar,
+  route,
 } from "./ui.js";
 init();
 const $ = (id) => document.getElementById(id);
-const id = new URLSearchParams(location.search).get("id");
+let id = new URLSearchParams(location.search).get("id");
 const dateKey = (value) =>
   new Intl.DateTimeFormat("sv-SE", {
     timeZone: "Asia/Seoul",
@@ -37,8 +38,7 @@ const currentMonth = () =>
   Number(today.slice(0, 4)) * 12 + Number(today.slice(5, 7)) - 1;
 let monthIndex = currentMonth();
 function updateButton() {
-  $("reserve").disabled =
-    busy || completed || !selectedSlot || !$("topic").value.trim();
+  $("reserve").disabled = busy || completed || !selectedDate;
 }
 function renderCalendar() {
   const year = Math.floor(monthIndex / 12),
@@ -91,29 +91,9 @@ function renderCalendar() {
   }
 }
 function renderTimes() {
-  const box = $("times");
-  box.replaceChildren();
-  const rows = slots.filter(
-    (s) =>
-      dateKey(s.start_at) === selectedDate && new Date(s.start_at) > new Date(),
-  );
   $("selected-date").textContent = selectedDate
-    ? `${selectedDate} · 상담 시간을 선택해주세요.`
+    ? `${selectedDate} 선택 · 다음 화면에서 시간과 상담 방식을 선택해주세요.`
     : "날짜를 선택해주세요.";
-  rows.forEach((s) => {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.textContent = `${time(s.start_at)} – ${time(s.end_at)}`;
-    b.setAttribute("aria-pressed", String(selectedSlot?.id === s.id));
-    b.onclick = () => {
-      selectedSlot = s;
-      renderTimes();
-    };
-    box.append(b);
-  });
-  $("booking-summary").textContent = selectedSlot
-    ? `${selectedDate} ${time(selectedSlot.start_at)} · ${money(expert.price_points)} P`
-    : `상담 ${money(expert.price_points)} P`;
   updateButton();
 }
 function renderTips() {
@@ -169,11 +149,23 @@ async function loadSlots() {
 }
 async function load() {
   status("expert-load", "베테랑 정보를 불러오고 있어요.");
-  if (!id) {
-    status("expert-load", "메인에서 상담할 베테랑을 먼저 선택해주세요.");
-    return;
-  }
   try {
+    if (!id) {
+      const keyword = new URLSearchParams(location.search).get("keyword") || "";
+      const rows = demo
+        ? (await import("./demo-data.js")).experts.filter((e) =>
+            `${e.name} ${e.headline} ${e.keywords.join(" ")}`.includes(keyword),
+          )
+        : await (await import("../api/experts.js")).getExperts({ keyword });
+      id = rows[0]?.id;
+      if (!id) {
+        status(
+          "expert-load",
+          "일치하는 베테랑이 없어요. 메인에서 다른 키워드로 검색해주세요.",
+        );
+        return;
+      }
+    }
     expert = demo
       ? (await import("./demo-data.js")).experts.find((e) => e.id === id)
       : await (await import("../api/experts.js")).getExpert(id);
@@ -250,64 +242,8 @@ $("more-tips").onclick = () => {
   showAll = !showAll;
   renderTips();
 };
-$("topic").oninput = updateButton;
-$("booking-form").onsubmit = (e) => {
-  e.preventDefault();
-  if (!selectedSlot || busy || completed) return;
-  if (new Date(selectedSlot.start_at) <= new Date()) {
-    status(
-      "booking-status",
-      "선택한 시간이 지났어요. 다른 시간을 선택해주세요.",
-    );
-    loadSlots();
-    return;
-  }
-  if (demo) {
-    notice(
-      "예약 미리보기",
-      `${selectedDate} ${time(selectedSlot.start_at)} · ${expert.name}\n예시 데이터이므로 실제 예약이나 포인트 차감은 실행되지 않아요.`,
-    );
-    return;
-  }
-  $("confirm-details").textContent =
-    `${expert.name}\n${selectedDate} ${time(selectedSlot.start_at)} – ${time(selectedSlot.end_at)}\n${money(expert.price_points)} P\n상담 내용: ${$("topic").value.trim()}`;
-  $("confirm-booking").showModal();
-};
-$("cancel-confirm").onclick = () => $("confirm-booking").close();
-$("submit-booking").onclick = async () => {
-  if (busy || completed || !selectedSlot) return;
-  busy = true;
-  updateButton();
-  $("submit-booking").disabled = true;
-  let bookingId;
-  try {
-    const { getCurrentUser } = await import("../api/auth.js");
-    if (!(await getCurrentUser()))
-      throw new Error(
-        "로그인 후 예약할 수 있어요. 로그인 화면은 준비 중이에요.",
-      );
-    if (new Date(selectedSlot.start_at) <= new Date())
-      throw new Error("선택한 시간이 지났어요. 다른 시간을 선택해주세요.");
-    bookingId = await (
-      await import("../api/bookings.js")
-    ).createBooking(selectedSlot.id, $("topic").value.trim());
-    completed = true;
-    $("confirm-booking").close();
-    $("reserve").textContent = "예약 완료";
-    $("topic").disabled = true;
-    $("times").replaceChildren();
-    renderCalendar();
-    status("booking-status", `예약이 완료됐어요. 예약 번호: ${bookingId}`);
-  } catch (e) {
-    $("confirm-booking").close();
-    status(
-      "booking-status",
-      e.message || "예약하지 못했어요. 다시 시도해주세요.",
-    );
-  } finally {
-    busy = false;
-    $("submit-booking").disabled = false;
-    updateButton();
-  }
+$("reserve").onclick = () => {
+  if (selectedDate)
+    location.href = route("booking.html", { id, date: selectedDate });
 };
 load();
