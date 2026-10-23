@@ -92,6 +92,8 @@ async function load() {
       : await import("../api/notifications.js");
     rows = await api.getNotifications({ limit: 50 });
     render();
+    // 알림함을 열면 확인한 것으로 보고 홈의 빨간 점을 끈다 (이번 화면의 안 읽음 표시는 그대로)
+    if (rows.some((n) => !n.read_at)) api.markAllNotificationsRead().catch(() => {});
   } catch (e) {
     status(
       "notifications-status",

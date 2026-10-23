@@ -299,15 +299,20 @@ $("confirm-booking").onclick = async () => {
     $("expert-choice").disabled = true;
     $("booking-change-expert").disabled = true;
     $("booking-topic").disabled = true;
-    $("date-strip").replaceChildren();
-    $("booking-times").replaceChildren();
     $("chat-mode").disabled = true;
-    status("booking-message", `예약이 완료됐어요. 예약 번호: ${id}`);
-    const chatLink = document.createElement("a");
-    chatLink.className = "outline";
-    chatLink.textContent = "상담 채팅방 보기";
-    chatLink.href = route("chat.html", { id });
-    $("booking-message").append(document.createElement("br"), chatLink);
+    document.body.classList.add("booking-done");
+    status("booking-message", `예약이 완료됐어요. 상담 ${clock(slot.start_at)} 10분 전부터 채팅방이 열려요.`);
+    const links = document.createElement("div");
+    links.className = "booking-done-links";
+    for (const [text, href, cls] of [["상담 채팅방 보기", route("chat.html", { id }), "primary"], ["내 상담 목록", route("consultations.html"), "outline"]]) {
+      const a = document.createElement("a");
+      a.className = cls;
+      a.textContent = text;
+      a.href = href;
+      links.append(a);
+    }
+    $("booking-message").append(links);
+    $("booking-message").scrollIntoView({ behavior: "smooth", block: "center" });
   } catch (e) {
     $("booking-confirm").close();
     if (/포인트|잔액/.test(e.message || "")) {
