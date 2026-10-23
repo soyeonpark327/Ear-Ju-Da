@@ -8,7 +8,7 @@ const link = (name, query = "") => {
     .join("&");
   return `${name}.html${suffix ? "?" + suffix : ""}`;
 };
-const portrait = (who = "lee") => `../assets/home/expert-${who}.png`;
+const portrait = (who = "lee") => `../assets/home/expert-${who}.png?v=portraits-1`;
 const icons = {
   spark:
     '<path fill="currentColor" stroke="none" d="M10.2 3.3Q12-2 13.8 3.3L16 8L21 10.2Q26 12 21 13.8L16 16L13.8 21Q12 26 10.2 21L8 16L3 13.8Q-2 12 3 10.2L8 8Z"/><path fill="currentColor" stroke="none" d="m22 0 .6 1.4L24 2l-1.4.6L22 4l-.6-1.4L20 2l1.4-.6Z"/>',

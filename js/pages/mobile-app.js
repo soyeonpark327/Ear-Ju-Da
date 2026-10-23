@@ -66,13 +66,21 @@ async function confirmAction(message, label = "확인") {
     ),
   );
 }
+function expertPortrait(e) {
+  const supplied = {
+    "이승호 위원": "lee", "이승호": "lee", "이정훈": "lee",
+    "박정미 대표": "park", "박정미": "park", "박미경": "park",
+    "정광일 노무사": "jung", "정광일": "jung", "정성호": "jung",
+  }[e.name];
+  return e.avatar_url || (supplied ? new URL(`../assets/home/expert-${supplied}.png?v=portraits-1`, location.href).href : null);
+}
 function image(url, cls = "") {
   const host = document.createElement("span");
   host.className = cls || "r-avatar";
   let safe;
   try {
     const u = new URL(url);
-    if (u.protocol === "https:") safe = u.href;
+    if (u.protocol === "https:" || (u.origin === location.origin && u.pathname.includes("/assets/home/expert-"))) safe = u.href;
   } catch {}
   if (safe) {
     const img = document.createElement("img");
@@ -118,7 +126,7 @@ function expertCard(e, reason = null) {
   const a = document.createElement("a");
   a.className = "r-expert";
   a.href = href("expert-booking", { id: e.id });
-  a.append(image(e.avatar_url, "r-live-portrait"));
+  a.append(image(expertPortrait(e), "r-live-portrait"));
   const info = document.createElement("div");
   info.className = "r-expert-info";
   info.append(text("h3", e.name), text("p", e.headline, "r-sub"));
@@ -259,7 +267,7 @@ async function loadExpert() {
 function fillProfile(e) {
   $(".r-profile-intro h2").textContent = e.name;
   $(".r-profile-intro p").textContent = e.headline;
-  changeImage($(".r-profile-intro>img"), e.avatar_url);
+  changeImage($(".r-profile-intro>img"), expertPortrait(e));
   const years = Number(e.career_years || 0);
   const current = new Date().getFullYear();
   const axis = $(".r-experience>div");
@@ -556,7 +564,7 @@ function matchCard(e, result) {
   card.className = "r-match-card";
   const person = document.createElement("div");
   person.className = "r-match-person";
-  person.append(image(e.avatar_url));
+  person.append(image(expertPortrait(e)));
   const info = document.createElement("div");
   info.append(text("h2", e.name), text("small", e.headline));
   person.append(info);
