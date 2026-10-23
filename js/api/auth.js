@@ -62,26 +62,34 @@ export async function signInWithSocial(provider, redirectTo) {
   unwrap(await supabase.auth.signInWithOAuth({ provider, options: { redirectTo } }));
 }
 
-// ---------- 네이버 로그인 (Edge Function: supabase/functions/naver-login) ----------
-const NAVER_FN = `${SUPABASE_URL}/functions/v1/naver-login`;
+// ---------- 네이버·카카오 로그인 (Edge Function: supabase/functions/naver-login, kakao-login) ----------
+// 카카오는 Supabase 기본 로그인이 이메일을 요구해(KOE205) 네이버처럼 직접 처리한다.
+const LOGIN_FN = { naver: 'naver-login', kakao: 'kakao-login' };
+const fnUrl = (provider) => `${SUPABASE_URL}/functions/v1/${LOGIN_FN[provider]}`;
 
-/** 네이버 로그인을 쓸 수 있는지 (Edge Function 배포 + 네이버 키 설정 완료) */
-export async function isNaverEnabled() {
+/**
+ * 네이버·카카오 로그인을 쓸 수 있는지 (Edge Function 배포 + 키 설정 완료)
+ * @param {'naver' | 'kakao'} provider
+ */
+export async function isFunctionLoginEnabled(provider) {
   try {
-    const res = await fetch(`${NAVER_FN}/status`);
+    const res = await fetch(`${fnUrl(provider)}/status`);
     return res.ok && (await res.json()).enabled === true;
   } catch {
     return false;
   }
 }
 
-/** 네이버 로그인 화면으로 이동. 로그인 후 redirectTo#naver_token_hash=... 로 돌아온다. */
-export function signInWithNaver(redirectTo) {
-  location.href = `${NAVER_FN}?redirect=${encodeURIComponent(redirectTo)}`;
+/**
+ * 네이버·카카오 로그인 화면으로 이동. 로그인 후 redirectTo#naver_token_hash=... (카카오는 kakao_token_hash) 로 돌아온다.
+ * @param {'naver' | 'kakao'} provider
+ */
+export function signInWithFunction(provider, redirectTo) {
+  location.href = `${fnUrl(provider)}?redirect=${encodeURIComponent(redirectTo)}`;
 }
 
-/** 네이버에서 돌아온 token_hash로 로그인을 마친다 */
-export async function completeNaverLogin(tokenHash) {
+/** 네이버·카카오에서 돌아온 token_hash로 로그인을 마친다 */
+export async function completeFunctionLogin(tokenHash) {
   return unwrap(await supabase.auth.verifyOtp({ token_hash: tokenHash, type: 'magiclink' }));
 }
 
@@ -104,6 +112,14 @@ export async function signIn(email, password) {
 export async function signOut() {
   const { error } = await supabase.auth.signOut();
   if (error) throw new Error(error.message);
+}
+
+/**
+ * 역할 선택 (구글·카카오·네이버 가입자만, 한 번만). getMyProfile()의 role_confirmed가 false일 때 사용
+ * @param {'youth' | 'veteran'} role
+ */
+export async function chooseMyRole(role) {
+  unwrap(await supabase.rpc('choose_my_role', { p_role: role }));
 }
 
 /** 로그인한 사용자 (없으면 null) */

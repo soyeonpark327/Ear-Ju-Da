@@ -50,10 +50,14 @@ try {
 | `signInWithId(id, password)` | 이메일 또는 휴대폰 번호로 로그인 | |
 | `normalizePhone(value)` | `'010-1234-5678'` → `'01012345678'`, 형식이 틀리면 `null` | 문자열 또는 `null` |
 | `getAuthProviders()` | Supabase에서 켜진 로그인 방식 | `{ email: true, google: false, kakao: true, ... }` |
-| `signInWithSocial(provider, redirectTo)` | 구글(`'google'`)·카카오(`'kakao'`) 로그인 화면으로 이동 | |
+| `signInWithSocial('google', redirectTo)` | 구글 로그인 화면으로 이동 (Supabase 기본 로그인) | |
+| `isFunctionLoginEnabled(provider)` | 네이버(`'naver'`)·카카오(`'kakao'`) 로그인 준비 여부 (Edge Function) | `true` / `false` |
+| `signInWithFunction(provider, redirectTo)` | 네이버·카카오 로그인 화면으로 이동 | |
+| `completeFunctionLogin(tokenHash)` | 네이버·카카오에서 돌아온 토큰으로 로그인 마무리 (로그인 화면이 자동 처리) | |
 | `signOut()` | 로그아웃 | |
 | `getCurrentUser()` | 로그인한 사용자 | `user` 또는 `null` |
-| `getMyProfile()` | 내 프로필 | `{ id, role, name, avatar_url, senior_mode, points }` 또는 `null` |
+| `getMyProfile()` | 내 프로필 | `{ id, role, role_confirmed, name, avatar_url, senior_mode, points }` 또는 `null`. `role_confirmed`가 `false`면 소셜 가입 후 역할을 아직 안 고른 상태 |
+| `chooseMyRole(role)` | 소셜 가입자의 역할 선택 (`'youth'` / `'veteran'`, 한 번만) | |
 | `updateMyProfile({ name, avatar_url, senior_mode })` | 내 프로필 수정 (바꿀 값만) | 수정된 프로필 |
 | `onAuthChange((user) => {})` | 로그인/로그아웃될 때마다 호출 | 구독 해제 함수 |
 
