@@ -55,6 +55,7 @@ export function init() {
             "이 화면은 준비 중이에요. 베테랑과 오답노트를 먼저 둘러보세요.",
           )),
     );
+  initSeniorMode();
   renderAccount();
   if (demo) {
     const banner = document.createElement("p");
@@ -71,7 +72,7 @@ export function init() {
 async function renderAccount() {
   const el = document.getElementById("account");
   const dashboard = document.getElementById("dashboard-link");
-  if (!el && !dashboard) return;
+
   if (el) el.href = loginUrl();
   if (dashboard) dashboard.hidden = true;
   if (demo) {
@@ -84,7 +85,7 @@ async function renderAccount() {
     return;
   }
   try {
-    const me = await (await import("../api/auth.js")).getMyProfile();
+    const me = await getProfile();
     if (me) {
       if (el) {
         el.href = route("points.html");
@@ -107,4 +108,73 @@ export function avatar(url) {
   } catch {
     return "";
   }
+}
+
+const SENIOR_KEY = "earjuda-senior";
+let seniorRevision = 0;
+let profilePromise;
+function getProfile() {
+  if (!profilePromise)
+    profilePromise = import("../api/auth.js")
+      .then((api) => api.getMyProfile())
+      .catch((error) => {
+        profilePromise = undefined;
+        throw error;
+      });
+  return profilePromise;
+}
+function applySenior(value, remember = true) {
+  document.documentElement.classList.toggle("senior-mode", !!value);
+  const button = document.getElementById("senior-toggle");
+  if (button) button.setAttribute("aria-pressed", String(!!value));
+  if (remember) {
+    try {
+      localStorage.setItem(SENIOR_KEY, String(!!value));
+    } catch {
+      /* Storage is optional. */
+    }
+  }
+}
+// Apply the saved preference synchronously, before awaiting the profile.
+try {
+  applySenior(["true", "1"].includes(localStorage.getItem(SENIOR_KEY)), false);
+} catch {
+  applySenior(false, false);
+}
+function initSeniorMode() {
+  const revision = seniorRevision;
+  const button = document.getElementById("senior-toggle");
+  if (button) {
+    button.setAttribute(
+      "aria-pressed",
+      String(document.documentElement.classList.contains("senior-mode")),
+    );
+    button.onclick = async () => {
+      const enabled =
+        !document.documentElement.classList.contains("senior-mode");
+      seniorRevision++;
+      applySenior(enabled);
+      button.disabled = true;
+      const feedback = document.getElementById("senior-status");
+      if (feedback) feedback.textContent = "";
+      try {
+        if (!demo && (await getProfile()))
+          await (
+            await import("../api/auth.js")
+          ).updateMyProfile({ senior_mode: enabled });
+      } catch {
+        if (feedback)
+          feedback.textContent =
+            "이 기기에는 적용했지만 계정에 저장하지 못했어요. 다시 켜고 끄면 재시도해요.";
+      } finally {
+        button.disabled = false;
+      }
+    };
+  }
+  if (!demo)
+    getProfile()
+      .then((me) => {
+        if (me && seniorRevision === revision) applySenior(me.senior_mode);
+      })
+      .catch(() => {});
 }

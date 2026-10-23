@@ -1,4 +1,5 @@
-import { demo, init, route, status } from "./ui.js";
+import { mountReview } from "./review-form.js?v=engagement-2";
+import { demo, init, route, status } from "./ui.js?v=engagement-2";
 import {
   $,
   services,
@@ -6,7 +7,7 @@ import {
   showBookingContext,
   isParticipant,
   loginRequired,
-} from "./consultation-ui.js";
+} from "./consultation-ui.js?v=engagement-2";
 init();
 const id = new URLSearchParams(location.search).get("id");
 let api,
@@ -101,6 +102,7 @@ async function load() {
       );
       return;
     }
+    await mountReview($("report-review"), booking, me);
     await readReport();
   } catch (e) {
     status("report-load", e.message || "상담 정보를 불러오지 못했어요.", load);

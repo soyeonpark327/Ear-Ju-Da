@@ -1,0 +1,72 @@
+.reviews-main {
+  padding: 24px;
+  line-height: 1.7;
+}
+.review-entry {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 18px;
+  margin: 14px 0;
+  overflow-wrap: anywhere;
+}
+.review-entry p {
+  white-space: pre-wrap;
+  margin-bottom: 8px;
+}
+.review-entry small {
+  color: var(--muted);
+}
+.review-target {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.review-dialog {
+  max-height: 85dvh;
+  overflow: auto;
+}
+.review-dialog p,
+.review-dialog label {
+  display: block;
+  margin: 14px 0;
+  line-height: 1.7;
+}
+.review-stars,
+.review-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.review-stars button {
+  flex: 1;
+  min-width: 40px;
+  min-height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font-size: 16px;
+}
+.review-stars [aria-checked="true"] {
+  background: var(--cyan);
+}
+.review-dialog textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  font: inherit;
+  resize: vertical;
+}
+.review-actions button {
+  flex: 1;
+  min-height: 44px;
+  padding: 10px 14px;
+}
+.review-slot button {
+  min-height: 44px;
+  padding: 10px;
+}
+.review-target {
+  min-height: 44px;
+}
