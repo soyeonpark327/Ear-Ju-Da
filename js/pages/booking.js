@@ -34,8 +34,7 @@ let experts = [],
 const price = () =>
   demo ? (mode === "call" ? 12000 : 10000) : Number(expert?.price_points || 0);
 function update() {
-  const valid =
-    !!slot && !!$("booking-topic").value.trim() && !busy && !complete;
+  const valid = !!slot && !busy && !complete;
   $("book").disabled = !valid;
   $("book").textContent = complete
     ? "예약 완료"
@@ -57,9 +56,7 @@ function renderTimes() {
     (s) => key(s.start_at) === date && new Date(s.start_at) > new Date(),
   );
   $("booking-times").replaceChildren();
-  $("day-heading").textContent = date
-    ? `${weekday(date)} · ${date}`
-    : "시간을 선택해주세요";
+  $("day-heading").textContent = date ? weekday(date) : "시간을 선택해주세요";
   for (const s of rows) {
     const b = document.createElement("button");
     b.textContent = clock(s.start_at);
@@ -70,6 +67,12 @@ function renderTimes() {
       renderTimes();
     };
     $("booking-times").append(b);
+  }
+  if (demo) {
+    const closed = document.createElement("button");
+    closed.textContent = "18:00 마감";
+    closed.disabled = true;
+    $("booking-times").append(closed);
   }
   update();
 }
@@ -123,13 +126,14 @@ async function loadExpert() {
       .sort((a, b) => new Date(a.start_at) - new Date(b.start_at));
     date = slots.some((s) => key(s.start_at) === params.get("date"))
       ? params.get("date")
-      : slots[0]
-        ? key(slots[0].start_at)
+      : slots[demo ? Math.min(4, slots.length - 1) : 0]
+        ? key(slots[demo ? Math.min(4, slots.length - 1) : 0].start_at)
         : "";
     status(
       "slots-status",
       slots.length ? "" : "현재 예약 가능한 시간이 없어요.",
     );
+    if (demo) slot = slots.find((s) => key(s.start_at) === date);
     renderDates();
     renderTimes();
   } catch (e) {
@@ -166,7 +170,7 @@ async function load() {
       ? "1시간 1:1 채팅 상담"
       : "1:1 채팅 상담";
     $("mode-note").textContent = demo
-      ? "디자인 미리보기 · 통화·채팅 옵션과 가격은 예시입니다."
+      ? ""
       : "현재 채팅 상담을 예약할 수 있어요. 통화 상담은 준비 중입니다. 시간별 소요 시간은 선택한 슬롯을 기준으로 합니다.";
     loadExpert();
     if (!demo) {
@@ -182,7 +186,10 @@ async function load() {
     status("load-status", e.message || "불러오지 못했어요.", load);
   }
 }
-$("expert-choice").onchange = loadExpert;
+$("expert-choice").onchange = () => {
+  $("booking-confirm").close();
+  loadExpert();
+};
 $("booking-topic").oninput = update;
 $("call-mode").onclick = () => {
   mode = "call";
@@ -200,19 +207,26 @@ $("book").onclick = () => {
     loadExpert();
     return;
   }
-  if (demo) {
-    notice(
-      "예약 미리보기",
-      `${expert.name} · ${date} ${clock(slot.start_at)}\n${mode === "call" ? "통화" : "채팅"} 상담 ${money(price())}P\n실제 예약이나 포인트 차감은 실행하지 않아요.`,
-    );
-    return;
-  }
   $("confirm-text").textContent =
-    `${expert.name}\n${date} ${clock(slot.start_at)} – ${clock(slot.end_at)}\n채팅 상담 ${money(price())}P\n${$("booking-topic").value.trim()}\n포인트가 차감되어 상담 완료 전까지 보관됩니다.`;
+    `${expert.name}\n${date} ${clock(slot.start_at)} – ${clock(slot.end_at)}\n${mode === "call" ? "통화" : "채팅"} 상담 ${money(price())}P\n포인트가 차감되어 상담 완료 전까지 보관됩니다.`;
+  $("confirm-error").textContent = "";
   $("booking-confirm").showModal();
 };
 $("confirm-booking").onclick = async () => {
   if (busy || complete || !slot) return;
+  if (!$("booking-topic").value.trim()) {
+    $("confirm-error").textContent = "상담 내용을 입력해주세요.";
+    $("booking-topic").focus();
+    return;
+  }
+  if (demo) {
+    $("booking-confirm").close();
+    notice(
+      "예약 미리보기",
+      `${expert.name} · ${date} ${clock(slot.start_at)}\n${mode === "call" ? "통화" : "채팅"} 상담 ${money(price())}P\n예시 데이터이므로 실제 예약이나 차감은 실행하지 않아요.`,
+    );
+    return;
+  }
   busy = true;
   update();
   $("confirm-booking").disabled = true;

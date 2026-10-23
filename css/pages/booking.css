@@ -222,3 +222,44 @@
     font-size: 14px;
   }
 }
+/* Keep the reservation entry focused on the supplied date/time design. */
+.reservation {
+  padding-top: 28px;
+}
+.date-strip {
+  margin-bottom: 18px;
+}
+.date-strip button {
+  min-height: 70px;
+}
+.booking-times button:disabled {
+  background: #c8c8cb;
+  color: #8e8e94;
+  cursor: default;
+  opacity: 1;
+}
+.mode-note:empty {
+  display: none;
+}
+.mode {
+  min-height: 80px;
+}
+.policies {
+  margin-top: 24px;
+}
+.reservation-footer {
+  padding-top: 50px;
+}
+#booking-confirm {
+  max-height: 85dvh;
+  overflow: auto;
+}
+#booking-confirm .expert-label {
+  display: block;
+}
+#booking-confirm #booking-topic {
+  margin-bottom: 8px;
+}
+.reservation #booking-content {
+  min-height: calc(100dvh - 170px);
+}
