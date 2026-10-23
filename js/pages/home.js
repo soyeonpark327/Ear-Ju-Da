@@ -84,10 +84,7 @@ function renderRecent() {
 }
 function openExpert(e) {
   remember(e);
-  notice(
-    e.name,
-    `${e.headline || ""}\n경력 ${e.career_years || 0}년 · 평점 ${e.rating || "-"}\n${e.career_summary || (e.keywords || []).join(" · ")}\n\n상담 예약 화면은 준비 중이에요.`,
-  );
+  location.href = route("expert-booking.html", { id: e.id });
 }
 function renderExperts() {
   const box = document.querySelector("#experts");

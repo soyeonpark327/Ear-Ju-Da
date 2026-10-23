@@ -1,0 +1,237 @@
+.profile-section,
+.booking-section {
+  padding: 28px 24px;
+}
+.profile-heading {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.profile-heading img,
+.profile-avatar {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top;
+  background: var(--panel);
+}
+.profile-avatar {
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  color: #079fbd;
+}
+.profile-heading h2 {
+  font-size: 21px;
+}
+.profile-heading p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 3px;
+}
+.experience {
+  background: var(--panel);
+  border-radius: 23px;
+  padding: 20px;
+}
+.experience h3 {
+  font-size: 14px;
+  color: #62636a;
+  font-weight: 500;
+}
+.experience-bars {
+  display: flex;
+  align-items: end;
+  gap: 2px;
+  height: 45px;
+  margin-top: 12px;
+}
+.experience-bars i {
+  background: var(--cyan);
+  width: 3px;
+  flex: 1;
+  max-width: 4px;
+}
+#career-summary {
+  font-size: 12px;
+  color: #717586;
+  margin-top: 8px;
+}
+.expert-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0 30px;
+}
+.expert-tags li {
+  background: #e9faff;
+  color: #079fbd;
+  padding: 7px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.tips-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.tips-heading h2 {
+  font-size: 16px;
+}
+.tips-heading button {
+  font-size: 12px;
+  min-height: 40px;
+}
+.tip-card {
+  background: var(--panel);
+  padding: 22px 18px;
+  border-radius: 22px;
+  margin-top: 12px;
+}
+.tip-card blockquote {
+  font-size: 15px;
+  line-height: 1.8;
+}
+.tip-card p {
+  font-size: 12px;
+  color: #878995;
+  margin-top: 14px;
+}
+.booking-section {
+  border-top: 1px solid var(--line);
+  padding-bottom: max(28px, env(safe-area-inset-bottom));
+}
+.booking-section h2 {
+  font-size: 17px;
+}
+.timezone {
+  font-size: 11px;
+  color: #747887;
+  margin-top: 8px;
+}
+.month-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  margin: 24px 0;
+}
+.month-nav h3 {
+  font-size: 18px;
+}
+.month-nav button {
+  font-size: 28px;
+  width: 44px;
+  height: 44px;
+  color: #727586;
+}
+.weekdays,
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  text-align: center;
+}
+.weekdays {
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+.calendar {
+  gap: 8px 0;
+}
+.calendar button {
+  min-height: 46px;
+  border-radius: 50%;
+  font-size: 15px;
+  position: relative;
+}
+.calendar button:disabled {
+  cursor: default;
+  color: #c0c1c6;
+  opacity: 1;
+}
+.calendar button.sunday:not(:disabled) {
+  color: #e5484d;
+}
+.calendar button.today {
+  color: #1684ff;
+}
+.calendar button[aria-pressed="true"] {
+  background: var(--cyan);
+  color: #071419;
+}
+.calendar small {
+  display: block;
+  font-size: 9px;
+  line-height: 1.2;
+}
+.calendar button.available:after {
+  content: "";
+  position: absolute;
+  bottom: 3px;
+  left: calc(50% - 2px);
+  width: 4px;
+  height: 4px;
+  background: #00a4c3;
+  border-radius: 50%;
+}
+.times {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 12px 0 22px;
+}
+.times button {
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  font-size: 13px;
+  min-height: 42px;
+}
+.times button[aria-pressed="true"] {
+  border-color: var(--cyan);
+  background: #e9faff;
+}
+.selected-date {
+  font-size: 13px;
+  color: #626574;
+  margin-top: 18px;
+}
+#booking-form label {
+  font-size: 14px;
+  font-weight: 600;
+}
+#topic {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  margin: 8px 0 14px;
+  resize: vertical;
+  background: #fff;
+  font-size: 14px;
+}
+.booking-summary {
+  font-size: 13px;
+  color: #626574;
+  margin-bottom: 14px;
+}
+#reserve:disabled {
+  cursor: default;
+}
+#confirm-details {
+  white-space: pre-wrap;
+}
+.confirm-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+.confirm-actions button {
+  flex: 1;
+}
