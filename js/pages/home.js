@@ -167,7 +167,7 @@ async function loadNotes() {
   try {
     const rows = demo
       ? (await import("./demo-data.js")).notes
-      : await (await import("../api/notes.js")).getNotes();
+      : await (await import("../api/notes.js")).getNotes({ sort: "popular" });
     document.querySelector("#popular").innerHTML = rows
       .slice(0, 2)
       .map(

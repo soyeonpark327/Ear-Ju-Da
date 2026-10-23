@@ -109,7 +109,7 @@ if (me?.senior_mode) document.documentElement.classList.add('senior-mode');
 
 | 함수 | 설명 | 돌려주는 값 |
 | --- | --- | --- |
-| `getNotes({ keyword, industry })` | 공개된 노트 목록 (최신순). `keyword`는 제목·미리보기·업종 부분 검색 + 키워드 일치 | `[{ id, title, summary, industry, keywords, price_points, created_at, author: { headline, profiles: { name } } }]` |
+| `getNotes({ keyword, industry, sort })` | 공개된 노트 목록. `sort`: `'latest'` 최신순(기본) / `'popular'` 구매 많은 순. `keyword`는 제목·미리보기·업종 부분 검색 + 키워드 일치 | `[{ id, title, summary, industry, keywords, price_points, purchase_count, created_at, author: { headline, profiles: { name } } }]` |
 | `getNote(noteId)` | 노트 하나 (미리보기) | 위와 같은 형태, 없으면 `null` |
 | `getNoteBody(noteId)` | 유료 본문 | 구매했으면 문자열, 아니면 `null` |
 | `purchaseNote(noteId)` | 구매 (포인트 차감) | |

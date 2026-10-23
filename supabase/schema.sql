@@ -102,6 +102,7 @@ create table public.notes (
   keywords     text[] not null default '{}',
   price_points integer not null default 0 check (price_points >= 0),
   is_published boolean not null default false,
+  purchase_count integer not null default 0,         -- 구매 수 (트리거가 자동 관리, 인기순 정렬용)
   created_at   timestamptz not null default now()
 );
 
@@ -140,6 +141,31 @@ create index on public.bookings (youth_id);
 create index on public.bookings (expert_id);
 create index on public.messages (booking_id, created_at);
 create index on public.tips (expert_id, created_at desc);
+
+
+-- ---------- 오답노트 구매 수 자동 관리 ----------
+-- 구매 기록은 본인 것만 보여서 다른 사람은 셀 수 없으므로 notes.purchase_count에 모아 둔다.
+create or replace function public.sync_note_purchase_count()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+as $$
+begin
+  if tg_op = 'INSERT' then
+    update public.notes set purchase_count = purchase_count + 1 where id = new.note_id;
+  elsif tg_op = 'DELETE' then
+    update public.notes set purchase_count = greatest(purchase_count - 1, 0) where id = old.note_id;
+  end if;
+  return null;
+end;
+$$;
+
+drop trigger if exists on_note_purchase_change on public.note_purchases;
+create trigger on_note_purchase_change
+  after insert or delete on public.note_purchases
+  for each row execute function public.sync_note_purchase_count();
+
+create index if not exists notes_popular_idx on public.notes (purchase_count desc, created_at desc);
 
 
 -- ---------- 회원가입 시 profiles 자동 생성 ----------
@@ -262,7 +288,8 @@ revoke insert, update, delete on public.bookings from anon, authenticated;
 revoke insert, update, delete on public.reports from anon, authenticated;
 revoke insert, update, delete on public.note_purchases from anon, authenticated;
 
-revoke update on public.notes from anon, authenticated;
+revoke insert, update on public.notes from anon, authenticated;  -- purchase_count는 트리거만 변경
+grant insert (author_id, title, summary, industry, keywords, price_points, is_published) on public.notes to authenticated;
 grant update (title, summary, industry, keywords, price_points, is_published) on public.notes to authenticated;
 
 

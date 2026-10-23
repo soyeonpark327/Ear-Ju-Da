@@ -200,6 +200,18 @@ E'1. 유동인구가 아니라 "내 손님"의 동선을 봐라\n역 앞 유동�
   select v_kim, id, price_points from public.notes where author_id = v_lee;
   insert into public.note_purchases (user_id, note_id, price_points)
   select v_park, id, price_points from public.notes where author_id in (v_jung, v_mk);
+  -- 인기순 데모: 베테랑끼리도 서로 노트를 사 본 것으로 구매 수 차이를 만든다
+  -- (이 위원 계약 노트 4 > 무역 사기 3 > 입점 제안서 2 > 상권분석 1)
+  insert into public.note_purchases (user_id, note_id, price_points)
+  select b.buyer, n.id, n.price_points
+  from public.notes n
+  join (values
+    (v_choi, v_lee), (v_ys, v_lee), (v_han, v_lee),
+    (v_lee, v_jung), (v_han, v_jung),
+    (v_ys, v_mk),
+    (v_mk, v_han)
+  ) as b(buyer, author) on n.author_id = b.author
+  where n.is_published;
 
   -- ---------- 한 줄 조언 ----------
   insert into public.tips (expert_id, content, created_at) values
