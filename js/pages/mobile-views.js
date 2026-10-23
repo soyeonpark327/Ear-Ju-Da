@@ -85,7 +85,7 @@ const bottomNavigation = () => {
       '<path d="M8 2v4m5-4v4m5-4v4M19 17l-5 5H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h12a3 3 0 0 1 3 3v9l-2 2Zm-5 5v-5a2 2 0 0 1 2-2h5M7 10h10M7 14h5"/>',
     ],
     [
-      "consultations",
+      "expert-booking",
       "상담",
       '<path d="M21.5 11.5a10 10 0 0 1-14.8 8.8L2 22l1.6-4.8A10 10 0 1 1 21.5 11.5Z"/>',
     ],
@@ -95,7 +95,7 @@ const bottomNavigation = () => {
       '<circle cx="12" cy="7" r="5"/><path d="M3 22a9 9 0 0 1 18 0"/>',
     ],
   ];
-  return `<nav class="r-bottom-navigation" aria-label="하단 메뉴">${items.map(([target, label, paths]) => `<a href="${link(target)}"${target === page ? ' aria-current="page"' : ""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg><span>${label}</span></a>`).join("")}</nav>`;
+  return `<nav class="r-bottom-navigation" aria-label="하단 메뉴">${items.map(([target, label, paths]) => `<a href="${link(target, target === "expert-booking" ? "id=preview-lee" : "")}"${target === page ? ' aria-current="page"' : ""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg><span>${label}</span></a>`).join("")}</nav>`;
 };
 function home() {
   return `${statusbar()}<header class="r-home-header"><a href="${link("notifications")}" aria-label="알림">${icon("bell")}</a></header><main id="main"><div class="r-home-top"><form class="r-search" action="matching.html"><input name="demo" value="1" type="hidden"/><label>${icon("search")}<input name="keyword" placeholder="무슨 문제를 겪고 계신가요?" aria-label="고민 검색"/></label><button>Ai 매칭 <span class="r-spark">${icon("spark")}</span></button></form><nav class="r-categories">${["계약", "노무", "세무", "자금", "판로", "마케팅", "인허가", "해외진출", "데이터", "지식재산"].map((n, i) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${[0, 1, 2, 3, 5, 6, 8].includes(i) ? `<img src="../assets/home/${n}.svg" alt=""/>` : icon(["", "", "", "", "box", "", "", "globe", "", "bulb"][i])}<span>${n}</span></a>`).join("")}</nav></div><section class="r-home-experts"><h2>경력으로 증명된 베테랑</h2><div id="r-experts">${people.map(expertCard).join("")}</div><button class="r-more" id="r-more" aria-expanded="false">베테랑 더보기 ${icon("down")}</button></section><section class="r-recent"><h2>내가 둘러본 베테랑</h2><div>${["마케팅", "인허가", "지식재산", "창업", "경제", "자금", "해외진출"].map((n) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${n}</a>`).join("")}</div></section><section class="r-popular"><h2>가장 많이 열람된 <a href="${link("notes")}">오답노트</a></h2><ol>${[
@@ -126,7 +126,7 @@ function home() {
 }
 function profile() {
   const cal = params.get("calendar") === "1";
-  return `${statusbar()}${header("예약하기")}<main id="main" class="r-profile">${expertIntro()}${cal ? calendar() : `<div class="r-profile-actions"><a href="${link("expert-booking", "id=demo-lee&calendar=1")}">${icon("calendar")} 날짜 선택</a><a href="${link("reviews", "expert=demo-lee")}">${icon("chat")} 후기 보기</a></div>`}</main>`;
+  return `${statusbar()}${header(params.get("id") === "preview-lee" ? "상담하기" : "예약하기")}<main id="main" class="r-profile">${expertIntro()}${cal ? calendar() : `<div class="r-profile-actions"><a href="${link("expert-booking", `id=${params.get("id") === "preview-lee" ? "preview-lee" : "demo-lee"}&calendar=1`)}">${icon("calendar")} 날짜 선택</a><a href="${link("reviews", "expert=demo-lee")}">${icon("chat")} 후기 보기</a></div>`}</main>`;
 }
 function calendar() {
   return `<section class="r-calendar-section"><h2>${icon("calendar")} 날짜와 시간을 선택해주세요</h2><div class="r-month"><button id="r-prev-month" aria-label="이전 달">‹</button><b id="r-month-label">2026년 10월</b><button id="r-next-month" aria-label="다음 달">›</button></div><div class="r-weekdays">${"일월화수목금토"
@@ -242,48 +242,8 @@ export function renderReference({ live = false } = {}) {
       );
     };
   }
-  if (page === "expert-booking" && params.get("calendar") === "1") {
-    let month = 9;
-    const year = 2026;
-    function draw() {
-      document.getElementById("r-month-label").textContent =
-        `${year}년 ${month + 1}월`;
-      const start = new Date(year, month, 1).getDay(),
-        count = new Date(year, month + 1, 0).getDate(),
-        prev = new Date(year, month, 0).getDate();
-      document.getElementById("r-calendar").innerHTML = Array.from(
-        { length: Math.ceil((start + count) / 7) * 7 },
-        (_, i) => {
-          const d = i - start + 1;
-          return `<button ${d < 24 || d > count ? "disabled" : ""} class="${d === 24 ? "selected" : ""} ${d === 23 ? "today" : ""}" data-day="${d}" aria-pressed="${d === 24}">${d < 1 ? prev + d : d > count ? d - count : d}${d === 23 ? "<small>오늘</small>" : ""}</button>`;
-        },
-      ).join("");
-      document.querySelectorAll("#r-calendar button:not(:disabled)").forEach(
-        (b) =>
-          (b.onclick = () => {
-            document.querySelectorAll("#r-calendar button").forEach((x) => {
-              x.classList.remove("selected");
-              x.setAttribute("aria-pressed", "false");
-            });
-            b.classList.add("selected");
-            b.setAttribute("aria-pressed", "true");
-            document.getElementById("r-reserve").href = link(
-              "booking",
-              `id=demo-lee&date=${year}-${String(month + 1).padStart(2, "0")}-${b.dataset.day}`,
-            );
-          }),
-      );
-    }
-    draw();
-    document.getElementById("r-prev-month").onclick = () => {
-      month = Math.max(0, month - 1);
-      draw();
-    };
-    document.getElementById("r-next-month").onclick = () => {
-      month = Math.min(11, month + 1);
-      draw();
-    };
-  }
+  if (page === "expert-booking" && params.get("calendar") === "1")
+    bindReferenceCalendar();
   if (page === "booking") {
     let day = "목요일",
       time = "14:00";
@@ -422,4 +382,47 @@ export function renderReference({ live = false } = {}) {
   }
   applyFinalMetrics().catch(() => {});
   return true;
+}
+
+export function bindReferenceCalendar() {
+  let month = 9;
+  const year = 2026;
+  function draw() {
+    document.getElementById("r-month-label").textContent =
+      `${year}년 ${month + 1}월`;
+    const start = new Date(year, month, 1).getDay(),
+      count = new Date(year, month + 1, 0).getDate(),
+      prev = new Date(year, month, 0).getDate();
+    document.getElementById("r-calendar").innerHTML = Array.from(
+      { length: Math.ceil((start + count) / 7) * 7 },
+      (_, i) => {
+        const d = i - start + 1;
+        return `<button ${d < 24 || d > count ? "disabled" : ""} class="${d === 24 ? "selected" : ""} ${d === 23 ? "today" : ""}" data-day="${d}" aria-pressed="${d === 24}">${d < 1 ? prev + d : d > count ? d - count : d}${d === 23 ? "<small>오늘</small>" : ""}</button>`;
+      },
+    ).join("");
+    document.querySelectorAll("#r-calendar button:not(:disabled)").forEach(
+      (b) =>
+        (b.onclick = () => {
+          document.querySelectorAll("#r-calendar button").forEach((x) => {
+            x.classList.remove("selected");
+            x.setAttribute("aria-pressed", "false");
+          });
+          b.classList.add("selected");
+          b.setAttribute("aria-pressed", "true");
+          document.getElementById("r-reserve").href = link(
+            "booking",
+            `id=${params.get("id") === "preview-lee" ? "preview-lee" : "demo-lee"}&date=${year}-${String(month + 1).padStart(2, "0")}-${b.dataset.day}`,
+          );
+        }),
+    );
+  }
+  draw();
+  document.getElementById("r-prev-month").onclick = () => {
+    month = Math.max(0, month - 1);
+    draw();
+  };
+  document.getElementById("r-next-month").onclick = () => {
+    month = Math.min(11, month + 1);
+    draw();
+  };
 }

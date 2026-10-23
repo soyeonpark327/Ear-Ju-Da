@@ -272,6 +272,30 @@ function fillProfile(e) {
   );
 }
 async function profile() {
+  if (params.get("id") === "preview-lee") {
+    document.body.classList.add("r-profile-preview");
+    if (params.get("calendar") === "1") {
+      const { bindReferenceCalendar } = await import(
+        "./mobile-views.js?v=flow-1"
+      );
+      bindReferenceCalendar();
+      $("#r-reserve").onclick = (event) => {
+        event.preventDefault();
+        say(
+          "선택한 날짜의 상담 예약은 베테랑의 실제 판매 등록 후 이용할 수 있어요.",
+        );
+      };
+    }
+    $(".r-tip-count").onclick = () => say("현재 공개된 답변을 보고 있어요.");
+    const reviews = $(".r-profile-actions a:last-child");
+    if (reviews)
+      reviews.onclick = (event) => {
+        event.preventDefault();
+        say("아직 등록된 후기가 없어요.");
+      };
+    return;
+  }
+
   const { api, e, id } = await loadExpert();
   fillProfile(e);
   const results = await Promise.allSettled([api.getTips(id), api.getSlots(id)]);
@@ -768,8 +792,7 @@ async function notes() {
   function filter(category) {
     publishedCards.forEach((card, i) => {
       card.hidden =
-        category !== "계약" &&
-        published[i].industry !== category &&
+        (category === "계약" || published[i].industry !== category) &&
         !(published[i].keywords || []).includes(category);
     });
     cards.forEach((card, i) => {
