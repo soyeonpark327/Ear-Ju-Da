@@ -1,11 +1,17 @@
-import { applyFinalMetrics } from "./reference-final-metrics.js?v=reference-1";
+import { applyFinalMetrics } from "./mobile-design-tokens.js?v=reference-1";
 // Exact supplied examples are isolated from authenticated production data.
 const params = new URLSearchParams(location.search);
 const page = location.pathname.split("/").pop().replace(".html", "");
-const link = (name, query = "") =>
-  `${name}.html?demo=1${query ? "&" + query : ""}`;
+const link = (name, query = "") => {
+  const suffix = [params.get("demo") === "1" ? "demo=1" : "", query]
+    .filter(Boolean)
+    .join("&");
+  return `${name}.html${suffix ? "?" + suffix : ""}`;
+};
 const portrait = (who = "lee") => `../assets/home/expert-${who}.png`;
 const icons = {
+  spark:
+    '<path fill="currentColor" stroke="none" d="M10.2 3.3Q12-2 13.8 3.3L16 8L21 10.2Q26 12 21 13.8L16 16L13.8 21Q12 26 10.2 21L8 16L3 13.8Q-2 12 3 10.2L8 8Z"/><path fill="currentColor" stroke="none" d="m22 0 .6 1.4L24 2l-1.4.6L22 4l-.6-1.4L20 2l1.4-.6Z"/>',
   back: '<path d="m14 5-6 7 6 7"/>',
   arrow: '<path d="M12 19V5m-6 6 6-6 6 6"/>',
   bell: '<path d="M6 9a6 6 0 0 1 12 0c0 6 3 6 3 8H3c0-2 3-2 3-8m6 10a2 2 0 0 1-4 0"/>',
@@ -71,7 +77,7 @@ const people = [
   },
 ];
 function home() {
-  return `${statusbar()}<header class="r-home-header"><a href="${link("notifications")}" aria-label="알림">${icon("bell")}</a></header><main id="main"><div class="r-home-top"><form class="r-search" action="matching.html"><input name="demo" value="1" type="hidden"/><label>${icon("search")}<input name="keyword" placeholder="무슨 문제를 겪고 계신가요?" aria-label="고민 검색"/></label><button>Ai 매칭 <span class="r-spark">✦</span></button></form><nav class="r-categories">${["계약", "노무", "세무", "자금", "판로", "마케팅", "인허가", "해외진출", "데이터", "지식재산"].map((n, i) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${[0, 1, 2, 3, 5, 6, 8].includes(i) ? `<img src="../assets/home/${n}.svg" alt=""/>` : icon(["", "", "", "", "box", "", "", "globe", "", "bulb"][i])}<span>${n}</span></a>`).join("")}</nav></div><section class="r-home-experts"><h2>경력으로 증명된 베테랑</h2><div id="r-experts">${people.map(expertCard).join("")}</div><button class="r-more" id="r-more" aria-expanded="false">베테랑 더보기 ${icon("down")}</button></section><section class="r-recent"><h2>내가 둘러본 베테랑</h2><div>${["마케팅", "인허가", "지식재산", "창업", "경제", "자금", "해외진출"].map((n) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${n}</a>`).join("")}</div></section><section class="r-popular"><h2>가장 많이 열람된 <a href="${link("notes")}">오답노트</a></h2><ol>${[
+  return `${statusbar()}<header class="r-home-header"><a href="${link("notifications")}" aria-label="알림">${icon("bell")}</a></header><main id="main"><div class="r-home-top"><form class="r-search" action="matching.html"><input name="demo" value="1" type="hidden"/><label>${icon("search")}<input name="keyword" placeholder="무슨 문제를 겪고 계신가요?" aria-label="고민 검색"/></label><button>Ai 매칭 <span class="r-spark">${icon("spark")}</span></button></form><nav class="r-categories">${["계약", "노무", "세무", "자금", "판로", "마케팅", "인허가", "해외진출", "데이터", "지식재산"].map((n, i) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${[0, 1, 2, 3, 5, 6, 8].includes(i) ? `<img src="../assets/home/${n}.svg" alt=""/>` : icon(["", "", "", "", "box", "", "", "globe", "", "bulb"][i])}<span>${n}</span></a>`).join("")}</nav></div><section class="r-home-experts"><h2>경력으로 증명된 베테랑</h2><div id="r-experts">${people.map(expertCard).join("")}</div><button class="r-more" id="r-more" aria-expanded="false">베테랑 더보기 ${icon("down")}</button></section><section class="r-recent"><h2>내가 둘러본 베테랑</h2><div>${["마케팅", "인허가", "지식재산", "창업", "경제", "자금", "해외진출"].map((n) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${n}</a>`).join("")}</div></section><section class="r-popular"><h2>가장 많이 열람된 <a href="${link("notes")}">오답노트</a></h2><ol>${[
     {
       name: "김수현",
       title: "사업 망하기 전에 읽었어야 할 오답노트",
@@ -118,8 +124,8 @@ function matchResult(text = question) {
   return `<section class="r-match-thread"><p class="r-user-bubble">${text}</p><div class="r-ai-reply"><span class="r-ai-avatar">✦</span><div><small>이어주다 Ai</small><p>납품 단가 분쟁을 많이 다뤄본 베테랑을 찾았어요.</p><article class="r-match-card"><div class="r-match-person"><img src="${portrait()}" alt=""/><div><h2>이승호 위원</h2><small>자동차 부품사 구매팀 | 2024년 정년퇴임</small></div><span><b>94</b><small>매칭</small></span></div><p>발주처 계약 실무 30년, 납품 단가 분쟁 47건 대응</p><div class="r-match-actions"><a href="${link("expert-booking", "id=demo-lee")}">프로필 보기</a><a href="${link("expert-booking", "id=demo-lee&calendar=1")}">상담 예약</a></div></article></div></div></section>`;
 }
 function matching() {
-  const result = params.get("result") === "1";
-  return `${statusbar()}${header("Ai 매칭")}<main id="main" class="r-matching ${result ? "has-result" : ""}"><div id="r-match-body">${result ? matchResult() : `<section class="r-match-intro"><span class="r-spark">✦</span><h2>어떤 문제를 겪고 계신가요?</h2><p>상황을 편하게 적어주시면<br/>Ai가 딱 맞는 베테랑을 찾아드려요</p><div class="r-suggestions">${["거래처가 남품 단가 인하를 요구해요", "첫 직원 채용, 근로계약서가 궁금해요", "정부 지원금 신청이 처음이에요"].map((n) => `<button>${n}</button>`).join("")}</div></section>`}</div>${composer(result ? "메세지를 입력해주세요." : "이어주다에게 말해주세요.")}</main>`;
+  const result = params.get("demo") === "1" && params.get("result") === "1";
+  return `${statusbar()}${header("Ai 매칭")}<main id="main" class="r-matching ${result ? "has-result" : ""}"><div id="r-match-body">${result ? matchResult() : `<section class="r-match-intro"><span class="r-spark">${icon("spark")}</span><h2>어떤 문제를 겪고 계신가요?</h2><p>상황을 편하게 적어주시면<br/>Ai가 딱 맞는 베테랑을 찾아드려요</p><div class="r-suggestions">${["거래처가 납품 단가 인하를 요구해요", "첫 직원 채용, 근로계약서가 궁금해요", "정부 지원금 신청이 처음이에요"].map((n) => `<button>${n}</button>`).join("")}</div></section>`}</div>${composer(result ? "메세지를 입력해주세요." : "이어주다에게 말해주세요.")}</main>`;
 }
 const noteItems = [
   {
@@ -131,7 +137,7 @@ const noteItems = [
     price: "5,900 P",
   },
   {
-    title: "정부 지원사업 정신에서 다들 하는 실수",
+    title: "정부 지원사업 정산에서 다들 하는 실수",
     name: "김수현 사업가",
     job: "정부 지원사업 사업가",
     loss: "환수액",
@@ -169,8 +175,8 @@ function mypage() {
     )
     .join("")}<button data-action="logout">로그아웃</button></nav></main>`;
 }
-export function renderReference() {
-  document.body.className = "reference-design reference-example r-page-" + page;
+export function renderReference({ live = false } = {}) {
+  document.body.className = "mobile-design mobile-ui r-page-" + page;
   const renderers = {
     home,
     "expert-booking": profile,
@@ -184,6 +190,11 @@ export function renderReference() {
   const render = renderers[page];
   if (!render) return false;
   document.body.innerHTML = `<div class="app r-app">${render()}</div><dialog id="r-notice"><h2>디자인 예시 화면</h2><p id="r-notice-text"></p><form method="dialog"><button class="r-primary">확인</button></form></dialog>`;
+  if (live) {
+    document.querySelector(".r-app").style.visibility = "hidden";
+    document.querySelector("#r-notice h2").textContent = "안내";
+    return true;
+  }
   const say = (text) => {
     document.getElementById("r-notice-text").textContent = text;
     document.getElementById("r-notice").showModal();
