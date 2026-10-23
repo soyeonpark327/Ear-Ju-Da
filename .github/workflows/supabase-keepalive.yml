@@ -1,0 +1,29 @@
+name: Supabase keep-alive
+
+# Supabase 무료 플랜은 7일 동안 DB 사용이 없으면 프로젝트를 일시정지한다.
+# 3일마다 공개 데이터를 한 번 조회해서 일시정지를 막는다.
+# 실패하면(이미 일시정지 등) GitHub가 레포 관리자에게 메일로 알려준다.
+
+on:
+  schedule:
+    - cron: '0 0 */3 * *'   # 3일마다 09:00 (KST)
+  workflow_dispatch:         # Actions 탭에서 수동 실행 가능
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Supabase DB 조회
+        run: |
+          # 프론트에서 쓰는 공개 URL과 키(publishable key)를 그대로 읽어온다
+          url=$(grep -oE "https://[a-z0-9]+\.supabase\.co" js/supabase.js)
+          key=$(grep -oE "sb_publishable_[A-Za-z0-9_-]+" js/supabase.js)
+          status=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 \
+            "$url/rest/v1/expert_cards?select=id&limit=1" -H "apikey: $key")
+          echo "응답 코드: $status"
+          if [ "$status" != "200" ]; then
+            echo "::error::Supabase에 연결하지 못했습니다 ($status). 대시보드에서 프로젝트가 일시정지됐는지 확인하세요."
+            exit 1
+          fi
