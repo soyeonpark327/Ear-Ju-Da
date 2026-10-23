@@ -100,7 +100,7 @@ const bottomNavigation = () => {
   return `<nav class="r-bottom-navigation" aria-label="하단 메뉴">${items.map(([target, label, paths]) => `<a href="${link(target, target === "expert-booking" ? "id=preview-lee" : "")}"${target === page ? ' aria-current="page"' : ""}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg><span>${label}</span></a>`).join("")}</nav>`;
 };
 function home() {
-  return `${statusbar()}<header class="r-home-header"><a class="r-home-logo" href="${link("home")}" aria-label="Ear-ju-da 홈"></a><a href="${link("notifications")}" aria-label="알림">${icon("bell")}</a></header><main id="main"><div class="r-home-top"><form class="r-search" action="matching.html"><input name="demo" value="1" type="hidden"/><label>${icon("search")}<input name="keyword" placeholder="무슨 문제를 겪고 계신가요?" aria-label="고민 검색"/></label><button>Ai 매칭 <span class="r-spark">${icon("spark")}</span></button></form><nav class="r-categories">${["계약", "노무", "세무", "자금", "판로", "마케팅", "인허가", "해외진출", "데이터", "지식재산"].map((n, i) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${[0, 1, 2, 3, 5, 6, 8].includes(i) ? `<img src="../assets/home/${n}.svg" alt=""/>` : i === 4 ? '<svg class="r-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#66bdcc" d="m12 2 10 5-10 5L2 7Z"/><path fill="#45adc0" d="m2 7 10 5v10L2 17Z"/><path fill="#339eae" d="m12 12 10-5v10l-10 5Z"/></svg>' : i === 9 ? '<svg class="r-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 17C8 14 4 13 4 9a8 8 0 0 1 16 0c0 4-4 5-4 8H8Zm0 2h8v2H8Zm2 3h4v2h-4Z"/><path d="m9 8 3 2 3-2" fill="none" stroke="#08768b" stroke-width="1.6"/></svg>' : icon("globe")}<span>${n}</span></a>`).join("")}</nav></div><section class="r-home-experts"><h2>경력으로 증명된 베테랑</h2><div id="r-experts">${people.map(expertCard).join("")}</div><button class="r-more" id="r-more" aria-expanded="false">베테랑 더보기 ${icon("down")}</button></section><section class="r-recent"><h2>내가 둘러본 베테랑</h2><div>${["마케팅", "인허가", "지식재산", "창업", "경제", "자금", "해외진출"].map((n) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${n}</a>`).join("")}</div></section><section class="r-popular"><h2>가장 많이 열람된 <a href="${link("notes")}">오답노트</a></h2><ol>${[
+  return `${statusbar()}<header class="r-home-header"><a class="r-home-logo" href="${link("home")}" aria-label="Ear-ju-da 홈"></a><a href="${link("notifications")}" aria-label="알림">${icon("bell")}</a></header><main id="main"><div class="r-home-top"><form class="r-search" action="matching.html"><input name="demo" value="1" type="hidden"/><label>${icon("search")}<input name="keyword" placeholder="무슨 문제를 겪고 계신가요?" aria-label="고민 검색"/></label><button>Ai 매칭 <span class="r-spark">${icon("spark")}</span></button></form><nav class="r-categories">${["계약", "노무", "세무", "자금", "판로", "마케팅", "인허가", "해외진출", "데이터", "지식재산"].map((n, i) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${[0, 1, 2, 3, 5, 6, 8].includes(i) ? `<img src="../assets/home/${n}.svg" alt=""/>` : i === 4 ? '<svg class="r-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="#66bdcc" d="m12 2 10 5-10 5L2 7Z"/><path fill="#45adc0" d="m2 7 10 5v10L2 17Z"/><path fill="#339eae" d="m12 12 10-5v10l-10 5Z"/></svg>' : i === 9 ? '<svg class="r-icon" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 17C8 14 4 13 4 9a8 8 0 0 1 16 0c0 4-4 5-4 8H8Zm0 2h8v2H8Zm2 3h4v2h-4Z"/><path d="m9 8 3 2 3-2" fill="none" stroke="#08768b" stroke-width="1.6"/></svg>' : icon("globe")}<span>${n}</span></a>`).join("")}</nav></div><section class="r-home-experts"><h2>경력으로 증명된 베테랑</h2><div id="r-experts">${people.map(expertCard).join("")}</div></section><section class="r-recent"><h2>내가 둘러본 베테랑</h2><div>${["마케팅", "인허가", "지식재산", "창업", "경제", "자금", "해외진출"].map((n) => `<a href="${link("notes", "category=" + encodeURIComponent(n))}">${n}</a>`).join("")}</div></section><section class="r-popular"><h2>가장 많이 열람된 <a href="${link("notes")}">오답노트</a></h2><ol>${[
     {
       name: "김수현",
       title: "사업 망하기 전에 읽었어야 할 오답노트",
@@ -233,19 +233,6 @@ export function renderReference({ live = false } = {}) {
             "디자인 확인용 예시입니다. 실제 계정이나 포인트는 변경하지 않아요.",
           )),
     );
-  if (page === "home") {
-    const more = document.getElementById("r-more");
-    more.onclick = () => {
-      const expanded = more.getAttribute("aria-expanded") === "true";
-      more.setAttribute("aria-expanded", String(!expanded));
-      more.innerHTML = `베테랑 ${expanded ? "더보기" : "접기"} ${icon("down")}`;
-      // The final source contains exactly these three sample people. Never invent
-      // or duplicate experts to simulate extra records in the design preview.
-      say(
-        "최종 시안의 예시 베테랑 3명을 모두 표시하고 있어요. 실제 서비스에서는 등록된 베테랑을 더 보고 접을 수 있어요.",
-      );
-    };
-  }
   if (page === "expert-booking" && params.get("calendar") === "1")
     bindReferenceCalendar();
   if (page === "booking")

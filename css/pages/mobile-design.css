@@ -2306,3 +2306,18 @@ body.mobile-design {
   line-height: 21.24px;
   white-space: nowrap;
 }
+
+/* Ai 매칭 버튼: 글자와 별 아이콘을 세로 가운데로 */
+.r-search button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  line-height: 1;
+}
+.r-search .r-spark {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+  transform: translateY(-1px);
+}
