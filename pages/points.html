@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>내 포인트 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/points.css?v=1" />
+  </head>
+  <body class="points-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
+        <h1>내 포인트</h1>
+      </header>
+      <main id="main" class="points-main">
+        <p id="points-status" class="status" role="status"></p>
+        <div id="points-content" hidden>
+          <section class="points-balance" aria-labelledby="points-balance-label">
+            <p id="points-balance-label">보유 포인트</p>
+            <strong id="points-balance" aria-live="polite">0P</strong>
+          </section>
+
+          <section class="points-charge" aria-labelledby="points-charge-title">
+            <h2 id="points-charge-title">포인트 충전</h2>
+            <div id="points-charge-options" class="points-charge-options" role="group" aria-label="충전 금액"></div>
+            <p class="points-charge-note">
+              데모용 충전이에요. 실제 결제는 이뤄지지 않고, 하루 최대 50,000P까지 충전할 수 있어요.
+            </p>
+            <p id="points-charge-status" class="status" role="status"></p>
+          </section>
+
+          <section class="points-history" aria-labelledby="points-history-title">
+            <h2 id="points-history-title">포인트 내역</h2>
+            <ul id="points-history-list" class="points-history-list"></ul>
+            <p id="points-history-empty" class="points-empty" hidden>아직 포인트 내역이 없어요.</p>
+          </section>
+        </div>
+      </main>
+    </div>
+    <dialog id="points-confirm" aria-labelledby="points-confirm-title">
+      <h2 id="points-confirm-title">포인트를 충전할까요?</h2>
+      <p id="points-confirm-text"></p>
+      <div class="points-confirm-actions">
+        <button type="button" id="points-confirm-cancel" class="outline">취소</button
+        ><button type="button" id="points-confirm-ok" class="primary">충전하기</button>
+      </div>
+    </dialog>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/points.js?v=1"></script>
+  </body>
+</html>
