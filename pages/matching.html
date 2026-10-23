@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="../css/variables.css?v=engagement-2" />
     <link rel="stylesheet" href="../css/pages/home-notes.css?v=engagement-2" />
     <link rel="stylesheet" href="../css/pages/matching.css?v=engagement-2" />
+    <link rel="stylesheet" href="../css/pages/mobile-design.css?v=booking-fix-2" />
   </head>
   <body class="matching-page">
     <a class="skip" href="#main">본문으로 이동</a>
@@ -93,14 +94,20 @@
           </button>
         </section>
         <form id="matching-form" class="matching-composer">
-          <input id="matching-photo" type="file" accept="image/jpeg,image/png,image/webp" hidden />
+          <input
+            id="matching-photo"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            hidden
+          />
           <div id="photo-preview" class="photo-preview" hidden>
             <img id="photo-thumbnail" alt="첨부할 사진 미리보기" />
             <span id="photo-name"></span>
-            <button id="photo-remove" type="button" aria-label="첨부 사진 삭제">삭제</button>
+            <button id="photo-remove" type="button" aria-label="첨부 사진 삭제">
+              삭제
+            </button>
           </div>
-          <button id="attach" type="button" aria-label="사진 첨부">
-            ＋</button
+          <button id="attach" type="button" aria-label="사진 첨부">＋</button
           ><label class="sr-only" for="concern"
             >이어주다에게 고민을 말해주세요</label
           ><textarea
@@ -132,6 +139,7 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <script type="module" src="../js/pages/matching.js?v=engagement-2"></script>
+
+    <script type="module" src="../js/pages/mobile-entry.js?v=portraits-1"></script>
   </body>
 </html>

@@ -8,7 +8,7 @@ import {
   init,
   avatar,
 } from "./ui.js?v=engagement-2";
-import { initNotifications } from "./home-notifications.js?v=engagement-2";
+import { initNotifications } from "./home-notifications.js?v=fix-1";
 init();
 initNotifications();
 const categories = [
@@ -167,6 +167,7 @@ function renderExperts() {
     box.append(b);
   });
   document.querySelector("#more").hidden = allExperts.length <= limit;
+  document.querySelector("#less").hidden = limit <= 3 || allExperts.length <= 3;
 }
 async function loadExperts(keyword = "") {
   const version = ++request;
@@ -175,6 +176,7 @@ async function loadExperts(keyword = "") {
   status("expert-status", "베테랑을 불러오고 있어요.");
   document.querySelector("#experts").replaceChildren();
   document.querySelector("#more").hidden = true;
+  document.querySelector("#less").hidden = true;
   try {
     let rows;
     if (demo) {
@@ -206,8 +208,20 @@ async function loadExperts(keyword = "") {
   }
 }
 document.querySelector("#more").onclick = () => {
+  const first = limit;
   limit += 3;
   renderExperts();
+  // 새로 붙은 첫 카드로 스크롤 (가로·세로 배치 모두)
+  const card = document.querySelector("#experts").children[first];
+  card?.scrollIntoView({ behavior: "smooth", block: "start", inline: "start" });
+  card?.focus?.({ preventScroll: true });
+};
+document.querySelector("#less").onclick = () => {
+  limit = 3;
+  renderExperts();
+  const box = document.querySelector("#experts");
+  box.scrollLeft = 0;
+  box.scrollIntoView({ block: "center" });
 };
 document.querySelector("#search-form").onsubmit = (e) => {
   e.preventDefault();
