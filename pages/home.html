@@ -34,7 +34,13 @@
           <h2><em>경력</em>으로 <em>증명</em>된 베테랑</h2>
           <p id="expert-status" class="status" role="status"></p>
           <p class="swipe-hint">옆으로 넘겨 더 둘러보세요 →</p>
-          <div id="experts" class="stack" role="region" aria-label="추천 베테랑" tabindex="0"></div>
+          <div
+            id="experts"
+            class="stack"
+            role="region"
+            aria-label="추천 베테랑"
+            tabindex="0"
+          ></div>
           <button id="more" class="outline full" hidden>
             베테랑 더보기 ﹀
           </button>
@@ -55,7 +61,7 @@
         </section>
       </main>
       <nav class="bottom-nav" aria-label="바로가기">
-        <button data-coming="예약하기"><span>▤</span>예약하기</button
+        <button id="reserve-nav" disabled><span>▤</span>예약하기</button
         ><button data-coming="후기 보기"><span>☆</span>후기 보기</button
         ><a href="#experts"><span>☷</span>베테랑 찾기</a>
       </nav>
@@ -65,6 +71,6 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <script type="module" src="../js/pages/home.js"></script>
+    <script type="module" src="../js/pages/home.js?v=4"></script>
   </body>
 </html>
