@@ -172,8 +172,58 @@ export async function addSlot(startAt, endAt) {
 
 /** 상담 가능 시간 삭제 (예약된 시간은 삭제 안 됨) */
 export async function deleteSlot(slotId) {
-  const deleted = unwrap(await supabase.from('availability_slots').delete().eq('id', slotId).select());
-  if (deleted.length === 0) throw new Error('이미 예약된 시간은 삭제할 수 없습니다.');
+  const count = await deleteSlots([slotId]);
+  if (count === 0) throw new Error('이미 예약된 시간은 삭제할 수 없습니다.');
+}
+
+/**
+ * 여러 시간 한 번에 삭제 (예약된 시간은 건너뜀). 지운 개수를 돌려준다.
+ * 취소된 예약 기록이 있는 시간은 지우지 않고 닫아서 목록·캘린더에서만 사라진다.
+ * @param {number[]} slotIds
+ */
+export async function deleteSlots(slotIds) {
+  return unwrap(await supabase.rpc('delete_my_slots', { p_ids: slotIds }));
+}
+
+/** 요일 번호 (JS getDay()와 같음) → 이름 */
+export const WEEKDAYS = ['일', '월', '화', '수', '목', '금', '토'];
+
+/**
+ * 매주 반복 일정 한 번에 만들기 (한국 시간 기준)
+ * 이미 연 시간과 겹치거나 지난 시간은 건너뛴다. 한 번에 최대 300개.
+ * @param {{ weekdays: number[], start: string, end: string, minutes?: number, weeks?: number, from?: string }} opts
+ *   weekdays: 0=일 ~ 6=토, start·end: '14:00', minutes: 한 번 상담 길이(30~180, 기본 60),
+ *   weeks: 반복 주 수(1~12, 기본 4), from: 시작 날짜 '2026-11-02' (기본 오늘)
+ * @returns {Promise<{ created: number, skipped_overlap: number, skipped_past: number }>}
+ * @example addWeeklySlots({ weekdays: [2, 4], start: '14:00', end: '18:00' })  // 매주 화·목 14~18시, 1시간씩, 4주
+ */
+export async function addWeeklySlots({ weekdays, start, end, minutes = 60, weeks = 4, from = null }) {
+  return unwrap(await supabase.rpc('add_weekly_slots', {
+    p_weekdays: weekdays, p_start: start, p_end: end, p_minutes: minutes, p_weeks: weeks, p_from: from,
+  }));
+}
+
+/**
+ * 베테랑 본인 일정 (기간은 최대 62일)
+ * state: 'open'(예약 가능) | 'confirmed'(예약됨) | 'completed'(완료) | 'no_show'(노쇼)
+ * @param {Date | string} from
+ * @param {Date | string} to
+ * @returns {Promise<Array<{ slot_id, start_at, end_at, state, booking_id, youth_name, topic }>>}
+ * @example getMyCalendar(new Date(2026, 10, 1), new Date(2026, 11, 1))  // 2026년 11월
+ */
+export async function getMyCalendar(from, to) {
+  const start = new Date(from), end = new Date(to);
+  if (end - start > 62 * 864e5) throw new Error('일정은 62일까지 한 번에 볼 수 있어요.');
+  return unwrap(await supabase.rpc('get_my_calendar', { p_from: start.toISOString(), p_to: end.toISOString() }));
+}
+
+/** 일정을 한국 날짜별로 묶기: { '2026-11-03': [slot, ...] } (캘린더 칸에 넣을 때) */
+export function groupByDay(slots) {
+  const key = (v) => new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Seoul' }).format(new Date(v));
+  return slots.reduce((days, slot) => {
+    (days[key(slot.start_at)] ??= []).push(slot);
+    return days;
+  }, {});
 }
 
 /** 한 줄 조언 작성 (승인된 베테랑만, 200자 이내) */

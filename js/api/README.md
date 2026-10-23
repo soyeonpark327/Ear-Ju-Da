@@ -114,6 +114,13 @@ await registerExpert({ headline, industry, career_years, career_summary, keyword
 | `getMySlots()` | 내가 연 시간 전체 (`is_booked` 포함) |
 | `addSlot(startAt, endAt)` | 상담 가능 시간 추가 (`Date` 또는 `'2026-11-01T14:00'`) |
 | `deleteSlot(slotId)` | 시간 삭제 (예약된 시간은 불가) |
+| `deleteSlots(slotIds)` | 여러 시간 한 번에 삭제 (예약된 시간은 건너뜀), 지운 개수 반환 |
+| `addWeeklySlots({ weekdays, start, end, minutes, weeks, from })` | **매주 반복 일정**. 예) `{ weekdays: [2, 4], start: '14:00', end: '18:00' }` → 매주 화·목 14~18시를 1시간씩 4주. 겹치거나 지난 시간은 건너뛰고 `{ created, skipped_overlap, skipped_past }` 반환 |
+| `getMyCalendar(from, to)` | **내 일정** (최대 62일): `[{ slot_id, start_at, end_at, state, booking_id, youth_name, topic }]`, state는 `open`·`confirmed`·`completed`·`no_show` |
+| `groupByDay(slots)` | 일정을 한국 날짜별로 묶기 `{ '2026-11-03': [...] }` (달력 칸 채울 때) |
+| `WEEKDAYS` | `['일', '월', ..., '토']` (번호는 JS `getDay()`와 같음) |
+
+> 시간 규칙: 같은 베테랑의 시간은 겹칠 수 없고, 앞으로 90일 안, 길이 30분~3시간. 어기면 이유가 담긴 에러가 난다 (예: "11월 3일 14:00에 이미 열어 둔 상담 시간과 겹쳐요.")
 | `addTip(content)` / `deleteTip(tipId)` | 한 줄 조언 작성 / 삭제 |
 
 ## notes.js: 오답 노트
