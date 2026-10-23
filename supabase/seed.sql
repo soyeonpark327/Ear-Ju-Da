@@ -253,11 +253,11 @@ E'1. 유동인구가 아니라 "내 손님"의 동선을 봐라\n역 앞 유동�
   perform pg_temp.past_booking(v_park, v_han, 10, '카페 자리 두 곳 중 어디가 나을까요?', 4, '직접 가서 세어보라는 조언 덕분에 결정했어요.');
 
   -- ---------- 진행 중인 예약 (채팅 데모용) ----------
-  -- 김대표 × 최동수: 가장 빠른 상담 시간에 예약됨
-  select id into v_slot from public.availability_slots
-  where expert_id = v_choi and not is_booked and start_at > now()
-  order by start_at limit 1;
-  update public.availability_slots set is_booked = true where id = v_slot;
+  -- 김대표 × 최동수: seed를 실행한 시점부터 3시간 동안 "상담 중" (채팅은 상담 시간에만 보낼 수 있어서)
+  -- → 발표 직전에 seed.sql을 다시 실행하면 바로 실시간 채팅을 시연할 수 있다.
+  insert into public.availability_slots (expert_id, start_at, end_at, is_booked)
+  values (v_choi, date_trunc('minute', now()) - interval '5 minutes', date_trunc('minute', now()) + interval '3 hours', true)
+  returning id into v_slot;
   insert into public.bookings (slot_id, youth_id, expert_id, topic, price_points)
   values (v_slot, v_kim, v_choi, '청년창업 지원사업에 선정됐는데 사업비 정산을 어떻게 준비해야 할지 모르겠어요.', 3000)
   returning id into v_booking;

@@ -164,7 +164,8 @@ const report = await generateReport(bookingId); // 몇 초 걸림 → "보고서
 | 함수 | 설명 |
 | --- | --- |
 | `getMessages(bookingId)` | 지난 메시지 (오래된 순) `[{ id, sender_id, content, created_at }]` |
-| `sendMessage(bookingId, content)` | 메시지 보내기 (`status`가 `'confirmed'`인 예약만) |
+| `sendMessage(bookingId, content)` | 메시지 보내기. **진행 중 예약 + 상담 시작 10분 전 ~ 종료 30분 후**에만 가능 (그 외엔 안내 메시지로 throw) |
+| `getChatWindow(booking)` | 채팅방 상태 `{ state: 'before' \| 'open' \| 'closed', opensAt, closesAt, message }`. `message`를 입력창 위에 그대로 보여주고, `state !== 'open'`이면 입력창 비활성화 |
 | `subscribeMessages(bookingId, (msg) => {})` | 새 메시지가 올 때마다 호출. 구독 해제 함수를 돌려줌 |
 
 ```js
