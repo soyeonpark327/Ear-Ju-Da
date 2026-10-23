@@ -148,3 +148,8 @@
   min-height: 48px;
   margin-top: 12px;
 }
+.dash-schedule-link {
+  margin-top: 10px;
+  background: white;
+  min-height: 48px;
+}
