@@ -253,3 +253,32 @@ try {
   // AI 장애 시: 키워드 검색(getExperts)으로 대신 찾기
 }
 ```
+
+## notifications.js: 알림함
+
+알림은 DB가 자동으로 만들어요 (예약·30분 전·취소·완료·노쇼·보고서·노트 판매·후기·경력 인증). 화면은 읽고 "읽음" 처리만 해요.
+
+| 함수 | 설명 | 돌려주는 값 |
+| --- | --- | --- |
+| `getNotifications({ limit, unreadOnly })` | 내 알림 (최신순, 기본 30개) | `[{ id, type, title, body, data: { booking_id?, note_id? }, read_at, created_at }]` |
+| `getUnreadCount()` | 안 읽은 알림 수 (알림 버튼 빨간 점) | 숫자 |
+| `markNotificationRead(id)` / `markAllNotificationsRead()` | 읽음 처리 | |
+| `subscribeNotifications((n) => {})` | 새 알림 실시간 수신 | 구독 해제 함수 (Promise) |
+
+| type | 누르면 이동하면 좋은 곳 |
+| --- | --- |
+| `booking_new`, `booking_confirmed`, `booking_reminder`, `booking_cancelled`, `booking_completed`, `booking_no_show` | 내 상담 / 채팅방 (`data.booking_id`) |
+| `report_ready` | AI 전략 보고서 (`data.booking_id`) |
+| `note_sold` | 오답노트 상세 (`data.note_id`) |
+| `review_new` | 내 베테랑 프로필 |
+| `verification_changed` | 베테랑 프로필 등록·수정 |
+
+```js
+import { getUnreadCount, subscribeNotifications } from '../api/notifications.js';
+
+const bell = document.querySelector('#notifications');
+const render = (n) => bell.classList.toggle('has-unread', n > 0);
+render(await getUnreadCount());
+await subscribeNotifications(async () => render(await getUnreadCount()));
+```
+
