@@ -80,12 +80,6 @@ function renderTimes() {
     };
     $("booking-times").append(b);
   }
-  if (demo) {
-    const closed = document.createElement("button");
-    closed.textContent = "18:00 마감";
-    closed.disabled = true;
-    $("booking-times").append(closed);
-  }
   update();
 }
 function renderDates() {

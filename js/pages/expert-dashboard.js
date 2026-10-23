@@ -65,9 +65,8 @@ function renderNext(next) {
   topic.textContent = next.topic;
   const go = document.createElement("a");
   go.className = "primary";
-  go.href = demo ? "#" : route("chat.html", { id: next.id });
+  go.href = route("chat.html", { id: demo ? "demo-active" : next.id });
   go.textContent = "채팅방 가기";
-  if (demo) go.onclick = (e) => e.preventDefault();
   box.replaceChildren(when, who, topic, go);
 }
 

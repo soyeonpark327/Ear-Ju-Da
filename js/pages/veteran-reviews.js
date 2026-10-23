@@ -1,4 +1,4 @@
-import { statusbar, icon } from "./mobile-views.js?v=reviews-1";
+import { statusbar, icon } from "./mobile-views.js?v=fix-5";
 const rows = [
   {
     initial: "박",

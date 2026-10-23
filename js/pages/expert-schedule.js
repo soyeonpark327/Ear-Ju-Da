@@ -172,9 +172,8 @@ function renderDay() {
       } else if (s.booking_id && s.state !== "open") {
         const go = document.createElement("a");
         go.className = "outline";
-        go.href = demo ? "#" : route("chat.html", { id: s.booking_id });
+        go.href = route("chat.html", { id: demo ? "demo-active" : s.booking_id });
         go.textContent = s.state === "confirmed" ? "채팅방" : "기록";
-        if (demo) go.onclick = (e) => (e.preventDefault(), notice("예시 화면", "실제 서비스에서는 상담 채팅방으로 이동해요."));
         li.append(go);
       }
       return li;
