@@ -1,6 +1,6 @@
 // The actual application uses the same screen components as the supplied design.
 // API values replace only data fields; preview data never reaches live actions.
-import { icon } from "./mobile-views.js?v=fix-3";
+import { icon } from "./mobile-views.js?v=fix-5";
 const $ = (s) => document.querySelector(s),
   $$ = (s) => [...document.querySelectorAll(s)];
 const params = new URLSearchParams(location.search);
@@ -233,7 +233,7 @@ async function profile() {
     document.body.classList.add("r-profile-preview");
     if (params.get("calendar") === "1") {
       const { bindReferenceCalendar } = await import(
-        "./mobile-views.js?v=fix-3"
+        "./mobile-views.js?v=fix-5"
       );
       bindReferenceCalendar();
     }
@@ -345,7 +345,7 @@ async function profile() {
 async function booking() {
   if (["preview-lee", "demo-lee"].includes(params.get("id"))) {
     const { bindBookingSelection } = await import(
-      "./mobile-views.js?v=fix-3"
+      "./mobile-views.js?v=fix-5"
     );
     bindBookingSelection(() => say("예약 내용을 확인해주세요."));
     const selected = params.get("date");
