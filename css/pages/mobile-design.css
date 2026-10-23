@@ -2322,3 +2322,23 @@ body.mobile-design {
   line-height: 0;
   transform: translateY(-1px);
 }
+
+/* 하단 탭: 아이콘·글씨를 작고 촘촘하게 */
+.r-bottom-navigation {
+  height: 72px;
+  padding: 14px 13px 0;
+}
+.r-bottom-navigation a {
+  gap: 4px;
+  font-size: 11px;
+  line-height: 16px;
+}
+.r-bottom-navigation svg {
+  width: 19px;
+  height: 19px;
+}
+/* Ai 매칭 별: 글자 크기에 맞춰 작게 */
+.r-search .r-spark > .r-icon {
+  width: 15px;
+  height: 15px;
+}
