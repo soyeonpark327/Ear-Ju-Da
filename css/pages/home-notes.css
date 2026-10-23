@@ -801,3 +801,8 @@ dialog form button {
   font-size: 9px;
   line-height: 1.4;
 }
+/* Fit consultation, dashboard, points and notification controls on mobile. */
+.home-page .header-actions .account {
+  font-size: 12px;
+  padding: 0 8px;
+}
