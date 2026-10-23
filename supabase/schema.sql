@@ -15,6 +15,7 @@ create type public.booking_status as enum ('confirmed', 'completed', 'cancelled'
 create table public.profiles (
   id          uuid primary key references auth.users (id) on delete cascade,
   role        public.user_role not null default 'youth',
+  role_confirmed boolean not null default false,  -- 역할을 직접 골랐는지 (소셜 가입자는 false로 시작)
   name        text not null,
   avatar_url  text,
   senior_mode boolean not null default false,
@@ -154,7 +155,7 @@ declare
   -- 카카오는 사진 주소를 http://로 주기도 해서 https://로 바꾼다
   v_avatar text  := regexp_replace(coalesce(v_meta ->> 'avatar_url', v_meta ->> 'picture', ''), '^http://', 'https://');
 begin
-  insert into public.profiles (id, name, role, avatar_url)
+  insert into public.profiles (id, name, role, role_confirmed, avatar_url)
   values (
     new.id,
     coalesce(
@@ -167,6 +168,7 @@ begin
       '회원'
     ),
     case when v_meta ->> 'role' = 'veteran' then 'veteran'::public.user_role else 'youth'::public.user_role end,
+    v_meta ? 'role',
     case when v_avatar like 'https://%' then v_avatar end
   );
   return new;

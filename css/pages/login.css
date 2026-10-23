@@ -112,6 +112,17 @@ fieldset .field-label:first-child {
 .demo-accounts button {
   background: white;
 }
+.choose-role h2 {
+  font-size: 20px;
+}
+.choose-role > p {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 6px 0 20px;
+}
+#choose-submit {
+  margin-top: 24px;
+}
 .signed-in {
   display: grid;
   gap: 12px;

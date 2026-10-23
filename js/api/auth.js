@@ -106,6 +106,14 @@ export async function signOut() {
   if (error) throw new Error(error.message);
 }
 
+/**
+ * 역할 선택 (구글·카카오·네이버 가입자만, 한 번만). getMyProfile()의 role_confirmed가 false일 때 사용
+ * @param {'youth' | 'veteran'} role
+ */
+export async function chooseMyRole(role) {
+  unwrap(await supabase.rpc('choose_my_role', { p_role: role }));
+}
+
 /** 로그인한 사용자 (없으면 null) */
 export async function getCurrentUser() {
   const { data } = await supabase.auth.getSession();

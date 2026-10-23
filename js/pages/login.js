@@ -10,6 +10,7 @@ import {
   isNaverEnabled,
   signInWithNaver,
   completeNaverLogin,
+  chooseMyRole,
 } from "../api/auth.js";
 
 const $ = (id) => document.getElementById(id);
@@ -162,6 +163,32 @@ $("logout").onclick = async () => {
   if (off.length) status("social-status", `${off.join(", ")} 로그인은 준비 중이에요.`);
 })();
 
+// ---------- 역할 선택 (소셜 가입자가 처음 로그인했을 때) ----------
+function showChooseRole() {
+  ["auth-form", "demo-box", "social", "signed-in"].forEach((id) => ($(id).hidden = true));
+  document.querySelector(".tabs").hidden = true;
+  $("choose-role").hidden = false;
+  $("page-title").textContent = "가입 마무리";
+  document.title = "가입 마무리 | 이어주다";
+}
+$("choose-submit").onclick = async () => {
+  $("choose-submit").disabled = true;
+  try {
+    const role = document.querySelector('input[name="first-role"]:checked').value;
+    await chooseMyRole(role);
+    location.replace(next);
+  } catch (err) {
+    status("choose-status", friendly(err.message));
+    $("choose-submit").disabled = false;
+  }
+};
+// 로그인 직후: 역할을 아직 안 골랐으면 선택 화면, 아니면 원래 보던 곳으로
+async function afterSocialLogin() {
+  const me = await getMyProfile();
+  if (me?.role_confirmed === false) showChooseRole();
+  else location.replace(next);
+}
+
 // 소셜 로그인에서 돌아왔을 때: 성공이면 원래 화면으로, 실패면 이유를 보여준다
 const returnParams = new URLSearchParams(location.hash.slice(1) || location.search);
 const fromSocial = returnParams.has("access_token") || returnParams.has("error_description");
@@ -178,7 +205,7 @@ if (returnParams.has("naver_token_hash")) {
   history.replaceState(null, "", location.pathname + location.search);
   status("social-status", "네이버 로그인을 마무리하고 있어요…");
   completeNaverLogin(tokenHash)
-    .then(() => location.replace(next))
+    .then(afterSocialLogin)
     .catch((err) => status("social-status", friendly(err.message)));
 }
 
@@ -188,7 +215,11 @@ if (returnParams.has("naver_token_hash")) {
     const me = await getMyProfile();
     if (!me) return;
     if (fromSocial) {
-      location.replace(next);
+      await afterSocialLogin();
+      return;
+    }
+    if (me.role_confirmed === false) {
+      showChooseRole();
       return;
     }
     $("auth-form").hidden = true;

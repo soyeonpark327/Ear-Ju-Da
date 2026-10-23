@@ -53,7 +53,8 @@ try {
 | `signInWithSocial(provider, redirectTo)` | 구글(`'google'`)·카카오(`'kakao'`) 로그인 화면으로 이동 | |
 | `signOut()` | 로그아웃 | |
 | `getCurrentUser()` | 로그인한 사용자 | `user` 또는 `null` |
-| `getMyProfile()` | 내 프로필 | `{ id, role, name, avatar_url, senior_mode, points }` 또는 `null` |
+| `getMyProfile()` | 내 프로필 | `{ id, role, role_confirmed, name, avatar_url, senior_mode, points }` 또는 `null`. `role_confirmed`가 `false`면 소셜 가입 후 역할을 아직 안 고른 상태 |
+| `chooseMyRole(role)` | 소셜 가입자의 역할 선택 (`'youth'` / `'veteran'`, 한 번만) | |
 | `updateMyProfile({ name, avatar_url, senior_mode })` | 내 프로필 수정 (바꿀 값만) | 수정된 프로필 |
 | `onAuthChange((user) => {})` | 로그인/로그아웃될 때마다 호출 | 구독 해제 함수 |
 
