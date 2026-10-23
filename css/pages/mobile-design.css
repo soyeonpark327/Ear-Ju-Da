@@ -2360,3 +2360,7 @@ body.mobile-design {
   width: 15px;
   height: 15px;
 }
+/* 판로(정육면체) 아이콘: 납작해 보여서 세로로 조금 늘림 */
+.r-categories a:nth-child(5) .r-icon {
+  transform: scaleY(1.18);
+}
