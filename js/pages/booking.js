@@ -1,4 +1,4 @@
-import { demo, money, escape, notice, status, init, goLogin } from "./ui.js";
+import { demo, money, escape, notice, status, init, goLogin } from "./ui.js?v=10";
 init();
 const $ = (id) => document.getElementById(id),
   params = new URLSearchParams(location.search);

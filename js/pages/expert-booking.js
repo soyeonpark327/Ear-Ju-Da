@@ -7,7 +7,7 @@ import {
   init,
   avatar,
   route,
-} from "./ui.js";
+} from "./ui.js?v=10";
 init();
 const $ = (id) => document.getElementById(id);
 let id = new URLSearchParams(location.search).get("id");
