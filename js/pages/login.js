@@ -7,9 +7,9 @@ import {
   normalizePhone,
   getAuthProviders,
   signInWithSocial,
-  isNaverEnabled,
-  signInWithNaver,
-  completeNaverLogin,
+  isFunctionLoginEnabled,
+  signInWithFunction,
+  completeFunctionLogin,
   chooseMyRole,
 } from "../api/auth.js";
 
@@ -156,11 +156,15 @@ $("logout").onclick = async () => {
 };
 
 // ---------- 간편 로그인 (카카오·네이버·구글) ----------
-// Supabase에서 켠 방식만 버튼을 활성화한다. 네이버는 Edge Function이 배포·설정됐는지 따로 확인한다.
+// 구글은 Supabase 설정, 네이버·카카오는 Edge Function이 배포·설정됐는지 확인해서 버튼을 활성화한다.
 (async () => {
   let enabled = {};
-  const [providers, naver] = await Promise.all([getAuthProviders().catch(() => ({})), isNaverEnabled()]);
-  enabled = { ...providers, naver };
+  const [providers, naver, kakao] = await Promise.all([
+    getAuthProviders().catch(() => ({})),
+    isFunctionLoginEnabled("naver"),
+    isFunctionLoginEnabled("kakao"),
+  ]);
+  enabled = { google: providers.google === true, naver, kakao };
   const off = [];
   document.querySelectorAll("[data-provider]").forEach((button) => {
     const provider = button.dataset.provider;
@@ -174,7 +178,7 @@ $("logout").onclick = async () => {
       try {
         // 로그인 후 이 화면으로 돌아와서(next 유지) 원래 보던 곳으로 보낸다
         const back = location.href.split("#")[0];
-        if (provider === "naver") signInWithNaver(back);
+        if (provider === "naver" || provider === "kakao") signInWithFunction(provider, back);
         else await signInWithSocial(provider, back);
       } catch (err) {
         status("social-status", friendly(err.message));
@@ -182,7 +186,10 @@ $("logout").onclick = async () => {
       }
     };
   });
-  if (off.length) status("social-status", `${off.join(", ")} 로그인은 준비 중이에요.`);
+  // 로그인에서 돌아온 결과(오류·진행 안내)가 이미 표시돼 있으면 덮어쓰지 않는다
+  if (off.length && !$("social-status").textContent) {
+    status("social-status", `${off.join(", ")} 로그인은 준비 중이에요.`);
+  }
 })();
 
 // ---------- 역할 선택 (소셜 가입자가 처음 로그인했을 때) ----------
@@ -217,16 +224,18 @@ const fromSocial = returnParams.has("access_token") || returnParams.has("error_d
 if (returnParams.has("error_description")) {
   status("social-status", friendly(returnParams.get("error_description")));
 }
-if (returnParams.has("naver_error")) {
-  status("social-status", returnParams.get("naver_error"));
+const fnError = returnParams.get("naver_error") || returnParams.get("kakao_error");
+if (fnError) {
+  status("social-status", fnError);
   history.replaceState(null, "", location.pathname + location.search);
 }
-// 네이버: Edge Function이 준 일회용 토큰으로 로그인을 마친다
-if (returnParams.has("naver_token_hash")) {
-  const tokenHash = returnParams.get("naver_token_hash");
+// 네이버·카카오: Edge Function이 준 일회용 토큰으로 로그인을 마친다
+const fnTokenHash = returnParams.get("naver_token_hash") || returnParams.get("kakao_token_hash");
+if (fnTokenHash) {
+  const tokenHash = fnTokenHash;
   history.replaceState(null, "", location.pathname + location.search);
-  status("social-status", "네이버 로그인을 마무리하고 있어요…");
-  completeNaverLogin(tokenHash)
+  status("social-status", "로그인을 마무리하고 있어요…");
+  completeFunctionLogin(tokenHash)
     .then(afterSocialLogin)
     .catch((err) => status("social-status", friendly(err.message)));
 }
