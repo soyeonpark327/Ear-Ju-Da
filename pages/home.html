@@ -13,7 +13,10 @@
     <div class="app">
       <header class="home-header">
         <a href="home.html" class="brand">이어주다<span>경험을 잇다</span></a
-        ><button id="notifications" aria-label="알림">♧</button>
+        ><div class="header-actions">
+          <a id="account" class="account" href="login.html">로그인</a
+          ><button id="notifications" aria-label="알림">♧</button>
+        </div>
       </header>
       <main id="main">
         <section class="home-top">
@@ -71,6 +74,6 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <script type="module" src="../js/pages/home.js?v=5"></script>
+    <script type="module" src="../js/pages/home.js?v=7"></script>
   </body>
 </html>

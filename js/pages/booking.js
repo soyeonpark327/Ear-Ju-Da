@@ -1,4 +1,4 @@
-import { demo, money, escape, notice, status, init } from "./ui.js";
+import { demo, money, escape, notice, status, init, goLogin } from "./ui.js";
 init();
 const $ = (id) => document.getElementById(id),
   params = new URLSearchParams(location.search);
@@ -200,8 +200,12 @@ $("chat-mode").onclick = () => {
   update();
 };
 $("cancel-booking").onclick = () => $("booking-confirm").close();
-$("book").onclick = () => {
+$("book").onclick = async () => {
   if (!slot || busy || complete) return;
+  if (!demo && !(await (await import("../api/auth.js")).getCurrentUser())) {
+    goLogin();
+    return;
+  }
   if (new Date(slot.start_at) <= new Date()) {
     status("booking-message", "선택한 시간이 지났어요. 다시 선택해주세요.");
     loadExpert();
@@ -232,7 +236,10 @@ $("confirm-booking").onclick = async () => {
   $("confirm-booking").disabled = true;
   try {
     const { getCurrentUser } = await import("../api/auth.js");
-    if (!(await getCurrentUser())) throw new Error("로그인 후 예약해주세요.");
+    if (!(await getCurrentUser())) {
+      goLogin();
+      return;
+    }
     if (new Date(slot.start_at) <= new Date())
       throw new Error("선택한 시간이 지났어요. 다시 선택해주세요.");
     const id = await (

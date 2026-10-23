@@ -142,20 +142,32 @@ create index on public.tips (expert_id, created_at desc);
 
 
 -- ---------- 회원가입 시 profiles 자동 생성 ----------
--- 프론트에서 signUp 할 때 options.data에 { name, role } 을 넘긴다.
-create function public.handle_new_user()
+-- 이메일·전화번호 가입: 프론트에서 signUp 할 때 options.data에 { name, role } 을 넘긴다.
+-- 구글·카카오 가입: 이름은 full_name·nickname 등에서 찾고, 역할은 청년(youth)으로 시작한다.
+create or replace function public.handle_new_user()
 returns trigger
 language plpgsql
 security definer set search_path = ''
 as $$
+declare
+  v_meta   jsonb := coalesce(new.raw_user_meta_data, '{}'::jsonb);
+  -- 카카오는 사진 주소를 http://로 주기도 해서 https://로 바꾼다
+  v_avatar text  := regexp_replace(coalesce(v_meta ->> 'avatar_url', v_meta ->> 'picture', ''), '^http://', 'https://');
 begin
-  insert into public.profiles (id, name, role)
+  insert into public.profiles (id, name, role, avatar_url)
   values (
     new.id,
-    coalesce(nullif(new.raw_user_meta_data ->> 'name', ''), '이름 없음'),
-    case when new.raw_user_meta_data ->> 'role' = 'veteran'
-         then 'veteran'::public.user_role
-         else 'youth'::public.user_role end
+    coalesce(
+      nullif(trim(v_meta ->> 'name'), ''),
+      nullif(trim(v_meta ->> 'full_name'), ''),
+      nullif(trim(v_meta ->> 'nickname'), ''),
+      nullif(trim(v_meta ->> 'user_name'), ''),
+      nullif(trim(v_meta ->> 'preferred_username'), ''),
+      case when new.email not like '%@phone.invalid' then nullif(split_part(new.email, '@', 1), '') end,
+      '회원'
+    ),
+    case when v_meta ->> 'role' = 'veteran' then 'veteran'::public.user_role else 'youth'::public.user_role end,
+    case when v_avatar like 'https://%' then v_avatar end
   );
   return new;
 end;
@@ -167,27 +179,61 @@ create trigger on_auth_user_created
 
 
 -- ---------- 화면용 뷰 ----------
--- 베테랑 목록 카드: 승인된 베테랑 + 이름 + 평점
-create view public.expert_cards
+-- 베테랑 목록 카드: 승인된 베테랑 + 이름 + 평점 + 검색용 텍스트 + 신뢰 등급·뱃지
+-- 등급 기준 (gold / silver / bronze)
+--   gold   : 경력 25년 이상 + 완료 상담 2회 이상 + 평점 4.5 이상
+--   silver : 경력 20년 이상 + 완료 상담 1회 이상 + 평점 4.0 이상
+--   bronze : 관리자 승인(경력 인증)을 받은 베테랑
+-- 완료한 상담 수. bookings는 당사자만 볼 수 있어서(RLS) 개수만 공개하는 함수로 센다.
+create or replace function public.expert_completed_count(p_expert_id uuid)
+returns integer
+language sql stable
+security definer set search_path = ''
+as $$
+  select count(*)::integer from public.bookings
+  where expert_id = p_expert_id and status = 'completed';
+$$;
+
+create or replace view public.expert_cards
 with (security_invoker = true) as
-select
-  e.id,
-  p.name,
-  p.avatar_url,
-  e.headline,
-  e.industry,
-  e.career_years,
-  e.keywords,
-  e.price_points,
-  coalesce(round(avg(r.rating), 1), 0) as rating,
-  count(r.id) as review_count,
-  -- 검색용: 이름·소개·업종·경력·키워드를 한 줄로 합친 값 (getExperts가 부분 검색에 사용)
-  concat_ws(' ', p.name, e.headline, e.industry, e.career_summary, array_to_string(e.keywords, ' ')) as search_text
-from public.experts e
-join public.profiles p on p.id = e.id
-left join public.reviews r on r.expert_id = e.id
-where e.verification = 'approved'
-group by e.id, p.id;
+with base as (
+  select
+    e.id,
+    p.name,
+    p.avatar_url,
+    e.headline,
+    e.industry,
+    e.career_years,
+    e.keywords,
+    e.price_points,
+    coalesce(round(avg(r.rating), 1), 0) as rating,
+    count(r.id) as review_count,
+    concat_ws(' ', p.name, e.headline, e.industry, e.career_summary, array_to_string(e.keywords, ' ')) as search_text,
+    public.expert_completed_count(e.id) as completed_count
+  from public.experts e
+  join public.profiles p on p.id = e.id
+  left join public.reviews r on r.expert_id = e.id
+  where e.verification = 'approved'
+  group by e.id, p.id
+),
+graded as (
+  select *,
+    case
+      when career_years >= 25 and completed_count >= 2 and rating >= 4.5 then 'gold'
+      when career_years >= 20 and completed_count >= 1 and rating >= 4.0 then 'silver'
+      else 'bronze'
+    end as trust_grade
+  from base
+)
+select *,
+  case trust_grade when 'gold' then '최고 신뢰' when 'silver' then '신뢰 베테랑' else '경력 인증' end as trust_label,
+  array_remove(array[
+    '경력 인증',
+    case when career_years >= 30 then '30년+ 경력' when career_years >= 20 then '20년+ 경력' end,
+    case when review_count >= 2 and rating >= 4.8 then '평점 최상위' end,
+    case when completed_count >= 1 then '상담 ' || completed_count || '회' end
+  ], null) as badges
+from graded;
 
 
 -- ---------- 테이블 권한 ----------

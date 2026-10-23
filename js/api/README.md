@@ -46,6 +46,11 @@ try {
 | --- | --- | --- |
 | `signUp({ email, password, name, role })` | 회원가입. `role`은 `'youth'` 또는 `'veteran'` | |
 | `signIn(email, password)` | 로그인 | |
+| `signUpWithId({ id, password, name, role })` | 회원가입. `id`는 **이메일 또는 휴대폰 번호** (`010-1234-5678`) | |
+| `signInWithId(id, password)` | 이메일 또는 휴대폰 번호로 로그인 | |
+| `normalizePhone(value)` | `'010-1234-5678'` → `'01012345678'`, 형식이 틀리면 `null` | 문자열 또는 `null` |
+| `getAuthProviders()` | Supabase에서 켜진 로그인 방식 | `{ email: true, google: false, kakao: true, ... }` |
+| `signInWithSocial(provider, redirectTo)` | 구글(`'google'`)·카카오(`'kakao'`) 로그인 화면으로 이동 | |
 | `signOut()` | 로그아웃 | |
 | `getCurrentUser()` | 로그인한 사용자 | `user` 또는 `null` |
 | `getMyProfile()` | 내 프로필 | `{ id, role, name, avatar_url, senior_mode, points }` 또는 `null` |
@@ -68,10 +73,21 @@ if (me?.senior_mode) document.documentElement.classList.add('senior-mode');
 
 | 함수 | 설명 | 돌려주는 값 |
 | --- | --- | --- |
-| `getExperts({ keyword, industry })` | 승인된 베테랑 목록 (평점순). 둘 다 생략 가능. `keyword`는 이름·소개·업종·경력·키워드 **부분 검색** (`'계약'`, `'이정훈'`, `'#제조공정 #납품계약'`), 띄어쓰기로 여러 단어면 모두 포함된 것만 | `[{ id, name, avatar_url, headline, industry, career_years, keywords, price_points, rating, review_count }]` |
+| `getExperts({ keyword, industry })` | 승인된 베테랑 목록 (평점순). 둘 다 생략 가능. `keyword`는 이름·소개·업종·경력·키워드 **부분 검색** (`'계약'`, `'이정훈'`, `'#제조공정 #납품계약'`), 띄어쓰기로 여러 단어면 모두 포함된 것만 | `[{ id, name, avatar_url, headline, industry, career_years, keywords, price_points, rating, review_count, completed_count, trust_grade, trust_label, badges }]` (아래 신뢰 등급 참고) |
 | `getExpert(id)` | 베테랑 상세 | 위 정보 + `career_summary`, 없으면 `null` |
 | `getSlots(expertId)` | 예약 가능한 시간 | `[{ id, start_at, end_at }]` |
 | `getTips(expertId)` | 한 줄 조언 | `[{ id, content, created_at }]` |
+
+**신뢰 등급 · 뱃지** (`getExperts`, `getExpert` 결과에 포함)
+
+| 필드 | 값 |
+| --- | --- |
+| `trust_grade` | `'gold'` / `'silver'` / `'bronze'` (CSS 클래스 `trust trust-gold` 등으로 사용) |
+| `trust_label` | `'최고 신뢰'` / `'신뢰 베테랑'` / `'경력 인증'` |
+| `badges` | 칩으로 보여줄 목록. 예) `['경력 인증', '30년+ 경력', '평점 최상위', '상담 2회']` |
+| `completed_count` | 완료한 상담 수 |
+
+등급 기준: **gold** 경력 25년↑ + 완료 상담 2회↑ + 평점 4.5↑ / **silver** 경력 20년↑ + 완료 상담 1회↑ + 평점 4.0↑ / **bronze** 관리자 승인(경력 인증) 완료
 
 **베테랑 본인용**
 

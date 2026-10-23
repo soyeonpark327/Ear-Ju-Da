@@ -89,6 +89,11 @@ function openExpert(e) {
 document.querySelector("#reserve-nav").onclick = () => {
   location.href = route("booking.html");
 };
+// 신뢰 등급 뱃지 (gold / silver / bronze). 예시 데이터에는 없어서 표시하지 않는다.
+const trustBadge = (e) =>
+  e.trust_label
+    ? ` <span class="trust trust-${escape(e.trust_grade)}">${escape(e.trust_label)}</span>`
+    : "";
 function renderExperts() {
   const box = document.querySelector("#experts");
   box.replaceChildren();
@@ -96,7 +101,7 @@ function renderExperts() {
     const b = document.createElement("button");
     b.className = "expert";
     let image = demo ? e.avatar_url : avatar(e.avatar_url);
-    b.innerHTML = `${image ? `<img class="portrait" src="${escape(image)}" alt="">` : `<span class="portrait initial" aria-hidden="true">${escape((e.name || "베")[0])}</span>`}<div class="expert-info"><div class="expert-top"><div><h3>${escape(e.name)}</h3><p class="sub">${escape(e.headline)}</p></div><div class="rating">${escape(e.rating || "-")}<small>평점</small></div></div><div class="career"><span class="bars" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="height:${6 + ((i * 7) % 17)}px"></i>`).join("")}</span>${escape(e.career_years || 0)}년</div><p class="career-summary">${escape(e.career_summary || (e.keywords || []).join(" · "))}</p></div>`;
+    b.innerHTML = `${image ? `<img class="portrait" src="${escape(image)}" alt="">` : `<span class="portrait initial" aria-hidden="true">${escape((e.name || "베")[0])}</span>`}<div class="expert-info"><div class="expert-top"><div><h3>${escape(e.name)}${trustBadge(e)}</h3><p class="sub">${escape(e.headline)}</p></div><div class="rating">${escape(e.rating || "-")}<small>평점</small></div></div><div class="career"><span class="bars" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="height:${6 + ((i * 7) % 17)}px"></i>`).join("")}</span>${escape(e.career_years || 0)}년</div><p class="career-summary">${escape(e.career_summary || (e.keywords || []).join(" · "))}</p></div>`;
     b.onclick = () => openExpert(e);
     const img = b.querySelector("img");
     if (img)
@@ -153,7 +158,7 @@ document.querySelector("#more").onclick = () => {
 };
 document.querySelector("#search-form").onsubmit = (e) => {
   e.preventDefault();
-  location.href = route("expert-booking.html", {
+  location.href = route("matching.html", {
     keyword: document.querySelector("#keyword").value.trim(),
   });
 };

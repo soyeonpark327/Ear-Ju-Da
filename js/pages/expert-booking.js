@@ -196,12 +196,17 @@ async function load() {
       { length: 64 },
       (_, i) => `<i style="height:${7 + ((i * 13) % 27)}px"></i>`,
     ).join("");
+    // 신뢰 등급 → 경력 → 뱃지(경력 연수와 겹치는 것 제외) → 키워드
     $("expert-tags").innerHTML = [
-      `경력 ${expert.career_years || 0}년`,
-      ...(expert.keywords || []),
-    ]
-      .map((k) => `<li>${escape(k)}</li>`)
-      .join("");
+      ...(expert.trust_label
+        ? [`<li class="trust trust-${escape(expert.trust_grade)}">${escape(expert.trust_label)}</li>`]
+        : []),
+      ...[
+        `경력 ${expert.career_years || 0}년`,
+        ...(expert.badges || []).filter((b) => !/년\+ 경력/.test(b)),
+        ...(expert.keywords || []),
+      ].map((k) => `<li>${escape(k)}</li>`),
+    ].join("");
     $("profile-content").hidden = false;
     status("expert-load", "");
     document.title = `${expert.name} 상담 예약 | 이어주다`;
