@@ -49,6 +49,7 @@ Ear-Ju-Da/
     ├── policies.sql    # RLS 보안 정책
     ├── functions.sql   # 포인트가 오가는 동작 (노트 구매, 예약, 완료, 취소)
     ├── seed.sql        # 데모용 샘플 데이터
+    ├── migrations/     # 운영 중인 DB에 순서대로 적용한 변경 (001~)
     └── functions/      # Edge Functions (AI 보고서 등)
 ```
 
@@ -60,6 +61,12 @@ ES Modules를 쓰기 때문에 HTML 파일을 더블클릭해서 열면 동작�
 
 1. VS Code 확장 프로그램 **Live Server**를 설치합니다.
 2. `index.html`을 우클릭하고 **Open with Live Server**를 누릅니다.
+
+## DB 설치·변경
+
+- **새로 설치**: SQL Editor에서 `schema.sql` → `policies.sql` → `functions.sql` → `migrations/007_certificates.sql`(Storage 설정) → `seed.sql`
+- **운영 중인 DB 변경**: `supabase/migrations/`의 새 번호 파일만 실행 (001~006은 schema·policies·functions에 이미 반영됨)
+- Edge Functions(`supabase/functions/`)는 대시보드에서 같은 이름으로 배포하고 **Verify JWT를 끈다**. 필요한 Secrets는 각 파일 맨 위 주석 참고
 
 ## 데모 계정
 
