@@ -94,23 +94,73 @@ const trustBadge = (e) =>
   e.trust_label
     ? ` <span class="trust trust-${escape(e.trust_grade)}">${escape(e.trust_label)}</span>`
     : "";
+// Fictional AI portraits are illustrative placeholders, never identity photos.
+function expertPortrait(expert) {
+  const files = ["man-v1.jpg", "woman-v1.jpg", "senior-v1.jpg"];
+  const examples = { "demo-lee": 0, "demo-park": 1, "demo-jung": 2 };
+  // The repository seed personas have fixed illustrative portraits.
+  const seedPersonas = {
+    이정훈: 0,
+    최동수: 2,
+    김영숙: 1,
+    박미경: 1,
+    정성호: 2,
+    한상철: 0,
+    오명수: 2,
+  };
+  const hash = [...String(expert.id || expert.name || "expert")].reduce(
+    (n, c) => (n * 31 + c.charCodeAt(0)) >>> 0,
+    0,
+  );
+  const fallback = `../assets/home/ai-portraits/${files[examples[expert.id] ?? seedPersonas[expert.name] ?? hash % files.length]}`;
+  const frame = document.createElement("span");
+  frame.className = "expert-portrait-frame";
+  const img = document.createElement("img");
+  img.className = "portrait";
+  img.loading = "lazy";
+  img.decoding = "async";
+  img.width = 64;
+  img.height = 84;
+  const label = document.createElement("span");
+  label.className = "expert-portrait-label";
+  label.textContent = "AI 예시";
+  let illustrative = false;
+  const useExample = () => {
+    illustrative = true;
+    img.alt = "AI로 생성한 예시 인물 사진 · 실제 베테랑의 모습이 아니에요";
+    label.hidden = false;
+    img.src = fallback;
+  };
+  img.onerror = () => {
+    if (!illustrative) {
+      useExample();
+      return;
+    }
+    const initial = document.createElement("span");
+    initial.className = "portrait initial";
+    initial.setAttribute("aria-hidden", "true");
+    initial.textContent = (expert.name || "베")[0];
+    img.replaceWith(initial);
+    label.hidden = true;
+  };
+  const original = demo ? "" : avatar(expert.avatar_url);
+  if (original) {
+    img.alt = "";
+    label.hidden = true;
+    img.src = original;
+  } else useExample();
+  frame.append(img, label);
+  return frame;
+}
 function renderExperts() {
   const box = document.querySelector("#experts");
   box.replaceChildren();
   allExperts.slice(0, limit).forEach((e) => {
     const b = document.createElement("button");
     b.className = "expert";
-    let image = demo ? e.avatar_url : avatar(e.avatar_url);
-    b.innerHTML = `${image ? `<img class="portrait" src="${escape(image)}" alt="">` : `<span class="portrait initial" aria-hidden="true">${escape((e.name || "베")[0])}</span>`}<div class="expert-info"><div class="expert-top"><div><h3>${escape(e.name)}${trustBadge(e)}</h3><p class="sub">${escape(e.headline)}</p></div><div class="rating">${escape(e.rating || "-")}<small>평점</small></div></div><div class="career"><span class="bars" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="height:${6 + ((i * 7) % 17)}px"></i>`).join("")}</span>${escape(e.career_years || 0)}년</div><p class="career-summary">${escape(e.career_summary || (e.keywords || []).join(" · "))}</p></div>`;
+    b.innerHTML = `<div class="expert-info"><div class="expert-top"><div><h3>${escape(e.name)}${trustBadge(e)}</h3><p class="sub">${escape(e.headline)}</p></div><div class="rating">${escape(e.rating || "-")}<small>평점</small></div></div><div class="career"><span class="bars" aria-hidden="true">${Array.from({ length: 22 }, (_, i) => `<i style="height:${6 + ((i * 7) % 17)}px"></i>`).join("")}</span>${escape(e.career_years || 0)}년</div><p class="career-summary">${escape(e.career_summary || (e.keywords || []).join(" · "))}</p></div>`;
     b.onclick = () => openExpert(e);
-    const img = b.querySelector("img");
-    if (img)
-      img.onerror = () => {
-        const fallback = document.createElement("span");
-        fallback.className = "portrait initial";
-        fallback.textContent = (e.name || "베")[0];
-        img.replaceWith(fallback);
-      };
+    b.prepend(expertPortrait(e));
     box.append(b);
   });
   document.querySelector("#more").hidden = allExperts.length <= limit;

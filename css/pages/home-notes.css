@@ -779,3 +779,25 @@ dialog form button {
   white-space: normal;
   overflow-wrap: anywhere;
 }
+.expert-portrait-frame {
+  position: relative;
+  width: 64px;
+  height: 84px;
+  display: block;
+}
+.expert-portrait-frame .portrait {
+  display: block;
+}
+.expert-portrait-label {
+  position: absolute;
+  bottom: 3px;
+  left: 3px;
+  right: 3px;
+  padding: 2px 3px;
+  border-radius: 5px;
+  background: #ffffffed;
+  color: #525a67;
+  text-align: center;
+  font-size: 9px;
+  line-height: 1.4;
+}
