@@ -2,14 +2,21 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <title>내 정보 | 이어주다</title>
     <link rel="stylesheet" href="../css/reset.css" />
     <link rel="stylesheet" href="../css/variables.css" />
     <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
     <link rel="stylesheet" href="../css/pages/mypage.css?v=1" />
+    <link
+      rel="stylesheet"
+      href="../css/pages/reference-design.css?v=reference-1"
+    />
   </head>
-  <body class="my-page">
+  <body class="my-page" data-reference-scripts="[&quot;../js/pages/mypage.js?v=1&quot;]">
     <a class="skip" href="#main">본문으로 이동</a>
     <div class="app">
       <header class="page-header">
@@ -23,22 +30,29 @@
             <span id="my-avatar" class="my-avatar" aria-hidden="true"></span>
             <div class="my-who">
               <h2 id="my-name"></h2>
-              <p><span id="my-role" class="my-role"></span><span id="my-login"></span></p>
+              <p>
+                <span id="my-role" class="my-role"></span
+                ><span id="my-login"></span>
+              </p>
             </div>
-            <button type="button" id="my-name-edit" class="outline">이름 수정</button>
+            <button type="button" id="my-name-edit" class="outline">
+              이름 수정
+            </button>
           </section>
           <form id="my-name-form" class="my-name-form" hidden>
             <label for="my-name-input">이름 (2~20자)</label>
             <input id="my-name-input" maxlength="20" required />
             <div class="my-two">
-              <button type="button" id="my-name-cancel" class="outline">취소</button
+              <button type="button" id="my-name-cancel" class="outline">
+                취소</button
               ><button type="submit" class="primary">저장</button>
             </div>
           </form>
           <p id="my-name-status" class="status" role="status"></p>
 
           <a href="points.html" data-route class="my-points">
-            <span>보유 포인트</span><strong id="my-points"></strong><span aria-hidden="true">›</span>
+            <span>보유 포인트</span><strong id="my-points"></strong
+            ><span aria-hidden="true">›</span>
           </a>
 
           <nav aria-label="내 메뉴">
@@ -51,21 +65,42 @@
                 <h2 id="my-senior-title">큰 글씨 모드</h2>
                 <p class="my-hint">글씨와 버튼을 크게 보여줘요.</p>
               </div>
-              <button type="button" id="my-senior" class="my-switch" role="switch" aria-checked="false" aria-labelledby="my-senior-title"><span></span></button>
+              <button
+                type="button"
+                id="my-senior"
+                class="my-switch"
+                role="switch"
+                aria-checked="false"
+                aria-labelledby="my-senior-title"
+              >
+                <span></span>
+              </button>
             </div>
           </section>
 
-          <button type="button" id="my-logout" class="outline full my-logout">로그아웃</button>
+          <button type="button" id="my-logout" class="outline full my-logout">
+            로그아웃
+          </button>
 
           <details class="my-danger">
             <summary>회원 탈퇴</summary>
             <ul class="my-danger-list">
-              <li>진행 중인 상담이 있으면 먼저 취소하거나 상담을 마쳐야 해요.</li>
+              <li>
+                진행 중인 상담이 있으면 먼저 취소하거나 상담을 마쳐야 해요.
+              </li>
               <li>남은 포인트는 사라지고 돌려받을 수 없어요.</li>
-              <li>상담·후기·판매 기록이 있으면 상대방 기록을 위해 이름만 "탈퇴한 회원"으로 남아요.</li>
-              <li>베테랑은 목록에서 사라지고, 오답노트는 비공개로 바뀌어요. 이미 산 사람은 계속 볼 수 있어요.</li>
+              <li>
+                상담·후기·판매 기록이 있으면 상대방 기록을 위해 이름만 "탈퇴한
+                회원"으로 남아요.
+              </li>
+              <li>
+                베테랑은 목록에서 사라지고, 오답노트는 비공개로 바뀌어요. 이미
+                산 사람은 계속 볼 수 있어요.
+              </li>
             </ul>
-            <button type="button" id="my-delete" class="outline full my-delete">탈퇴하기</button>
+            <button type="button" id="my-delete" class="outline full my-delete">
+              탈퇴하기
+            </button>
           </details>
         </div>
       </main>
@@ -74,12 +109,22 @@
       <form id="my-delete-form">
         <h2 id="my-delete-title">정말 탈퇴할까요?</h2>
         <p id="my-delete-text"></p>
-        <label for="my-delete-confirm" class="my-hint">확인을 위해 <strong>탈퇴</strong>라고 입력해 주세요.</label>
+        <label for="my-delete-confirm" class="my-hint"
+          >확인을 위해 <strong>탈퇴</strong>라고 입력해 주세요.</label
+        >
         <input id="my-delete-confirm" autocomplete="off" />
         <p id="my-delete-status" class="status" role="status"></p>
         <div class="my-two">
-          <button type="button" id="my-delete-cancel" class="outline">돌아가기</button
-          ><button type="submit" id="my-delete-ok" class="primary my-delete-fill" disabled>탈퇴하기</button>
+          <button type="button" id="my-delete-cancel" class="outline">
+            돌아가기</button
+          ><button
+            type="submit"
+            id="my-delete-ok"
+            class="primary my-delete-fill"
+            disabled
+          >
+            탈퇴하기
+          </button>
         </div>
       </form>
     </dialog>
@@ -88,6 +133,10 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <script type="module" src="../js/pages/mypage.js?v=1"></script>
+
+    <script
+      type="module"
+      src="../js/pages/reference-shell.js?v=reference-1"
+    ></script>
   </body>
 </html>
