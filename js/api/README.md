@@ -95,10 +95,20 @@ if (me?.senior_mode) document.documentElement.classList.add('senior-mode');
 
 **베테랑 본인용**
 
+증명서 → 전문가 등록 흐름:
+```js
+const input = document.querySelector('#certificate'); // <input type="file" accept=".pdf,image/*">
+const path = await uploadCertificate(input.files[0]);
+await registerExpert({ headline, industry, career_years, career_summary, keywords, price_points, certificate_path: path });
+// 관리자가 Supabase에서 확인 후 verification을 'approved'로 바꾸면 목록에 노출
+```
+
 | 함수 | 설명 |
 | --- | --- |
 | `getMyExpert()` | 내 전문가 정보. `verification`이 `'pending'`이면 승인 대기 중 |
-| `registerExpert({ headline, industry, career_years, career_summary, keywords, price_points })` | 전문가 정보 처음 작성 |
+| `uploadCertificate(file)` | **경력 증명서 업로드** (PDF·JPG·PNG·WEBP·HEIC, 10MB 이하). 전문가 정보가 있으면 바로 연결, 반려 상태면 승인 대기로. 없으면 돌려받은 경로를 `registerExpert`의 `certificate_path`에 |
+| `getMyCertificateUrl()` | 내가 올린 증명서 보기 링크 (1분 유효), 없으면 `null` |
+| `registerExpert({ headline, industry, career_years, career_summary, keywords, price_points, certificate_path })` | 전문가 정보 처음 작성 (`certificate_path`는 `uploadCertificate()` 결과) |
 | `updateMyExpert(changes)` | 전문가 정보 수정 |
 | `getMySlots()` | 내가 연 시간 전체 (`is_booked` 포함) |
 | `addSlot(startAt, endAt)` | 상담 가능 시간 추가 (`Date` 또는 `'2026-11-01T14:00'`) |
