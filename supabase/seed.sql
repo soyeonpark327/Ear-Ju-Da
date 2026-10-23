@@ -8,6 +8,7 @@
 --   청년  park@example.com  박청년
 --   베테랑 lee@example.com   이정훈 (제조·납품계약)  외 베테랑 5명은 아래 참고
 --   베테랑 oh@example.com    오명수 (승인 대기 상태 → 관리자 승인 데모용)
+--   관리자 admin@example.com 관리자 (014 적용 후, 경력 인증 승인 화면 admin.html)
 -- =========================================================
 
 -- ---------- 기존 데모 데이터 삭제 ----------
@@ -102,6 +103,8 @@ declare
   v_jung  uuid := pg_temp.demo_user('jung@example.com',  '정성호', 'veteran');
   v_han   uuid := pg_temp.demo_user('han@example.com',   '한상철', 'veteran');
   v_oh    uuid := pg_temp.demo_user('oh@example.com',    '오명수', 'veteran');
+  -- 관리자 (014 적용 전 DB에서는 일반 회원으로만 만들어짐)
+  v_admin uuid := pg_temp.demo_user('admin@example.com', '관리자', 'youth');
 
   v_note    bigint;
   v_booking bigint;
@@ -294,5 +297,11 @@ E'1. 유동인구가 아니라 "내 손님"의 동선을 봐라\n역 앞 유동�
   insert into public.messages (booking_id, sender_id, content, created_at) values
   (v_booking, v_kim,  '안녕하세요 세무사님, 상담 전에 협약서를 먼저 보내드려도 될까요?', now() - interval '1 hour'),
   (v_booking, v_choi, '네 좋습니다. 사업비 비목표도 같이 보내주시면 미리 보고 들어가겠습니다.', now() - interval '40 minutes');
+
+  -- ---------- 관리자 지정 ----------
+  if exists (select 1 from information_schema.columns
+             where table_schema = 'public' and table_name = 'profiles' and column_name = 'is_admin') then
+    execute 'update public.profiles set is_admin = true, role_confirmed = true where id = $1' using v_admin;
+  end if;
 end;
 $seed$;
