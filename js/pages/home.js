@@ -7,7 +7,7 @@ import {
   status,
   init,
   avatar,
-} from "./ui.js";
+} from "./ui.js?v=header-links-1";
 init();
 const categories = [
   "계약",
