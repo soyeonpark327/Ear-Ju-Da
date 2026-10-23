@@ -2292,3 +2292,17 @@ body.mobile-design {
   transform: translate(-50%, -50%) rotate(45deg);
 }
 .r-cross::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* Recent-category pills share one size, independently of the top icon labels. */
+.r-recent a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: 32px;
+  padding: 0 13px;
+  font-size: 13.275px;
+  font-weight: 400;
+  line-height: 21.24px;
+  white-space: nowrap;
+}

@@ -1,4 +1,4 @@
-import { applyFinalMetrics } from "./mobile-design-tokens.js?v=nav-font-1";
+import { applyFinalMetrics } from "./mobile-design-tokens.js?v=recent-pills-1";
 // Exact supplied examples are isolated from authenticated production data.
 const params = new URLSearchParams(location.search);
 const page = location.pathname.split("/").pop().replace(".html", "");
