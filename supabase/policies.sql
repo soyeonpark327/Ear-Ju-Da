@@ -93,16 +93,27 @@ create policy "예약 당사자만 메시지 조회"
   on public.messages for select to authenticated
   using (public.is_booking_participant(booking_id));
 
-create policy "예약 당사자만 본인 이름으로 메시지 전송"
-  on public.messages for insert to authenticated
-  with check (
-    sender_id = auth.uid()
-    and public.is_booking_participant(booking_id)
-    and exists (
-      select 1 from public.bookings b
-      where b.id = booking_id and b.status = 'confirmed'
-    )
+-- 보내기는 상담 시작 10분 전 ~ 종료 30분 후, 진행 중 예약의 당사자만. 읽기는 언제든.
+-- 지금 이 예약에서 메시지를 보낼 수 있는가
+create or replace function public.can_send_message(p_booking_id bigint)
+returns boolean
+language sql stable
+security definer set search_path = ''
+as $$
+  select exists (
+    select 1
+    from public.bookings b
+    join public.availability_slots s on s.id = b.slot_id
+    where b.id = p_booking_id
+      and auth.uid() in (b.youth_id, b.expert_id)
+      and b.status = 'confirmed'
+      and now() between s.start_at - interval '10 minutes' and s.end_at + interval '30 minutes'
   );
+$$;
+
+create policy "상담 시간에 예약 당사자만 본인 이름으로 메시지 전송"
+  on public.messages for insert to authenticated
+  with check (sender_id = auth.uid() and public.can_send_message(booking_id));
 
 
 -- ---------- reports ----------

@@ -74,6 +74,58 @@ export async function updateMyExpert(changes) {
   return unwrap(await supabase.from('experts').update(changes).eq('id', user.id).select().single());
 }
 
+// ---------- 경력 증명서 (비공개 Storage 버킷 certificates) ----------
+const CERT_BUCKET = 'certificates';
+const CERT_TYPES = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/heic'];
+const CERT_MAX_BYTES = 10 * 1024 * 1024;
+
+/**
+ * 경력 증명서 업로드 (베테랑만). <input type="file">에서 고른 File을 넘긴다.
+ * 전문가 정보가 이미 있으면 certificate_path를 바로 연결하고, 반려 상태였다면 승인 대기로 돌아간다.
+ * 전문가 정보가 아직 없으면 돌려받은 path를 registerExpert({ ..., certificate_path: path })에 넣는다.
+ * @param {File} file PDF·JPG·PNG·WEBP·HEIC, 10MB 이하
+ * @returns {Promise<string>} 저장된 경로 (예: '<내 id>/1730000000000.pdf')
+ */
+export async function uploadCertificate(file) {
+  const user = await getCurrentUser();
+  if (!user) throw new Error('로그인이 필요합니다.');
+  if (!file) throw new Error('파일을 선택해주세요.');
+  if (!CERT_TYPES.includes(file.type)) throw new Error('PDF 또는 사진(JPG·PNG·WEBP·HEIC) 파일만 올릴 수 있어요.');
+  if (file.size > CERT_MAX_BYTES) throw new Error('10MB 이하 파일만 올릴 수 있어요.');
+
+  // 파일 이름은 한글·공백 문제를 피하려고 시간+확장자로 만든다
+  const ext = (file.name.split('.').pop() || 'pdf').toLowerCase().replace(/[^a-z0-9]/g, '') || 'pdf';
+  const path = `${user.id}/${Date.now()}.${ext}`;
+  const { error } = await supabase.storage.from(CERT_BUCKET).upload(path, file, { contentType: file.type, upsert: false });
+  if (error) {
+    if (/row-level security|Unauthorized|403/i.test(error.message)) throw new Error('베테랑 회원만 증명서를 올릴 수 있어요.');
+    if (/mime|type/i.test(error.message)) throw new Error('PDF 또는 사진 파일만 올릴 수 있어요.');
+    if (/size|large/i.test(error.message)) throw new Error('10MB 이하 파일만 올릴 수 있어요.');
+    throw new Error(error.message);
+  }
+
+  // 전문가 정보가 있으면 바로 연결 (없으면 registerExpert 때 넣기)
+  const mine = await getMyExpert();
+  if (mine) {
+    const old = mine.certificate_path;
+    unwrap(await supabase.from('experts').update({ certificate_path: path }).eq('id', user.id));
+    if (old && old !== path) await supabase.storage.from(CERT_BUCKET).remove([old]); // 이전 파일 정리
+  }
+  return path;
+}
+
+/**
+ * 내가 올린 증명서를 잠깐 볼 수 있는 링크 (1분 유효). 없으면 null
+ * @returns {Promise<string | null>}
+ */
+export async function getMyCertificateUrl() {
+  const mine = await getMyExpert();
+  if (!mine?.certificate_path) return null;
+  const { data, error } = await supabase.storage.from(CERT_BUCKET).createSignedUrl(mine.certificate_path, 60);
+  if (error) throw new Error('증명서를 불러오지 못했어요.');
+  return data.signedUrl;
+}
+
 /** 내가 열어둔 시간 전체 (예약된 것 포함) */
 export async function getMySlots() {
   const user = await getCurrentUser();

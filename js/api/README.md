@@ -95,10 +95,20 @@ if (me?.senior_mode) document.documentElement.classList.add('senior-mode');
 
 **베테랑 본인용**
 
+증명서 → 전문가 등록 흐름:
+```js
+const input = document.querySelector('#certificate'); // <input type="file" accept=".pdf,image/*">
+const path = await uploadCertificate(input.files[0]);
+await registerExpert({ headline, industry, career_years, career_summary, keywords, price_points, certificate_path: path });
+// 관리자가 Supabase에서 확인 후 verification을 'approved'로 바꾸면 목록에 노출
+```
+
 | 함수 | 설명 |
 | --- | --- |
 | `getMyExpert()` | 내 전문가 정보. `verification`이 `'pending'`이면 승인 대기 중 |
-| `registerExpert({ headline, industry, career_years, career_summary, keywords, price_points })` | 전문가 정보 처음 작성 |
+| `uploadCertificate(file)` | **경력 증명서 업로드** (PDF·JPG·PNG·WEBP·HEIC, 10MB 이하). 전문가 정보가 있으면 바로 연결, 반려 상태면 승인 대기로. 없으면 돌려받은 경로를 `registerExpert`의 `certificate_path`에 |
+| `getMyCertificateUrl()` | 내가 올린 증명서 보기 링크 (1분 유효), 없으면 `null` |
+| `registerExpert({ headline, industry, career_years, career_summary, keywords, price_points, certificate_path })` | 전문가 정보 처음 작성 (`certificate_path`는 `uploadCertificate()` 결과) |
 | `updateMyExpert(changes)` | 전문가 정보 수정 |
 | `getMySlots()` | 내가 연 시간 전체 (`is_booked` 포함) |
 | `addSlot(startAt, endAt)` | 상담 가능 시간 추가 (`Date` 또는 `'2026-11-01T14:00'`) |
@@ -164,7 +174,8 @@ const report = await generateReport(bookingId); // 몇 초 걸림 → "보고서
 | 함수 | 설명 |
 | --- | --- |
 | `getMessages(bookingId)` | 지난 메시지 (오래된 순) `[{ id, sender_id, content, created_at }]` |
-| `sendMessage(bookingId, content)` | 메시지 보내기 (`status`가 `'confirmed'`인 예약만) |
+| `sendMessage(bookingId, content)` | 메시지 보내기. **진행 중 예약 + 상담 시작 10분 전 ~ 종료 30분 후**에만 가능 (그 외엔 안내 메시지로 throw) |
+| `getChatWindow(booking)` | 채팅방 상태 `{ state: 'before' \| 'open' \| 'closed', opensAt, closesAt, message }`. `message`를 입력창 위에 그대로 보여주고, `state !== 'open'`이면 입력창 비활성화 |
 | `subscribeMessages(bookingId, (msg) => {})` | 새 메시지가 올 때마다 호출. 구독 해제 함수를 돌려줌 |
 
 ```js
