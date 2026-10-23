@@ -152,35 +152,51 @@ fieldset .field-label:first-child {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 50px;
+  width: 100%;
+  min-height: 52px;
+  padding: 0 52px;
   border-radius: 12px;
   font-size: 15px;
   font-weight: 600;
+  letter-spacing: -0.2px;
+  transition: filter 0.15s, transform 0.05s;
+}
+.social-btn:not(:disabled):hover {
+  filter: brightness(0.96);
+}
+.social-btn:not(:disabled):active {
+  transform: scale(0.99);
 }
 .social-btn:disabled {
   cursor: not-allowed;
   opacity: 0.45;
 }
-.social-icon {
+.social-logo {
   position: absolute;
   left: 18px;
-  font-weight: 800;
+  width: 20px;
+  height: 20px;
 }
+/* 카카오 디자인 가이드: #FEE500 배경, 검정 말풍선, 85% 검정 글자 */
 .kakao {
   background: #fee500;
-  color: #191600;
+  color: rgba(0, 0, 0, 0.85);
 }
+/* 네이버 디자인 가이드: #03C75A 배경, 흰색 N */
 .naver {
   background: #03c75a;
   color: white;
 }
+.naver .social-logo {
+  width: 15px;
+  height: 15px;
+  left: 20px;
+}
+/* 구글 디자인 가이드: 흰 배경, 회색 테두리, 4색 G */
 .google {
   background: white;
   color: #1f1f1f;
-  border: 1px solid #c9ccd6;
-}
-.google .social-icon {
-  color: #4285f4;
+  border: 1px solid #747775;
 }
 #social-status:not(:empty) {
   margin-top: 10px;
