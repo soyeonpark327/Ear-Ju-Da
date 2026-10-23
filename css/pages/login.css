@@ -124,3 +124,64 @@ fieldset .field-label:first-child {
 .signed-in .primary {
   text-align: center;
 }
+.social {
+  margin-top: 32px;
+}
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.social-buttons {
+  display: grid;
+  gap: 8px;
+}
+.social-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 50px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.social-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+.social-icon {
+  position: absolute;
+  left: 18px;
+  font-weight: 800;
+}
+.kakao {
+  background: #fee500;
+  color: #191600;
+}
+.naver {
+  background: #03c75a;
+  color: white;
+}
+.google {
+  background: white;
+  color: #1f1f1f;
+  border: 1px solid #c9ccd6;
+}
+.google .social-icon {
+  color: #4285f4;
+}
+#social-status:not(:empty) {
+  margin-top: 10px;
+}

@@ -45,13 +45,15 @@
             <input id="name" name="name" autocomplete="name" maxlength="30" />
           </fieldset>
 
-          <label class="field-label" for="email">이메일</label>
+          <label class="field-label" for="email">이메일 또는 휴대폰 번호</label>
           <input
             id="email"
             name="email"
-            type="email"
-            autocomplete="email"
-            inputmode="email"
+            type="text"
+            autocomplete="username"
+            autocapitalize="off"
+            spellcheck="false"
+            placeholder="example@email.com 또는 010-1234-5678"
             required
           />
           <label class="field-label" for="password">비밀번호</label>
@@ -68,6 +70,22 @@
           <p id="auth-status" class="status" role="status"></p>
           <button id="submit" type="submit" class="primary full">로그인</button>
         </form>
+
+        <section id="social" class="social" aria-labelledby="social-title">
+          <h2 id="social-title" class="divider"><span>간편 로그인</span></h2>
+          <div class="social-buttons">
+            <button type="button" class="social-btn kakao" data-provider="kakao" data-label="카카오" disabled>
+              <span class="social-icon" aria-hidden="true">●</span>카카오로 계속하기
+            </button>
+            <button type="button" class="social-btn naver" data-provider="naver" data-label="네이버" disabled>
+              <span class="social-icon" aria-hidden="true">N</span>네이버로 계속하기
+            </button>
+            <button type="button" class="social-btn google" data-provider="google" data-label="구글" disabled>
+              <span class="social-icon" aria-hidden="true">G</span>구글로 계속하기
+            </button>
+          </div>
+          <p id="social-status" class="hint"></p>
+        </section>
 
         <section id="demo-box" class="demo-box" aria-labelledby="demo-title">
           <h2 id="demo-title">데모 계정으로 둘러보기</h2>
