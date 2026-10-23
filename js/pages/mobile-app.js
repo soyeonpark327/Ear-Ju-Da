@@ -743,45 +743,82 @@ function noteCard(n) {
   return a;
 }
 async function notes() {
+  // These three public editorial previews are supplied in the approved design.
+  // Their identifiers are kept separate from database notes and purchases.
+  const cards = $$(".r-note");
+  let published = [];
   const api = await import("../api/notes.js");
-  const host = $(".r-note-list");
-  const all = await api.getNotes();
-  let selected = params.get("category") || "";
-  function draw() {
-    const rows = selected
-      ? all.filter(
-          (n) =>
-            n.industry === selected || (n.keywords || []).includes(selected),
-        )
-      : all;
-    host.replaceChildren(...rows.map(noteCard));
-    if (!rows.length)
-      host.append(
-        text("p", "이 분야에 등록된 오답노트가 없어요.", "r-app-message"),
-      );
+  try {
+    published = await api.getNotes();
+  } catch {
+    /* Public previews remain available offline. */
+  }
+  const publishedCards = published.map(noteCard);
+  $(".r-note-list").append(...publishedCards);
+  const categories = ["계약", "자금", "판로"];
+  cards.forEach((card, i) => {
+    const url = new URL(card.href);
+    url.searchParams.set(
+      "id",
+      ["preview-contract", "preview-funding", "preview-export"][i],
+    );
+    card.href = url.href;
+  });
+  const initial = params.get("category");
+  function filter(category) {
+    publishedCards.forEach((card, i) => {
+      card.hidden =
+        category !== "계약" &&
+        published[i].industry !== category &&
+        !(published[i].keywords || []).includes(category);
+    });
+    cards.forEach((card, i) => {
+      card.hidden = category !== "계약" && categories[i] !== category;
+    });
     $$(".r-note-filters button").forEach((b) =>
-      b.setAttribute(
-        "aria-pressed",
-        String(
-          selected
-            ? b.textContent === selected
-            : b === $(".r-note-filters button"),
-        ),
-      ),
+      b.setAttribute("aria-pressed", String(b.textContent === category)),
     );
   }
   $$(".r-note-filters button").forEach(
-    (b) =>
-      (b.onclick = () => {
-        selected = selected === b.textContent ? "" : b.textContent;
-        draw();
-      }),
+    (b) => (b.onclick = () => filter(b.textContent)),
   );
-  draw();
+  filter(initial || "계약");
 }
 async function detail() {
   const id = params.get("id");
   if (!id) throw Error("오답노트를 목록에서 선택해주세요.");
+  if (id.startsWith("preview-")) {
+    document.body.classList.add("r-editorial-preview");
+    const key = id.replace("preview-", "demo-");
+    const { notes: previews } = await import("./demo-data.js");
+    const preview = previews.find((n) => n.id === key);
+    if (!preview) throw Error("오답노트를 찾을 수 없어요.");
+    if (key !== "demo-contract") {
+      $(".r-category").textContent = preview.industry;
+      $(".r-note-overview>h2").textContent = preview.title;
+      $(".r-author").replaceChildren(
+        text("div", preview.author.profiles.name),
+        text("p", preview.author.headline),
+      );
+      $(".r-note-meta").textContent = "";
+      $(".r-preview").replaceChildren(
+        text("h2", "무료 미리보기"),
+        text("p", preview.summary, "r-note-summary"),
+      );
+      $(".r-locked").replaceChildren(text("h2", "전체 오답노트"));
+    }
+    $(".r-purchase>div>b").textContent = money(preview.price_points) + "P";
+    const auth = await import("../api/auth.js");
+    const me = await auth.getMyProfile();
+    $(".r-purchase small").textContent = me
+      ? "보유 " + money(me.points) + "P"
+      : "로그인 후 확인";
+    $("#r-purchase").onclick = () =>
+      say(
+        "이 노트는 공개 미리보기입니다. 전체 열람은 판매 등록 후 이용할 수 있어요.",
+      );
+    return;
+  }
   const api = await import("../api/notes.js");
   const note = await api.getNote(id);
   if (!note) throw Error("오답노트를 찾을 수 없어요.");
