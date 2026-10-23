@@ -736,3 +736,16 @@ dialog form button {
   padding: 7px 10px;
   font-size: 12px;
 }
+/* 상세 화면 태그 색(.expert-tags li)보다 우선 */
+.expert-tags li.trust-gold {
+  background: #fff4d6;
+  color: #8a5a00;
+}
+.expert-tags li.trust-silver {
+  background: #eceef3;
+  color: #4a4f60;
+}
+.expert-tags li.trust-bronze {
+  background: #f8ebe2;
+  color: #8a4b23;
+}
