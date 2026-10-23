@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>예약 관리 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/booking-manage.css?v=1" />
+  </head>
+  <body class="bm-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="consultations.html" data-route aria-label="내 상담으로 돌아가기">〈</a>
+        <h1>예약 관리</h1>
+      </header>
+      <main id="main" class="bm-main">
+        <p id="bm-status" class="status" role="status"></p>
+        <div id="bm-content" hidden>
+          <section class="bm-summary" aria-labelledby="bm-person">
+            <span id="bm-state" class="bm-state"></span>
+            <h2 id="bm-person"></h2>
+            <p id="bm-when" class="bm-when"></p>
+            <p id="bm-topic" class="bm-topic"></p>
+            <dl class="bm-list">
+              <div><dt>보관 중인 포인트</dt><dd id="bm-points"></dd></div>
+              <div><dt>일정 변경</dt><dd id="bm-count"></dd></div>
+            </dl>
+            <a id="bm-chat" class="outline full" href="#">채팅방 가기</a>
+          </section>
+
+          <p id="bm-locked" class="bm-note" hidden></p>
+
+          <section id="bm-move" class="bm-card" aria-labelledby="bm-move-title" hidden>
+            <h2 id="bm-move-title">시간 바꾸기</h2>
+            <p class="bm-hint">같은 베테랑의 예약 가능한 시간으로 옮겨요. 포인트와 채팅 내용은 그대로예요.</p>
+            <div id="bm-slots"></div>
+            <p id="bm-slots-empty" class="bm-note" hidden>지금 바꿀 수 있는 시간이 없어요. 채팅으로 베테랑에게 시간을 열어 달라고 요청해 보세요.</p>
+          </section>
+
+          <p id="bm-expert-hint" class="bm-note" hidden>일정 변경은 예약한 청년이 할 수 있어요. 바꾸고 싶은 시간이 있으면 채팅으로 알려 주세요.</p>
+
+          <section id="bm-cancel-box" class="bm-card" aria-labelledby="bm-cancel-title" hidden>
+            <h2 id="bm-cancel-title">예약 취소</h2>
+            <p id="bm-cancel-hint" class="bm-hint"></p>
+            <button type="button" id="bm-cancel" class="outline full bm-danger">예약 취소하기</button>
+          </section>
+          <p id="bm-action-status" class="status" role="status"></p>
+        </div>
+      </main>
+    </div>
+    <dialog id="bm-confirm" aria-labelledby="bm-confirm-title">
+      <h2 id="bm-confirm-title"></h2>
+      <p id="bm-confirm-text"></p>
+      <div class="bm-confirm-actions">
+        <button type="button" id="bm-confirm-cancel" class="outline">돌아가기</button
+        ><button type="button" id="bm-confirm-ok" class="primary"></button>
+      </div>
+    </dialog>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/booking-manage.js?v=1"></script>
+  </body>
+</html>
