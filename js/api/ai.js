@@ -51,7 +51,7 @@ export async function aiMatch(concern, filters = {}) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY },
     body: JSON.stringify({ concern, filters }),
-    signal: AbortSignal.timeout(30_000), // 오래 걸리면 포기하고 키워드 매칭으로
+    signal: AbortSignal.timeout(40_000), // 오래 걸리면 포기하고 키워드 매칭으로
   });
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(data.error || 'AI 매칭에 실패했어요.');

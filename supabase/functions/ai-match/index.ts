@@ -22,14 +22,22 @@
 //
 // 필요한 Secrets: GEMINI_API_KEY
 //   (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY는 Supabase가 자동으로 넣어준다)
-// 선택 Secrets: GEMINI_MODEL  먼저 써볼 모델. 기본 순서는 MODELS 참고
+// 선택 Secrets: GEMINI_MODEL  먼저 써볼 모델. 기본 순서는 ATTEMPTS 참고
 //
 // 배포할 때 "Verify JWT"는 끈다. (로그인하지 않은 방문자도 매칭을 써볼 수 있게)
 
 const env = (key: string) => Deno.env.get(key) ?? "";
 const MAX_CONCERN = 1000;
-// 빠른 모델부터. "생각하는(thinking)" 최신 모델은 답이 수십 초~수 분 걸려 함수 시간 제한(150초)에 걸린다.
-const MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-flash-lite-latest"];
+// 가벼운 최신 모델부터, 생각(thinking) 단계를 최소로 해서 빠르게 답하게 한다.
+// (2.5 모델은 새 사용자에게 제공 중단됨. 생각을 길게 하면 15초 이상 걸린다)
+// 생각 설정을 그 모델이 지원하지 않아 400이 나면 설정 없이 다시 시도한다.
+const MINIMAL_THINKING = { thinkingConfig: { thinkingLevel: "minimal" } };
+const ATTEMPTS = [
+  { model: "gemini-3.5-flash-lite", extra: MINIMAL_THINKING },
+  { model: "gemini-3.5-flash-lite", extra: {} },
+  { model: "gemini-flash-lite-latest", extra: MINIMAL_THINKING },
+  { model: "gemini-flash-lite-latest", extra: {} },
+];
 const MODEL_TIMEOUT_MS = 20_000;
 const SOON_DAYS = 7;
 
@@ -174,13 +182,12 @@ async function askGemini(concern: string, filters: Filters, experts: Expert[], n
     contents: [{ role: "user", parts: [{ text: context }] }],
     generationConfig: { temperature: 0.3, responseMimeType: "application/json", responseSchema: SCHEMA },
   };
-  const models = [...new Set([env("GEMINI_MODEL"), ...MODELS].filter(Boolean))];
+  const custom = env("GEMINI_MODEL");
+  const attempts = custom ? [{ model: custom, extra: MINIMAL_THINKING }, { model: custom, extra: {} }, ...ATTEMPTS] : ATTEMPTS;
   const errors: string[] = [];
-  for (const model of models) {
-    // 2.5 flash는 기본으로 생각(thinking)을 해서 느리다 → 끈다
-    const config = model === "gemini-2.5-flash"
-      ? { ...body, generationConfig: { ...body.generationConfig, thinkingConfig: { thinkingBudget: 0 } } }
-      : body;
+  for (const { model, extra } of attempts) {
+    const config = { ...body, generationConfig: { ...body.generationConfig, ...extra } };
+    const label = `${model}${"thinkingConfig" in extra ? "(minimal)" : ""}`;
     let res: Response;
     try {
       res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
@@ -190,17 +197,17 @@ async function askGemini(concern: string, filters: Filters, experts: Expert[], n
         signal: AbortSignal.timeout(MODEL_TIMEOUT_MS),
       });
     } catch (err) {
-      errors.push(`${model}: ${(err as Error).name === "TimeoutError" ? "timeout" : (err as Error).message}`);
+      errors.push(`${label}: ${(err as Error).name === "TimeoutError" ? "timeout" : (err as Error).message}`);
       continue; // 시간 초과·네트워크 오류 → 다음 모델
     }
     const data = await res.json().catch(() => ({}));
     if (!res.ok) {
-      errors.push(`${model} ${res.status}: ${data.error?.message ?? ""}`);
+      errors.push(`${label} ${res.status}: ${String(data.error?.message ?? "").slice(0, 120)}`);
       if (res.status === 403) break; // 키·프로젝트 권한 문제는 다른 모델도 같다
-      continue; // 404(모델 없음)·429(사용량 초과)·5xx → 다음 모델
+      continue; // 400(설정 미지원)·404(모델 없음)·429(사용량 초과)·5xx → 다음 시도
     }
     const text = data.candidates?.[0]?.content?.parts?.map((p: any) => p.text ?? "").join("") ?? "";
-    return { result: JSON.parse(text), model, tried: errors };
+    return { result: JSON.parse(text), model: label, tried: errors };
   }
   throw new Error(`gemini: ${errors.join(" | ")}`);
 }
