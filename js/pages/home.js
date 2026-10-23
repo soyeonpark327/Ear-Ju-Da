@@ -87,11 +87,9 @@ function openExpert(e) {
   location.href = route("expert-booking.html", { id: e.id });
 }
 document.querySelector("#reserve-nav").onclick = () => {
-  if (allExperts.length) openExpert(allExperts[0]);
-  else notice("예약할 베테랑이 없어요", "다른 키워드로 베테랑을 찾아주세요.");
+  location.href = route("booking.html");
 };
 function renderExperts() {
-  document.querySelector("#reserve-nav").disabled = !allExperts.length;
   const box = document.querySelector("#experts");
   box.replaceChildren();
   allExperts.slice(0, limit).forEach((e) => {
@@ -115,7 +113,7 @@ function renderExperts() {
 async function loadExperts(keyword = "") {
   const version = ++request;
   allExperts = [];
-  document.querySelector("#reserve-nav").disabled = true;
+
   status("expert-status", "베테랑을 불러오고 있어요.");
   document.querySelector("#experts").replaceChildren();
   document.querySelector("#more").hidden = true;
@@ -155,10 +153,9 @@ document.querySelector("#more").onclick = () => {
 };
 document.querySelector("#search-form").onsubmit = (e) => {
   e.preventDefault();
-  loadExperts(document.querySelector("#keyword").value.trim());
-  document
-    .querySelector("#experts")
-    .scrollIntoView({ block: "start", behavior: "smooth" });
+  location.href = route("expert-booking.html", {
+    keyword: document.querySelector("#keyword").value.trim(),
+  });
 };
 async function loadNotes() {
   status("note-status", "오답노트를 불러오고 있어요.");

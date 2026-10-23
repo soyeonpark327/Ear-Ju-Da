@@ -14,7 +14,7 @@
     <div class="app">
       <header class="page-header">
         <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
-        <h1>매칭 결과</h1>
+        <h1>AI 매칭 결과</h1>
       </header>
       <main id="main">
         <p id="expert-load" class="status" role="status"></p>
@@ -74,21 +74,9 @@
               role="group"
               aria-label="상담 시간"
             ></div>
-            <form id="booking-form">
-              <label for="topic">상담하고 싶은 내용</label
-              ><textarea
-                id="topic"
-                required
-                maxlength="1000"
-                rows="3"
-                placeholder="고민이나 미리 물어볼 내용을 적어주세요."
-              ></textarea>
-              <p id="booking-summary" class="booking-summary"></p>
-              <button id="reserve" class="primary full" type="submit" disabled>
-                상담 예약하기
-              </button>
-              <p id="booking-status" class="status" role="status"></p>
-            </form>
+            <button id="reserve" class="primary full" type="button" disabled>
+              상담 예약하기
+            </button>
           </section>
         </div>
       </main>
@@ -98,15 +86,7 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <dialog id="confirm-booking">
-      <h2>상담 예약 확인</h2>
-      <p id="confirm-details"></p>
-      <p>예약하면 표시된 포인트가 차감되어 보관됩니다.</p>
-      <div class="confirm-actions">
-        <button id="cancel-confirm" class="outline">취소</button
-        ><button id="submit-booking" class="primary">확인하고 예약하기</button>
-      </div>
-    </dialog>
-    <script type="module" src="../js/pages/expert-booking.js"></script>
+
+    <script type="module" src="../js/pages/expert-booking.js?v=5"></script>
   </body>
 </html>
