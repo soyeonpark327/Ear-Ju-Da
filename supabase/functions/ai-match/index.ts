@@ -117,8 +117,11 @@ const SYSTEM = `당신은 "이어주다"의 매칭 담당자입니다. 이어주
   (예: "납품 단가 조정 조항 때문에 고민이시죠. 자동차 부품사 구매팀에서 30년간 협력사 단가 협상을 맡아온 분이라 공장 측 입장을 정확히 짚어주실 거예요.")
 - notes: 상담 전에 먼저 읽으면 좋은 오답노트를 최대 2개. 관련 있는 것만, 없으면 빈 배열. reason은 왜 먼저 읽으면 좋은지 1문장.
 - questions: 이 고민으로 상담할 때 베테랑에게 물어볼 핵심 질문 3개. 청년이 그대로 복사해 쓸 수 있게 구체적인 한 문장씩.
+  matches가 빈 배열이면(창업과 관련 없는 고민 등) questions와 notes도 빈 배열로 두세요.
 - 창업 단계가 주어지면 그 단계에 맞게 추천 이유와 질문의 눈높이를 맞추세요. (예비 창업이면 기초부터, 성장 단계면 실무 심화)
-- summary: 고민을 15자 안팎으로 요약. keywords: 핵심 주제 1~4개 (예: "단가협상", "근로계약").`;
+- summary: 고민을 15자 안팎으로 요약. 고민에 쓰인 사실(인상/인하, 금액, 대상)을 바꾸지 말고 그대로 반영하세요.
+- keywords: 핵심 주제 1~4개 (예: "단가협상", "근로계약").
+- 모든 문장은 자연스러운 표준 한국어 맞춤법으로 쓰세요. 뜻이 불분명한 단어를 만들어 쓰지 마세요.`;
 
 const SCHEMA = {
   type: "OBJECT",
@@ -197,7 +200,7 @@ async function askGemini(concern: string, filters: Filters, experts: Expert[], n
       continue; // 404(모델 없음)·429(사용량 초과)·5xx → 다음 모델
     }
     const text = data.candidates?.[0]?.content?.parts?.map((p: any) => p.text ?? "").join("") ?? "";
-    return JSON.parse(text);
+    return { result: JSON.parse(text), model, tried: errors };
   }
   throw new Error(`gemini: ${errors.join(" | ")}`);
 }
@@ -233,14 +236,21 @@ export async function handler(req: Request): Promise<Response> {
     const empty = { summary: "", keywords: [], matches: [], notes: [], questions: [], filtered_count: experts.length };
     if (!experts.length) return json(empty); // 필터에 맞는 베테랑이 없음
 
-    const result = await askGemini(concern, filters, experts, notes);
+    const started = Date.now();
+    const { result, model, tried } = await askGemini(concern, filters, experts, notes);
+    const matches = pick(result.matches, "expert_id", new Set(experts.map((e) => e.id)), 3);
     return json({
       summary: String(result.summary ?? "").slice(0, 60),
       keywords: (Array.isArray(result.keywords) ? result.keywords : []).map(String).slice(0, 4),
-      matches: pick(result.matches, "expert_id", new Set(experts.map((e) => e.id)), 3),
-      notes: pick(result.notes, "note_id", new Set(notes.map((n) => n.id)), 2),
-      questions: (Array.isArray(result.questions) ? result.questions : []).map((q: unknown) => String(q).slice(0, 200)).filter(Boolean).slice(0, 3),
+      matches,
+      // 추천할 베테랑이 없으면 노트·질문도 비운다 (창업과 무관한 고민)
+      notes: matches.length ? pick(result.notes, "note_id", new Set(notes.map((n) => n.id)), 2) : [],
+      questions: matches.length
+        ? (Array.isArray(result.questions) ? result.questions : []).map((q: unknown) => String(q).slice(0, 200)).filter(Boolean).slice(0, 3)
+        : [],
       filtered_count: experts.length,
+      // 확인용: 실제로 답한 모델, 걸린 시간(ms), 앞서 실패한 모델
+      debug: { model, ms: Date.now() - started, skipped: tried },
     });
   } catch (err) {
     console.error("ai-match error:", err);
