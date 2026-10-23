@@ -18,9 +18,9 @@ body.reference-design {
   color: var(--ink);
 }
 .reference-design .app {
-  width: 402px;
-  max-width: none;
-  min-height: 874px;
+  width: 100%;
+  max-width: 402px;
+  min-height: 100vh;
   margin: 0 auto;
   background: #fff;
   overflow: visible;
@@ -1768,7 +1768,8 @@ body.reference-design {
   overflow: visible;
 }
 .reference-design:not(.reference-example) .expert {
-  width: 354px;
+  width: 100%;
+  max-width: 354px;
   min-width: 0;
   flex: none;
   min-height: 122px;
