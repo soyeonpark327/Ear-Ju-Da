@@ -4,7 +4,7 @@
   font-weight: 100 900;
   font-display: swap;
 }
-body.reference-design {
+body.mobile-design {
   --cyan: #20c5e3;
   --panel: #f2f3f7;
   --line: #d4d6e2;
@@ -17,7 +17,7 @@ body.reference-design {
   background: #f4f5f7;
   color: var(--ink);
 }
-.reference-design .app {
+.mobile-design .app {
   width: 402px;
   max-width: none;
   min-height: 874px;
@@ -26,29 +26,29 @@ body.reference-design {
   overflow: visible;
   position: relative;
 }
-.reference-design [hidden] {
+.mobile-design [hidden] {
   display: none !important;
 }
-.reference-design em {
+.mobile-design em {
   font-style: normal;
   color: var(--cyan);
 }
-.reference-design h1,
-.reference-design h2,
-.reference-design h3 {
+.mobile-design h1,
+.mobile-design h2,
+.mobile-design h3 {
   color: inherit;
   letter-spacing: 0;
   line-height: 1.5;
 }
-.reference-design h1 {
+.mobile-design h1 {
   font-size: 20px;
   font-weight: 700;
 }
-.reference-design h2 {
+.mobile-design h2 {
   font-size: 16px;
   font-weight: 700;
 }
-.reference-design h3 {
+.mobile-design h3 {
   font-size: 14px;
   font-weight: 600;
 }
@@ -89,7 +89,7 @@ body.reference-design {
   width: 28px;
 }
 .r-header,
-.reference-design:not(.reference-example) .page-header {
+.mobile-design:not(.mobile-ui) .page-header {
   height: 56px;
   display: flex;
   align-items: center;
@@ -1680,364 +1680,17 @@ body.reference-design {
   line-height: 24px;
   margin-bottom: 20px;
 }
-/* Production pages retain their existing APIs and actions, with the same 402px design tokens. */
-.reference-design:not(.reference-example) .home-header {
-  height: 96px;
-  padding: 0 24px;
-  position: relative;
-}
-.reference-design:not(.reference-example) .brand {
-  display: none;
-}
-.reference-design:not(.reference-example) .header-actions {
-  margin-left: auto;
-  align-self: flex-end;
-  margin-bottom: 16px;
-}
-.reference-design:not(.reference-example) .header-actions .account {
-  position: absolute;
-  left: 24px;
-  top: 4px;
-  font-size: 11px;
-  border: 0;
-  min-height: 24px;
-  padding: 0;
-}
-.reference-design:not(.reference-example) .header-actions #dashboard-link {
-  left: 140px;
-}
-.reference-design:not(.reference-example) .header-actions #account {
-  left: 260px;
-}
-.reference-design:not(.reference-example) .home-top {
-  padding: 0 24px 25px;
-}
-.reference-design:not(.reference-example) .search {
-  gap: 8px;
-}
-.reference-design:not(.reference-example) .search-field {
-  height: 44px;
-  border-radius: 12px;
-  background: #e4e4e9;
-  min-width: 0;
-}
-.reference-design:not(.reference-example) .search input {
-  font-size: 12px;
-  min-width: 0;
-}
-.reference-design:not(.reference-example) .search .match {
-  font-size: 13px;
-  width: 92px;
-  min-width: 92px;
-  height: 44px;
-  border: 1px solid var(--cyan);
-  border-radius: 13px;
-  background: white;
-  color: var(--cyan);
-}
-.reference-design:not(.reference-example) .categories {
-  height: 204px;
-  border-radius: 20px;
-  margin-top: 28px;
-  padding: 22px 10px 17px;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 10px;
-}
-.reference-design:not(.reference-example) .category {
-  font-size: 11px;
-}
-.reference-design:not(.reference-example) .category img {
-  height: 36px;
-  width: 36px;
-}
-.reference-design:not(.reference-example) .experts-section {
-  padding: 24px 24px 31px;
-  border-top: 1px solid #d7d9e3;
-}
-.reference-design:not(.reference-example) .experts-section > h2 {
-  font-size: 16px;
-  color: #000;
-}
-.reference-design:not(.reference-example) .experts-section > h2 em {
-  color: inherit;
-}
-.reference-design:not(.reference-example) .stack {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  overflow: visible;
-}
-.reference-design:not(.reference-example) .expert {
-  width: 354px;
-  min-width: 0;
-  flex: none;
-  min-height: 122px;
-  border-radius: 20px;
-  padding: 18px 20px;
-  box-shadow: none;
-  border: 0;
-  background: var(--panel);
-  gap: 24px;
-}
-.reference-design:not(.reference-example) .expert .portrait {
-  width: 65px;
-  height: 84px;
-  object-fit: cover;
-  border-radius: 0 0 8px 8px;
-}
-.reference-design:not(.reference-example) .expert-info {
-  min-width: 0;
-}
-.reference-design:not(.reference-example) .expert h3 {
-  font-size: 14px;
-}
-.reference-design:not(.reference-example) .expert .sub {
-  font-size: 12px;
-}
-.reference-design:not(.reference-example) .expert .career-summary {
-  font-size: 10px;
-  line-height: 15px;
-}
-.reference-design:not(.reference-example) .expert .rating {
-  font-size: 23px;
-}
-.reference-design:not(.reference-example) .expert .rating small {
-  font-size: 10px;
-}
-.reference-design:not(.reference-example) .swipe-hint {
-  display: none;
-}
-.reference-design:not(.reference-example) .bottom-nav {
-  position: static;
-  display: none;
-}
-.reference-design:not(.reference-example) .recent {
-  margin: 0;
-  background: var(--panel);
-  padding: 22px 24px 26px;
-}
-.reference-design:not(.reference-example) .section {
-  padding-left: 24px;
-  padding-right: 24px;
-}
-.reference-design:not(.reference-example) .page-header h1 {
-  font-size: 20px;
-}
-.reference-design:not(.reference-example) .profile-heading {
-  gap: 12px;
-}
-.reference-design:not(.reference-example) .profile-section {
-  padding: 28px 24px 24px;
-}
-.reference-design:not(.reference-example) .profile-heading h2 {
-  font-size: 16px;
-}
-.reference-design:not(.reference-example) .profile-heading p {
-  font-size: 12px;
-}
-.reference-design:not(.reference-example) #expert-avatar img {
-  width: 66px;
-  height: 62px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.reference-design:not(.reference-example) .experience {
-  height: 110px;
-  border-radius: 20px;
-  background: var(--panel);
-  padding: 17px 18px 12px;
-  margin-top: 24px;
-}
-.reference-design:not(.reference-example) .experience h3 {
-  font-size: 14px;
-  font-weight: 400;
-}
-.reference-design:not(.reference-example) .expert-tags {
-  gap: 5px;
-  flex-wrap: wrap;
-}
-.reference-design:not(.reference-example) .expert-tags li {
-  font-size: 12px;
-  background: #e9fbff;
-  color: #07acc9;
-  border-radius: 20px;
-  padding: 5px 13px;
-}
-.reference-design:not(.reference-example) .booking-section {
-  padding: 24px;
-  border-top: 1px solid #dddfe7;
-}
-.reference-design:not(.reference-example) .calendar {
-  grid-template-columns: repeat(7, 1fr);
-}
-.reference-design:not(.reference-example) .calendar button {
-  font-size: 14px;
-}
-.reference-design:not(.reference-example) .reservation {
-  padding: 28px 24px 24px;
-}
-.reference-design:not(.reference-example) .mode {
-  height: 78px;
-  min-height: 78px;
-  border-radius: 22px;
-  padding: 15px 18px;
-}
-.reference-design:not(.reference-example) .mode strong {
-  font-size: 14px;
-}
-.reference-design:not(.reference-example) .mode small {
-  font-size: 12px;
-}
-.reference-design:not(.reference-example) .reservation-footer {
-  padding-top: 70px;
-}
-.reference-design:not(.reference-example) .matching-page {
-}
-.reference-design.matching-page .matching-main {
-  background: linear-gradient(150deg, #d2f5fc 0, #eafaff 31%, white 65%);
-  min-height: 738px;
-}
-.reference-design.matching-page .page-header {
-  background: #d2f5fc;
-  border: 0;
-}
-.reference-design.matching-page .matching-intro {
-  padding: 153px 24px 40px;
-  min-height: 0;
-  flex: none;
-  justify-content: flex-start;
-}
-.reference-design.matching-page .matching-intro h2 {
-  font-size: 20px;
-  line-height: 28px;
-}
-.reference-design.matching-page .matching-intro > p {
-  font-size: 14px;
-  line-height: 26px;
-}
-.reference-design.matching-page .suggestions {
-  margin-top: 18px;
-  gap: 12px;
-}
-.reference-design.matching-page .suggestions button {
-  font-size: 14px;
-  line-height: 20px;
-  min-height: 44px;
-  padding: 11px 17px;
-  background: var(--panel);
-  border-color: #d4d7e3;
-}
-.reference-design.matching-page .ai-filter-panel {
-  margin-top: 24px;
-}
-.reference-design.matching-page .matching-composer {
-  margin: 24px 24px 38px;
-  padding: 12px 20px;
-  min-height: 58px;
-  border-radius: 32px;
-  box-shadow: none;
-  gap: 12px;
-  border: 1px solid #d4d7e3;
-  grid-template-columns: 16px minmax(0, 1fr) 24px;
-  bottom: 20px;
-  background: var(--panel);
-}
-.reference-design.matching-page .matching-composer textarea {
-  font-size: 14px;
-  min-height: 24px;
-  height: 24px;
-  line-height: 24px;
-  resize: none;
-}
-.reference-design.matching-page .matching-composer #send {
-  width: 24px;
-  height: 24px;
-}
-.reference-design.matching-page .matching-composer #attach {
-  width: 16px;
-  height: 24px;
-  font-size: 24px;
-  line-height: 24px;
-}
-.reference-design.matching-page #matching-status {
-  font-size: 11px;
-}
-.reference-design.matching-page
-  .matching-main:has(#matching-results:not([hidden])) {
-  background: white;
-}
-.reference-design.matching-page
-  .matching-main:has(#matching-results:not([hidden]))
-  .matching-intro {
-  padding-top: 20px;
-}
-.reference-design:not(.reference-example) .note-card {
-  border-radius: 22px;
-  background: var(--panel);
-  padding: 20px;
-  box-shadow: none;
-  border: 0;
-  margin-bottom: 20px;
-}
-.reference-design:not(.reference-example) .note-top h2 {
-  font-size: 14px;
-  font-weight: 500;
-}
-.reference-design:not(.reference-example) .note-author {
-  font-size: 12px;
-}
-.reference-design:not(.reference-example) .note-bottom {
-  font-size: 12px;
-  border-top: 2px solid #dfe0e7;
-}
-.reference-design:not(.reference-example) .note-card .cross {
-  width: 24px;
-  height: 24px;
-  font-size: 26px;
-  background: #ffdddd;
-  line-height: 24px;
-}
-.reference-design:not(.reference-example) .notes-main {
-  padding: 24px;
-}
-.reference-design:not(.reference-example) .filters {
-  gap: 8px;
-}
-.reference-design:not(.reference-example) .filters button {
-  font-size: 12px;
-  padding: 5px 16px;
-  border: 0;
-  border-radius: 20px;
-  min-height: 29px;
-  background: #e4e4e9;
-}
-.reference-design:not(.reference-example) .filters button[aria-pressed="true"] {
-  background: var(--cyan);
-  color: white;
-}
-.reference-design:not(.reference-example) .my-points {
-  border-radius: 24px;
-  background: #dff8fd;
-}
-.reference-design:not(.reference-example) .my-profile {
-  border: 0;
-}
-.reference-design:not(.reference-example) .my-menu a {
-  border-radius: 0;
-  background: white;
-  border-bottom: 1px solid #eceef2;
-}
 @media (max-width: 401px) {
-  body.reference-design {
+  body.mobile-design {
     overflow-x: auto;
   }
-  .reference-design .app {
+  .mobile-design .app {
     margin-left: 0;
     margin-right: 0;
   }
 }
 /* Explicit control dimensions prevent the old shared 44px button rule changing the supplied frame. */
-.reference-example button {
+.mobile-ui button {
   min-height: 0;
 }
 .r-ai-reply > div {
@@ -2150,7 +1803,7 @@ body.reference-design {
   font-size: 32px;
   margin-bottom: 10px;
 }
-.reference-design.reference-example button {
+.mobile-design.mobile-ui button {
   min-height: 0 !important;
 }
 .r-page-chat .r-chat {
@@ -2178,210 +1831,11 @@ body.reference-design {
 .r-match-intro {
   padding-top: 151px;
 }
-.r-live-filters {
-  margin: 20px 0 0;
-  max-width: 354px;
-  width: 100%;
-  font-size: 12px;
-  text-align: left;
-  color: #717985;
-}
-.r-live-filters summary {
-  cursor: pointer;
-  text-align: right;
-}
-.r-live-filters .ai-filter-panel {
-  margin-top: 8px;
-}
-.reference-design .r-booking-context {
-  margin-bottom: 16px;
-  border: 0;
-  background: transparent;
-  padding: 0;
-}
-.reference-design .profile-section:has(#expert-reviews-title) {
-  padding-top: 0;
-}
-.reference-design .tip-card {
-  background: var(--panel);
-  border: 0;
-  border-radius: 20px;
-  padding: 20px 18px;
-  box-shadow: none;
-  font-size: 14px;
-  line-height: 22px;
-}
-.reference-design .r-live-note-overview {
-  background: white;
-  padding: 18px 24px 22px;
-  border-radius: 0;
-  border-bottom: 8px solid var(--panel);
-  margin: 0;
-}
-.reference-design .r-live-note-overview h2 {
-  font-size: 18px;
-  line-height: 28px;
-  color: #080a0e;
-}
-.reference-design .r-live-note-overview > .r-author {
-  display: block;
-  margin-top: 16px;
-  font-size: 12px;
-}
-.reference-design .r-live-note-overview > .r-author p {
-  font-size: 12px;
-  color: #485063;
-}
-.reference-design .detail-main {
-  padding: 0;
-}
-.reference-design .detail-main .mistake {
-  display: none;
-}
-.reference-design .r-live-locked {
-  border: 0;
-  border-top: 8px solid var(--panel);
-  border-radius: 0;
-  background: white;
-  padding: 24px;
-  margin: 0;
-}
-.reference-design .purchase-footer {
-  display: flex;
-  gap: 14px;
-  align-items: center;
-  padding: 12px 24px 32px;
-  border-top: 1px solid #eee;
-  flex-wrap: wrap;
-}
-.reference-design .purchase-footer #purchase-status {
-  width: 100%;
-  font-size: 12px;
-}
-.r-live-note-price {
-  font-size: 16px;
-  white-space: nowrap;
-}
-.reference-design .purchase-footer #purchase {
-  flex: 1;
-  min-width: 0;
-  border-radius: 14px;
-  font-size: 16px;
-}
-.reference-design .my-main {
-  padding: 12px 24px 40px;
-}
-.reference-design .my-points {
-  margin-bottom: 0;
-  border-radius: 24px 24px 0 0;
-  border: 0;
-  padding: 18px 20px 10px;
-}
-.reference-design .r-live-topup {
-  border: 20px solid #dff8fd;
-  border-top: 0;
-  box-sizing: content-box;
-  width: calc(100% - 40px);
-  border-radius: 0 0 24px 24px;
-  height: 44px;
-  min-height: 44px;
-}
-.reference-design .r-my-upcoming > p,
-.reference-design .r-my-purchased > p {
-  padding: 20px;
-  background: var(--panel);
-  border-radius: 20px;
-}
-.reference-design .my-menu {
-  margin-top: 30px;
-}
-.reference-design .my-logout {
-  border: 0;
-  text-align: left;
-  padding-left: 0;
-  color: #7c8491;
-}
-.reference-design .consultation-chat-main {
-  padding: 0 24px 40px;
-}
-.reference-design .r-live-chat-info {
-  background: none;
-  border: 0;
-  border-radius: 0;
-  box-shadow: none;
-  padding: 14px 0;
-  margin-bottom: 20px;
-  font-size: 12px;
-}
-.reference-design .r-live-chat-info #chat-person {
-  display: none;
-}
-.reference-design .r-live-chat-info .consultation-actions {
-  margin-top: 8px;
-}
-.reference-design .r-live-chat-info .consultation-actions > * {
-  font-size: 12px;
-  padding: 5px 12px;
-  min-height: 32px;
-}
-.reference-design .consultation-message {
-  margin-bottom: 24px;
-  max-width: 90%;
-  background: var(--panel);
-  border: 0;
-  border-radius: 20px;
-  padding: 12px 13px;
-  box-shadow: none;
-  font-size: 14px;
-  line-height: 23px;
-}
-.reference-design .consultation-message.is-mine {
-  background: var(--cyan);
-  color: white;
-}
-.reference-design .consultation-message small {
-  font-size: 10px;
-}
-.reference-design .consultation-composer {
-  position: sticky;
-  bottom: 38px;
-  border: 1px solid #d4d7e3;
-  border-radius: 32px;
-  background: var(--panel);
-  padding: 12px 20px;
-  box-shadow: none;
-  margin-top: 48px;
-}
-.reference-design .consultation-compose-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-.reference-design #chat-input {
-  font-size: 14px;
-  line-height: 24px;
-  min-height: 24px;
-  border: 0;
-  background: none;
-  resize: none;
-  padding: 0;
-}
-.reference-design #chat-send {
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
-  min-height: 24px;
-  padding: 2px;
-  min-width: 24px;
-}
-.reference-design #chat-send-status:empty {
-  display: none;
-}
 /* Exact frame sizes from “최종”; no viewport-driven font or ratio scaling. */
-.reference-example.r-page-note-detail .r-app {
+.mobile-ui.r-page-note-detail .r-app {
   min-height: 1276px;
 }
-.reference-example.r-page-mypage .r-app {
+.mobile-ui.r-page-mypage .r-app {
   min-height: 1153px;
 }
 .r-header h1 {
@@ -2455,19 +1909,19 @@ body.reference-design {
 .r-ai-reply > div > p {
   font-size: 13.24784088px;
 }
-.reference-design.matching-page .matching-results.r-match-thread {
+.mobile-design.matching-page .matching-results.r-match-thread {
   padding: 28px 24px;
 }
-.reference-design.matching-page #matching-concern.r-user-bubble {
+.mobile-design.matching-page #matching-concern.r-user-bubble {
   background: var(--cyan);
   padding: 12px 13px;
   line-height: 22px;
   margin-bottom: 0;
 }
-.reference-design.matching-page .r-ai-reply {
+.mobile-design.matching-page .r-ai-reply {
   margin-top: 24px;
 }
-.reference-design.matching-page #matching-source {
+.mobile-design.matching-page #matching-source {
   border-radius: 24px;
   background: var(--panel);
   padding: 11px 12px;
@@ -2477,52 +1931,272 @@ body.reference-design {
   line-height: 20px;
   margin: 0;
 }
-.reference-design.matching-page #matching-explanation {
+.mobile-design.matching-page #matching-explanation {
   font-size: 11px;
   line-height: 17px;
   color: #717985;
   margin-top: 12px;
 }
-.reference-design.matching-page .matching-result-card.r-match-card {
+.mobile-design.matching-page .matching-result-card.r-match-card {
   border: 0;
   margin: 16px 0 0;
   padding: 23px 23px 22px;
   box-shadow: 0 4px 15px #0003;
 }
-.reference-design.matching-page .matching-result-card.r-match-card p {
+.mobile-design.matching-page .matching-result-card.r-match-card p {
   line-height: 19px;
   margin: 12px 0 10px;
 }
-.reference-design.matching-page .r-match-person h3 {
+.mobile-design.matching-page .r-match-person h3 {
   font-size: 13.2537317276px;
   line-height: 20px;
   font-weight: 600;
 }
-.reference-design.matching-page .r-match-person > img {
+.mobile-design.matching-page .r-match-person > img {
   width: 40px;
   height: 40px;
 }
-.reference-design.matching-page .r-result-details {
+.mobile-design.matching-page .r-result-details {
   font-size: 11px;
   color: #717985;
   margin-top: 10px;
   line-height: 17px;
 }
-.reference-design.matching-page .r-result-details p {
+.mobile-design.matching-page .r-result-details p {
   font-size: 11px;
 }
-.r-page-home.reference-example .r-popular {
+.r-page-home.mobile-ui .r-popular {
   padding-bottom: 37px;
 }
-.r-page-mypage.reference-example .r-mypage {
+.r-page-mypage.mobile-ui .r-mypage {
   min-height: 1008px;
 }
-.r-page-expert-booking.reference-example .r-calendar-section {
+.r-page-expert-booking.mobile-ui .r-calendar-section {
   padding-bottom: 43px;
 }
-.r-page-mypage.reference-example .r-mypage {
+.r-page-mypage.mobile-ui .r-mypage {
   padding-bottom: 75px;
 }
 .r-statusbar {
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+/* One screen component tree for both live API data and the supplied examples. */
+.r-app-loading {
+  position: absolute;
+  top: 170px;
+  left: 50%;
+  transform: translateX(-50%);
+  font:
+    14px ReferencePretendard,
+    sans-serif;
+  color: #777;
+}
+.r-app-message {
+  padding: 24px;
+  font-size: 14px;
+  line-height: 24px;
+}
+.r-app-message button {
+  margin-top: 16px;
+}
+.r-avatar,
+.r-live-portrait {
+  display: inline-grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #e7f8fc;
+  color: #27c9ed;
+}
+.r-avatar img,
+.r-live-portrait img {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  object-position: top;
+}
+.r-expert > .r-live-portrait {
+  width: 65px;
+  height: 87px;
+  border-radius: 0 0 8px 8px;
+}
+.r-portrait-empty {
+  font-size: 28px;
+  opacity: 0.5;
+}
+.r-paper-cover {
+  height: 90px;
+  width: 65px;
+  display: grid;
+  place-items: center;
+  color: #9da4ad;
+  background: #f2f3f7;
+}
+.r-paper-cover .r-icon {
+  height: 35px;
+  width: 35px;
+}
+.r-profile-intro > .r-avatar {
+  height: 62px;
+  width: 66px;
+}
+.mobile-live .r-expert-info h3 {
+  max-width: 165px;
+}
+.mobile-live .r-expert .r-sub {
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mobile-live .r-career-summary {
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.mobile-live .r-tip {
+  height: auto;
+  min-height: 111px;
+}
+.mobile-live .r-tip p + p {
+  margin-top: 12px;
+}
+.mobile-live .r-tags {
+  flex-wrap: wrap;
+  white-space: normal;
+}
+.mobile-live .r-date-strip {
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+.mobile-live .r-date-strip button {
+  min-width: 64px;
+  flex-shrink: 0;
+}
+.r-match-status,
+.r-chat-status {
+  font-size: 12px;
+  color: #747b88;
+  padding: 8px 24px;
+  line-height: 18px;
+}
+.r-match-status:empty,
+.r-chat-status:empty {
+  display: none;
+}
+.r-matching:has(.r-match-status:not(:empty)) {
+  padding-bottom: 150px;
+}
+.r-match-status {
+  position: absolute;
+  bottom: 100px;
+  left: 0;
+  right: 0;
+}
+.r-matching .r-match-thread + .r-match-thread {
+  padding-top: 0;
+}
+.r-match-person > .r-avatar {
+  height: 40px;
+  width: 40px;
+}
+.mobile-live .r-ai-reply > div > p {
+  white-space: normal;
+}
+.mobile-live .r-matching .r-composer,
+.mobile-live .r-chat .r-composer {
+  position: sticky;
+  bottom: 38px;
+  margin-top: 30px;
+}
+.mobile-live .r-matching {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 0;
+}
+.mobile-live #r-match-body {
+  flex: 1;
+}
+.mobile-live .r-matching .r-composer {
+  flex-shrink: 0;
+  left: auto;
+  right: auto;
+}
+.mobile-live .r-note h2 {
+  white-space: normal;
+}
+.mobile-live .r-note p {
+  white-space: normal;
+}
+.mobile-live .r-note-overview > h2 {
+  white-space: normal;
+}
+.r-note-summary {
+  font-size: 14px;
+  line-height: 24px;
+  padding: 18px 0;
+  white-space: pre-wrap;
+}
+.r-owned-note {
+  white-space: pre-wrap;
+  height: auto !important;
+  display: block !important;
+  line-height: 25px;
+  padding: 20px !important;
+}
+.mobile-live .r-author {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2px;
+}
+.mobile-live .r-chat {
+  padding-bottom: 40px;
+  display: flex;
+  flex-direction: column;
+}
+.mobile-live .r-chat-log {
+  flex: 1;
+}
+.mobile-live .r-chat-line p {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-width: 90%;
+}
+.r-chat-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  font-size: 12px;
+  color: #697181;
+  margin-top: 18px;
+}
+.mobile-live .r-my-upcoming > p,
+.mobile-live .r-my-purchased > p {
+  padding: 20px;
+  background: var(--panel);
+  border-radius: 20px;
+  font-size: 14px;
+}
+.mobile-live .r-my-menu a {
+  cursor: pointer;
+}
+.r-categories .r-icon {
+  width: 26px;
+  height: 30px;
+}
+.r-spark > .r-icon {
+  width: 32px;
+  height: 32px;
+}
+.r-match-intro > .r-spark {
+  display: flex;
+  justify-content: center;
+}
+.r-search .r-spark > .r-icon {
+  width: 24px;
+  height: 24px;
 }
