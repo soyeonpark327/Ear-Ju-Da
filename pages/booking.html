@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="../css/reset.css" />
     <link rel="stylesheet" href="../css/variables.css" />
     <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
-    <link rel="stylesheet" href="../css/pages/booking.css" />
+    <link rel="stylesheet" href="../css/pages/booking.css?v=6" />
   </head>
   <body>
     <a class="skip" href="#main">본문으로 이동</a>
@@ -19,8 +19,6 @@
       <main id="main" class="reservation">
         <p id="load-status" class="status" role="status"></p>
         <div id="booking-content" hidden>
-          <label class="expert-label" for="expert-choice">상담할 베테랑</label
-          ><select id="expert-choice"></select>
           <div
             id="date-strip"
             class="date-strip"
@@ -77,13 +75,6 @@
               >
             </p>
           </div>
-          <label class="topic-label" for="booking-topic">상담 내용</label
-          ><textarea
-            id="booking-topic"
-            maxlength="1000"
-            rows="3"
-            placeholder="상담하고 싶은 내용을 적어주세요."
-          ></textarea>
           <footer class="reservation-footer">
             <button id="book" type="button" class="primary full" disabled>
               날짜와 시간을 선택해주세요
@@ -102,11 +93,21 @@
     <dialog id="booking-confirm">
       <h2>예약 내용을 확인해주세요</h2>
       <p id="confirm-text"></p>
+      <label class="expert-label" for="expert-choice">상담할 베테랑</label
+      ><select id="expert-choice"></select>
+      <label class="topic-label" for="booking-topic">상담 내용</label
+      ><textarea
+        id="booking-topic"
+        maxlength="1000"
+        rows="3"
+        placeholder="상담하고 싶은 내용을 적어주세요."
+      ></textarea>
+      <p id="confirm-error" class="status" role="status"></p>
       <div class="confirm-actions">
         <button id="cancel-booking" class="outline">취소</button
         ><button id="confirm-booking" class="primary">예약 확정</button>
       </div>
     </dialog>
-    <script type="module" src="../js/pages/booking.js"></script>
+    <script type="module" src="../js/pages/booking.js?v=6"></script>
   </body>
 </html>
