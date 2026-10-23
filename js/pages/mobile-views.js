@@ -134,7 +134,7 @@ function calendar() {
     .map((n) => `<span>${n}</span>`)
     .join(
       "",
-    )}</div><div class="r-calendar" id="r-calendar"></div><a class="r-primary" id="r-reserve" href="${link("booking", "id=demo-lee&date=2026-10-24")}">상담 예약하기</a></section>`;
+    )}</div><div class="r-calendar" id="r-calendar"></div><a class="r-primary" id="r-reserve" href="${link("booking", `id=${params.get("id") === "preview-lee" ? "preview-lee" : "demo-lee"}&date=2026-10-24`)}">상담 예약하기</a></section>`;
 }
 function booking() {
   return `${statusbar()}${header("예약하기")}<main id="main" class="r-booking"><div class="r-date-strip">${["토", "일", "월", "화", "수"].map((n, i) => `<button class="${i === 2 ? "selected" : ""}" data-date="${24 + i}" aria-pressed="${i === 2}"><span>${n}</span><b>${24 + i}</b></button>`).join("")}</div><h2 id="r-day-heading">목요일</h2><div class="r-times"><button aria-pressed="true">14:00</button><button aria-pressed="false">16:00</button><button disabled>18:00 마감</button></div><div class="r-modes"><button class="r-mode selected" data-mode="call" aria-pressed="true"><span class="r-mode-icon">${icon("phone")}</span><span><b>1시간 1:1 통화 상담</b><small>자료를 공유하고 베테랑의 피드백까지</small></span><strong>12,000P</strong><i>추천</i></button><button class="r-mode" data-mode="chat" aria-pressed="false"><span class="r-mode-icon">${icon("chat")}</span><span><b>1시간 1:1 채팅 상담</b><small>채팅으로 편하게 질문</small></span><strong>10,000P</strong></button></div><div class="r-policies"><p>${icon("shield")}<span>결제한 포인트는 <b>상담이 끝난 뒤</b>에 베테랑에게 전달됩니다. 그 전까지는 플랫폼이 보관합니다.</span></p><p><span class="r-red-cross">×</span><span>상대방이 응답하지 않을 경우 <b>포인트는 환급되지 않으며, 신뢰 등급이 하락</b>합니다.</span></p></div><footer class="r-booking-footer"><button class="r-primary" id="r-book-submit">목요일 14:00으로 예약하기</button><p>보유 포인트 <b>31,500P</b></p></footer></main>`;
@@ -374,6 +374,9 @@ export function bindReferenceCalendar() {
           );
         }),
     );
+    document
+      .querySelector("#r-calendar button.selected:not(:disabled)")
+      ?.click();
   }
   draw();
   document.getElementById("r-prev-month").onclick = () => {

@@ -276,7 +276,7 @@ async function profile() {
     document.body.classList.add("r-profile-preview");
     if (params.get("calendar") === "1") {
       const { bindReferenceCalendar } = await import(
-        "./mobile-views.js?v=flow-1"
+        "./mobile-views.js?v=booking-fix-2"
       );
       bindReferenceCalendar();
     }
@@ -390,9 +390,9 @@ async function profile() {
   };
 }
 async function booking() {
-  if (params.get("id") === "preview-lee") {
+  if (["preview-lee", "demo-lee"].includes(params.get("id"))) {
     const { bindBookingSelection } = await import(
-      "./mobile-views.js?v=booking-flow-1"
+      "./mobile-views.js?v=booking-fix-2"
     );
     bindBookingSelection(() => say("예약 내용을 확인해주세요."));
     const selected = params.get("date");

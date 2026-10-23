@@ -2257,3 +2257,8 @@ body.mobile-design {
 .r-purchase small {
   white-space: nowrap;
 }
+
+/* Reserve actual space below the sticky input, even before the page scrolls. */
+.mobile-live .r-matching .r-composer {
+  margin-bottom: 38px;
+}

@@ -1,6 +1,6 @@
-import { renderReference } from "./mobile-views.js?v=booking-flow-1";
+import { renderReference } from "./mobile-views.js?v=booking-fix-2";
 const demo = new URLSearchParams(location.search).get("demo") === "1";
 if (renderReference({ live: !demo }) && !demo) {
-  const { startApp } = await import("./mobile-app.js?v=booking-flow-1");
+  const { startApp } = await import("./mobile-app.js?v=booking-fix-2");
   await startApp();
 }
