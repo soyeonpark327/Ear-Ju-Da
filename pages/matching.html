@@ -7,14 +7,14 @@
     <link rel="stylesheet" href="../css/reset.css" />
     <link rel="stylesheet" href="../css/variables.css" />
     <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
-    <link rel="stylesheet" href="../css/pages/matching.css" />
+    <link rel="stylesheet" href="../css/pages/matching.css?v=10" />
   </head>
   <body class="matching-page">
     <a class="skip" href="#main">본문으로 이동</a>
     <div class="app">
       <header class="page-header">
         <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
-        <h1>AI 매칭 결과</h1>
+        <h1>AI 매칭</h1>
       </header>
       <main id="main" class="matching-main">
         <section class="matching-intro">
@@ -40,6 +40,14 @@
             </button>
           </div>
         </section>
+        <section
+          id="matching-conversation"
+          class="matching-conversation"
+          role="log"
+          aria-label="매칭 대화"
+          aria-live="polite"
+          hidden
+        ></section>
         <form id="matching-form" class="matching-composer">
           <button id="attach" type="button" aria-label="첨부 기능 안내">
             ＋</button
@@ -74,6 +82,6 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <script type="module" src="../js/pages/matching.js"></script>
+    <script type="module" src="../js/pages/matching.js?v=11"></script>
   </body>
 </html>
