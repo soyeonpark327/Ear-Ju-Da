@@ -180,3 +180,20 @@ function render(msg) {
 new Date(slot.start_at).toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' });
 // → '2026. 11. 1. 오후 2:00'
 ```
+
+## ai.js: AI 기능 (Gemini)
+
+| 함수 | 설명 | 돌려주는 값 |
+| --- | --- | --- |
+| `aiMatch(concern)` | 고민 문장으로 맞는 베테랑 추천 (최대 3명, 잘 맞는 순) | `{ summary, keywords: [], matches: [{ expert_id, reason, name, headline, avatar_url, trust_label }] }` |
+
+```js
+import { aiMatch } from '../api/ai.js';
+
+try {
+  const { summary, matches } = await aiMatch('공장이 갑자기 단가를 깎자고 해요');
+  // matches[0].reason → "자동차 부품사 구매팀에서 30년간 ... 정확히 짚어주실 거예요."
+} catch (e) {
+  // AI 장애 시: 키워드 검색(getExperts)으로 대신 찾기
+}
+```
