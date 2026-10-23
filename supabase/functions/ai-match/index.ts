@@ -7,12 +7,15 @@
 //
 // 필요한 Secrets: GEMINI_API_KEY
 //   (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY는 Supabase가 자동으로 넣어준다)
-// 선택 Secrets: GEMINI_MODEL  기본은 gemini-flash-latest, 안 되면 gemini-2.5-flash
+// 선택 Secrets: GEMINI_MODEL  먼저 써볼 모델. 기본 순서는 MODELS 참고
 //
 // 배포할 때 "Verify JWT"는 끈다. (로그인하지 않은 방문자도 매칭을 써볼 수 있게)
 
 const env = (key: string) => Deno.env.get(key) ?? "";
 const MAX_CONCERN = 1000;
+// 빠른 모델부터. "생각하는(thinking)" 최신 모델은 답이 수십 초~수 분 걸려 함수 시간 제한(150초)에 걸린다.
+const MODELS = ["gemini-2.5-flash-lite", "gemini-2.5-flash", "gemini-flash-lite-latest"];
+const MODEL_TIMEOUT_MS = 20_000;
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
@@ -95,21 +98,35 @@ async function askGemini(concern: string, experts: Expert[]) {
     }],
     generationConfig: { temperature: 0.3, responseMimeType: "application/json", responseSchema: SCHEMA },
   };
-  const models = [env("GEMINI_MODEL"), "gemini-flash-latest", "gemini-2.5-flash"].filter(Boolean);
-  let lastError = "";
+  const models = [...new Set([env("GEMINI_MODEL"), ...MODELS].filter(Boolean))];
+  const errors: string[] = [];
   for (const model of models) {
-    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": env("GEMINI_API_KEY") },
-      body: JSON.stringify(body),
-    });
-    const data = await res.json();
-    if (res.status === 404) { lastError = `${model}: not found`; continue; } // 모델 이름이 바뀐 경우 다음 후보로
-    if (!res.ok) throw new Error(`gemini ${model} ${res.status}: ${data.error?.message ?? ""}`);
+    // 2.5 flash는 기본으로 생각(thinking)을 해서 느리다 → 끈다
+    const config = model === "gemini-2.5-flash"
+      ? { ...body, generationConfig: { ...body.generationConfig, thinkingConfig: { thinkingBudget: 0 } } }
+      : body;
+    let res: Response;
+    try {
+      res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "x-goog-api-key": env("GEMINI_API_KEY") },
+        body: JSON.stringify(config),
+        signal: AbortSignal.timeout(MODEL_TIMEOUT_MS),
+      });
+    } catch (err) {
+      errors.push(`${model}: ${(err as Error).name === "TimeoutError" ? "timeout" : (err as Error).message}`);
+      continue; // 시간 초과·네트워크 오류 → 다음 모델
+    }
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      errors.push(`${model} ${res.status}: ${data.error?.message ?? ""}`);
+      if (res.status === 403) break; // 키·프로젝트 권한 문제는 다른 모델도 같다
+      continue; // 404(모델 없음)·429(사용량 초과)·5xx → 다음 모델
+    }
     const text = data.candidates?.[0]?.content?.parts?.map((p: any) => p.text ?? "").join("") ?? "";
     return JSON.parse(text);
   }
-  throw new Error(`gemini: ${lastError}`);
+  throw new Error(`gemini: ${errors.join(" | ")}`);
 }
 
 export async function handler(req: Request): Promise<Response> {
