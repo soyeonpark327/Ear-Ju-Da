@@ -101,8 +101,33 @@ async function findExperts(text, reply) {
           keyword,
         ),
       );
-    } else
-      rows = await (await import("../api/experts.js")).getExperts({ keyword });
+    } else {
+      const { getExperts } = await import("../api/experts.js");
+      rows = await getExperts({ keyword });
+      // Older cached API modules used exact keyword matching. Recheck the
+      // public list so a related compound keyword such as 지원금정산 is found.
+      if (!rows.length) {
+        const all = await getExperts();
+        const words = keyword
+          .toLocaleLowerCase("ko-KR")
+          .split(/\s+/)
+          .filter(Boolean);
+        rows = all.filter((e) => {
+          const searchable = [
+            e.name,
+            e.headline,
+            e.industry,
+            e.career_summary,
+            e.search_text,
+            ...(e.keywords || []),
+          ]
+            .filter(Boolean)
+            .join(" ")
+            .toLocaleLowerCase("ko-KR");
+          return words.every((word) => searchable.includes(word));
+        });
+      }
+    }
     if (!rows.length) {
       bubble.textContent =
         "관련 베테랑을 아직 찾지 못했어요. 계약, 노무, 지원금처럼 분야를 바꿔서 적어주세요.";
