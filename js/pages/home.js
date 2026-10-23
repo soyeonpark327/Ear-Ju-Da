@@ -158,7 +158,7 @@ document.querySelector("#more").onclick = () => {
 };
 document.querySelector("#search-form").onsubmit = (e) => {
   e.preventDefault();
-  location.href = route("expert-booking.html", {
+  location.href = route("matching.html", {
     keyword: document.querySelector("#keyword").value.trim(),
   });
 };

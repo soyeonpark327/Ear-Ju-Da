@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI 매칭 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/matching.css" />
+  </head>
+  <body class="matching-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
+        <h1>AI 매칭 결과</h1>
+      </header>
+      <main id="main" class="matching-main">
+        <section class="matching-intro">
+          <svg class="sparkle" viewBox="0 0 64 64" aria-hidden="true">
+            <path
+              d="M27 9Q30 0 33 9L38 24L53 29Q62 32 53 35L38 40L33 55Q30 64 27 55L22 40L7 35Q-2 32 7 29L22 24Z"
+              fill="currentColor"
+            />
+            <path
+              d="M55 1L57 6L62 8L57 10L55 15L53 10L48 8L53 6Z"
+              fill="currentColor"
+            />
+          </svg>
+          <h2>어떤 문제를 겪고 계신가요?</h2>
+          <p>상황을 편하게 적어주시면<br />딱 맞는 베테랑을 찾아드려요</p>
+          <div class="suggestions" aria-label="고민 예시">
+            <button type="button" data-keyword="납품">
+              거래처가 납품 단가 인하를 요구해요</button
+            ><button type="button" data-keyword="노무">
+              첫 직원 채용, 근로계약서가 궁금해요</button
+            ><button type="button" data-keyword="지원금">
+              정부 지원금 신청이 처음이에요
+            </button>
+          </div>
+        </section>
+        <form id="matching-form" class="matching-composer">
+          <button id="attach" type="button" aria-label="첨부 기능 안내">
+            ＋</button
+          ><label class="sr-only" for="concern"
+            >이어주다에게 고민을 말해주세요</label
+          ><textarea
+            id="concern"
+            maxlength="1000"
+            rows="3"
+            placeholder="이어주다에게 말해주세요"
+          ></textarea
+          ><button id="send" type="submit" aria-label="베테랑 찾기" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path
+                d="M12 20V4M5 11l7-7 7 7"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          <p id="matching-status" role="status">
+            현재는 입력한 내용의 키워드로 베테랑을 찾아요.
+          </p>
+        </form>
+      </main>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/matching.js"></script>
+  </body>
+</html>
