@@ -2276,3 +2276,19 @@ body.mobile-design {
   background-position: -24px -140px;
   background-repeat: no-repeat;
 }
+
+/* Geometric strokes keep the cross centered independently of font baselines. */
+.r-cross { position: relative; font-size: 0; }
+.r-cross::before,
+.r-cross::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 13px;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.r-cross::after { transform: translate(-50%, -50%) rotate(-45deg); }
