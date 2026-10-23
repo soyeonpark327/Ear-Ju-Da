@@ -313,3 +313,33 @@
 .reservation-footer {
   padding-bottom: max(16px, env(safe-area-inset-bottom));
 }
+
+/* 예약 완료: 시간 선택 영역을 숨기고 완료 안내만 또렷하게 */
+.booking-done #date-strip,
+.booking-done #booking-times,
+.booking-done #day-heading,
+.booking-done #modes,
+.booking-done #book {
+  display: none;
+}
+.booking-done #booking-message {
+  padding: 18px;
+  border-radius: 18px;
+  background: #e6f9fd;
+  color: #0b5566;
+  font-weight: 700;
+  opacity: 1;
+}
+.booking-done-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+.booking-done-links a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  font-weight: 700;
+}
