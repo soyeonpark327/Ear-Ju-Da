@@ -244,53 +244,12 @@ export function renderReference({ live = false } = {}) {
   }
   if (page === "expert-booking" && params.get("calendar") === "1")
     bindReferenceCalendar();
-  if (page === "booking") {
-    let day = "목요일",
-      time = "14:00";
-    const update = () =>
-      (document.getElementById("r-book-submit").textContent =
-        `${day} ${time}으로 예약하기`);
-    document.querySelectorAll(".r-date-strip button").forEach(
-      (b, i) =>
-        (b.onclick = () => {
-          document.querySelectorAll(".r-date-strip button").forEach((x) => {
-            x.classList.remove("selected");
-            x.setAttribute("aria-pressed", "false");
-          });
-          b.classList.add("selected");
-          b.setAttribute("aria-pressed", "true");
-          day = ["토요일", "일요일", "월요일", "화요일", "수요일"][i];
-          document.getElementById("r-day-heading").textContent = day;
-          update();
-        }),
-    );
-    document.querySelectorAll(".r-times button:not(:disabled)").forEach(
-      (b) =>
-        (b.onclick = () => {
-          document
-            .querySelectorAll(".r-times button")
-            .forEach((x) => x.setAttribute("aria-pressed", "false"));
-          b.setAttribute("aria-pressed", "true");
-          time = b.textContent;
-          update();
-        }),
-    );
-    document.querySelectorAll(".r-mode").forEach(
-      (b) =>
-        (b.onclick = () => {
-          document.querySelectorAll(".r-mode").forEach((x) => {
-            x.classList.remove("selected");
-            x.setAttribute("aria-pressed", "false");
-          });
-          b.classList.add("selected");
-          b.setAttribute("aria-pressed", "true");
-        }),
-    );
-    document.getElementById("r-book-submit").onclick = () =>
+  if (page === "booking")
+    bindBookingSelection(() =>
       say(
         "시안 확인용 예약입니다. 실제 예약이나 포인트 결제는 실행하지 않아요.",
-      );
-  }
+      ),
+    );
   if (page === "notes")
     document.querySelectorAll(".r-note-filters button").forEach(
       (b) =>
@@ -425,4 +384,49 @@ export function bindReferenceCalendar() {
     month = Math.min(11, month + 1);
     draw();
   };
+}
+
+export function bindBookingSelection(onSubmit) {
+  let day = "목요일",
+    time = "14:00";
+  const update = () =>
+    (document.getElementById("r-book-submit").textContent =
+      `${day} ${time}으로 예약하기`);
+  document.querySelectorAll(".r-date-strip button").forEach(
+    (b, i) =>
+      (b.onclick = () => {
+        document.querySelectorAll(".r-date-strip button").forEach((x) => {
+          x.classList.remove("selected");
+          x.setAttribute("aria-pressed", "false");
+        });
+        b.classList.add("selected");
+        b.setAttribute("aria-pressed", "true");
+        day = b.querySelector("span").textContent + "요일";
+        document.getElementById("r-day-heading").textContent = day;
+        update();
+      }),
+  );
+  document.querySelectorAll(".r-times button:not(:disabled)").forEach(
+    (b) =>
+      (b.onclick = () => {
+        document
+          .querySelectorAll(".r-times button")
+          .forEach((x) => x.setAttribute("aria-pressed", "false"));
+        b.setAttribute("aria-pressed", "true");
+        time = b.textContent;
+        update();
+      }),
+  );
+  document.querySelectorAll(".r-mode").forEach(
+    (b) =>
+      (b.onclick = () => {
+        document.querySelectorAll(".r-mode").forEach((x) => {
+          x.classList.remove("selected");
+          x.setAttribute("aria-pressed", "false");
+        });
+        b.classList.add("selected");
+        b.setAttribute("aria-pressed", "true");
+      }),
+  );
+  document.getElementById("r-book-submit").onclick = () => onSubmit();
 }

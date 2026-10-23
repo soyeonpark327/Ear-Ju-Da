@@ -279,12 +279,6 @@ async function profile() {
         "./mobile-views.js?v=flow-1"
       );
       bindReferenceCalendar();
-      $("#r-reserve").onclick = (event) => {
-        event.preventDefault();
-        say(
-          "선택한 날짜의 상담 예약은 베테랑의 실제 판매 등록 후 이용할 수 있어요.",
-        );
-      };
     }
     $(".r-tip-count").onclick = () => say("현재 공개된 답변을 보고 있어요.");
     const reviews = $(".r-profile-actions a:last-child");
@@ -396,6 +390,39 @@ async function profile() {
   };
 }
 async function booking() {
+  if (params.get("id") === "preview-lee") {
+    const { bindBookingSelection } = await import(
+      "./mobile-views.js?v=booking-flow-1"
+    );
+    bindBookingSelection(() => say("예약 내용을 확인해주세요."));
+    const selected = params.get("date");
+    if (selected) {
+      const date = new Date(selected + "T12:00:00+09:00");
+      const day = date.getDate();
+      const strip = $$(".r-date-strip button");
+      if (!strip.some((button) => Number(button.dataset.date) === day)) {
+        strip.forEach((button, i) => {
+          const d = new Date(date);
+          d.setDate(day + i);
+          button.dataset.date = String(d.getDate());
+          button.querySelector("span").textContent = "일월화수목금토"[
+            d.getDay()
+          ];
+          button.querySelector("b").textContent = d.getDate();
+        });
+      }
+      const button = strip.find(
+        (button) => Number(button.dataset.date) === day,
+      );
+      if (button) button.click();
+    }
+    $("#r-book-submit").onclick = () =>
+      say(
+        "선택한 날짜·시간·상담 방식을 확인했어요. 이 프로필은 미리보기이므로 실제 예약이나 포인트 결제는 실행하지 않아요.",
+      );
+    return;
+  }
+
   const { api, e, id } = await loadExpert();
   const [slots, auth] = await Promise.all([
     api.getSlots(id),
