@@ -282,3 +282,15 @@ render(await getUnreadCount());
 await subscribeNotifications(async () => render(await getUnreadCount()));
 ```
 
+
+## points.js: 포인트 충전(데모) · 내역
+
+| 함수 / 값 | 설명 | 돌려주는 값 |
+| --- | --- | --- |
+| `chargePoints(amount)` | 데모 충전 (실제 결제 없음). `5000` / `10000` / `30000`, 하루 최대 50,000P | 충전 후 잔액 |
+| `CHARGE_OPTIONS` | 충전 버튼 금액 | `[5000, 10000, 30000]` |
+| `getPointHistory({ limit })` | 내 포인트 내역 (최신순, 기본 50개) | `[{ id, amount, balance_after, type, label, ref: { booking_id?, note_id? }, created_at }]` |
+| `POINT_TYPE_LABELS` | 내역 종류 → 문구 | `{ booking_payout: '상담 수익', ... }` |
+
+- `amount`가 양수면 적립(+), 음수면 사용(-). `balance_after`는 그 직후 잔액이에요.
+- 포인트가 바뀌는 모든 곳(가입·충전·예약·환불·완료·노쇼·노트 구매·판매)이 자동으로 기록돼요.
