@@ -135,6 +135,7 @@ else showBuyButton(note.price_points); // 구매 안 함 → 구매 버튼
 | `completeBooking(bookingId)` | 상담 완료 (청년만). 베테랑에게 포인트 지급 | |
 | `cancelBooking(bookingId)` | 예약 취소 (시작 전만). 포인트 환불 | |
 | `getReport(bookingId)` | AI 보고서 | `{ summary, checklist: [], risks: [] }` 또는 `null` |
+| `generateReport(bookingId)` | **AI 전략 보고서 만들기** (Gemini가 채팅 대화를 읽고 정리). 완료된 상담의 청년·베테랑만, 상담당 하나 (이미 있으면 그대로 반환) | `{ booking_id, summary, checklist: [], risks: [], created_at }` |
 | `getReviews(expertId)` | 후기 목록 | `[{ id, rating, content, created_at, youth: { name } }]` |
 | `addReview(bookingId, rating, content)` | 후기 작성 (완료된 상담만, 1~5점) | |
 
@@ -148,6 +149,14 @@ else showBuyButton(note.price_points); // 구매 안 함 → 구매 버튼
   youth:  { name },
   expert: { headline, profiles: { name } }
 }
+```
+
+상담 완료 → 보고서 흐름:
+```js
+await completeBooking(bookingId);          // 포인트가 베테랑에게 지급되고 상태가 completed로
+const report = await generateReport(bookingId); // 몇 초 걸림 → "보고서를 만들고 있어요…" 표시
+// report.summary, report.checklist, report.risks 를 화면에
+// 나중에 다시 볼 때는 getReport(bookingId)
 ```
 
 ## chat.js: 실시간 채팅
