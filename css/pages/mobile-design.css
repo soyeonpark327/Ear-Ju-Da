@@ -2268,12 +2268,12 @@ body.mobile-design {
 .r-home-header > .r-home-logo {
   left: 24px;
   right: auto;
-  bottom: 16px;
-  width: 88px;
+  bottom: 18px;
+  width: 94px;
   height: 20px;
-  background-image: url("../../assets/home/approved-home-logo-source.png");
+  background-image: url("../../assets/home/approved-home-logo-source.png?v=final-logo-2");
   background-size: 402px 1682px;
-  background-position: -24px -140px;
+  background-position: -24px -138px;
   background-repeat: no-repeat;
 }
 
