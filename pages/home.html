@@ -6,7 +6,10 @@
     <title>메인 | 이어주다</title>
     <link rel="stylesheet" href="../css/reset.css" />
     <link rel="stylesheet" href="../css/variables.css" />
-    <link rel="stylesheet" href="../css/pages/home-notes.css?v=ai-portraits-2" />
+    <link
+      rel="stylesheet"
+      href="../css/pages/home-notes.css?v=header-links-1"
+    />
   </head>
   <body class="home-page">
     <a class="skip" href="#main">본문으로 이동</a>
@@ -15,6 +18,13 @@
         <a href="home.html" class="brand">이어주다<span>경험을 잇다</span></a>
         <div class="header-actions">
           <a href="consultations.html" data-route class="account">내 상담</a
+          ><a
+            id="dashboard-link"
+            class="account"
+            href="expert-dashboard.html"
+            data-route
+            hidden
+            >대시보드</a
           ><a id="account" class="account" href="login.html">로그인</a
           ><button id="notifications" aria-label="알림">♧</button>
         </div>
@@ -75,6 +85,6 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <script type="module" src="../js/pages/home.js?v=ai-portraits-2"></script>
+    <script type="module" src="../js/pages/home.js?v=header-links-1"></script>
   </body>
 </html>

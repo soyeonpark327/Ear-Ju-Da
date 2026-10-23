@@ -70,17 +70,34 @@ export function init() {
 // 헤더의 #account 링크: 로그인 전엔 "로그인", 후엔 "이름 · 포인트"
 async function renderAccount() {
   const el = document.getElementById("account");
-  if (!el) return;
-  el.href = loginUrl();
-  if (demo) return;
+  const dashboard = document.getElementById("dashboard-link");
+  if (!el && !dashboard) return;
+  if (el) el.href = loginUrl();
+  if (dashboard) dashboard.hidden = true;
+  if (demo) {
+    if (el) {
+      el.href = route("points.html");
+      el.textContent = "내 포인트";
+      el.setAttribute("aria-label", "내 포인트 예시 화면");
+    }
+    if (dashboard) dashboard.hidden = false;
+    return;
+  }
   try {
     const me = await (await import("../api/auth.js")).getMyProfile();
     if (me) {
-      el.textContent = `${me.name} · ${money(me.points)}P`;
-      el.setAttribute("aria-label", `내 계정: ${me.name}, 보유 포인트 ${money(me.points)}P`);
+      if (el) {
+        el.href = route("points.html");
+        el.textContent = `${me.name} · ${money(me.points)}P`;
+        el.setAttribute(
+          "aria-label",
+          `내 계정: ${me.name}, 보유 포인트 ${money(me.points)}P`,
+        );
+      }
+      if (dashboard) dashboard.hidden = me.role !== "veteran";
     }
   } catch {
-    // 연결 실패 시 "로그인" 그대로 둔다
+    // 연결 실패 시 로그인 링크와 숨겨진 대시보드를 유지한다.
   }
 }
 export function avatar(url) {
