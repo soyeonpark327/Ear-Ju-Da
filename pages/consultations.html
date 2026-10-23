@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
+    <title>내 상담 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/consultations.css?v=1" />
+  </head>
+  <body class="consultation-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
+        <h1>내 상담</h1>
+      </header>
+      <main id="main" class="consultation-main">
+        <p class="consultation-intro">
+          예약한 상담과 완료된 상담의 보고서를 확인해보세요.
+        </p>
+        <nav class="consultation-filters" aria-label="상담 상태">
+          <button type="button" data-filter="all" aria-pressed="true">
+            전체</button
+          ><button type="button" data-filter="confirmed" aria-pressed="false">
+            예약된 상담</button
+          ><button type="button" data-filter="completed" aria-pressed="false">
+            완료</button
+          ><button type="button" data-filter="cancelled" aria-pressed="false">
+            취소
+          </button>
+        </nav>
+        <div class="consultation-tools">
+          <button type="button" id="consultations-refresh" class="outline">
+            새로 불러오기</button
+          ><a href="booking.html" data-route class="primary">상담 예약하기</a>
+        </div>
+        <p id="consultations-status" class="status" role="status"></p>
+        <div id="consultations-list"></div>
+      </main>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/consultations.js?v=1"></script>
+  </body>
+</html>

@@ -95,10 +95,21 @@ if (me?.senior_mode) document.documentElement.classList.add('senior-mode');
 
 **베테랑 본인용**
 
+증명서 → 전문가 등록 흐름:
+```js
+const input = document.querySelector('#certificate'); // <input type="file" accept=".pdf,image/*">
+const path = await uploadCertificate(input.files[0]);
+await registerExpert({ headline, industry, career_years, career_summary, keywords, price_points, certificate_path: path });
+// 관리자가 Supabase에서 확인 후 verification을 'approved'로 바꾸면 목록에 노출
+```
+
 | 함수 | 설명 |
 | --- | --- |
 | `getMyExpert()` | 내 전문가 정보. `verification`이 `'pending'`이면 승인 대기 중 |
-| `registerExpert({ headline, industry, career_years, career_summary, keywords, price_points })` | 전문가 정보 처음 작성 |
+| `getMyDashboard()` | **베테랑 대시보드**: 프로필·등급, 오늘/이번 주/예정/완료/노쇼 상담 수, 다음 상담, 지급 예정·누적·이번 달 수익, 노트 판매, 최근 후기 3개. 전문가 정보가 없으면 `{ registered: false }` |
+| `uploadCertificate(file)` | **경력 증명서 업로드** (PDF·JPG·PNG·WEBP·HEIC, 10MB 이하). 전문가 정보가 있으면 바로 연결, 반려 상태면 승인 대기로. 없으면 돌려받은 경로를 `registerExpert`의 `certificate_path`에 |
+| `getMyCertificateUrl()` | 내가 올린 증명서 보기 링크 (1분 유효), 없으면 `null` |
+| `registerExpert({ headline, industry, career_years, career_summary, keywords, price_points, certificate_path })` | 전문가 정보 처음 작성 (`certificate_path`는 `uploadCertificate()` 결과) |
 | `updateMyExpert(changes)` | 전문가 정보 수정 |
 | `getMySlots()` | 내가 연 시간 전체 (`is_booked` 포함) |
 | `addSlot(startAt, endAt)` | 상담 가능 시간 추가 (`Date` 또는 `'2026-11-01T14:00'`) |
@@ -109,7 +120,7 @@ if (me?.senior_mode) document.documentElement.classList.add('senior-mode');
 
 | 함수 | 설명 | 돌려주는 값 |
 | --- | --- | --- |
-| `getNotes({ keyword, industry })` | 공개된 노트 목록 (최신순). `keyword`는 제목·미리보기·업종 부분 검색 + 키워드 일치 | `[{ id, title, summary, industry, keywords, price_points, created_at, author: { headline, profiles: { name } } }]` |
+| `getNotes({ keyword, industry, sort })` | 공개된 노트 목록. `sort`: `'latest'` 최신순(기본) / `'popular'` 구매 많은 순. `keyword`는 제목·미리보기·업종 부분 검색 + 키워드 일치 | `[{ id, title, summary, industry, keywords, price_points, purchase_count, created_at, author: { headline, profiles: { name } } }]` |
 | `getNote(noteId)` | 노트 하나 (미리보기) | 위와 같은 형태, 없으면 `null` |
 | `getNoteBody(noteId)` | 유료 본문 | 구매했으면 문자열, 아니면 `null` |
 | `purchaseNote(noteId)` | 구매 (포인트 차감) | |
@@ -135,6 +146,7 @@ else showBuyButton(note.price_points); // 구매 안 함 → 구매 버튼
 | `completeBooking(bookingId)` | 상담 완료 (청년만). 베테랑에게 포인트 지급 | |
 | `cancelBooking(bookingId)` | 예약 취소 (시작 전만). 포인트 환불 | |
 | `getReport(bookingId)` | AI 보고서 | `{ summary, checklist: [], risks: [] }` 또는 `null` |
+| `generateReport(bookingId)` | **AI 전략 보고서 만들기** (Gemini가 채팅 대화를 읽고 정리). 완료된 상담의 청년·베테랑만, 상담당 하나 (이미 있으면 그대로 반환) | `{ booking_id, summary, checklist: [], risks: [], created_at }` |
 | `getReviews(expertId)` | 후기 목록 | `[{ id, rating, content, created_at, youth: { name } }]` |
 | `addReview(bookingId, rating, content)` | 후기 작성 (완료된 상담만, 1~5점) | |
 
@@ -142,7 +154,9 @@ else showBuyButton(note.price_points); // 구매 안 함 → 구매 버튼
 ```js
 {
   id, topic, price_points, created_at,
-  status,        // 'confirmed'(진행 중) | 'completed'(완료) | 'cancelled'(취소)
+  status,        // 'confirmed'(진행 중) | 'completed'(완료) | 'cancelled'(취소) | 'no_show'(노쇼)
+  no_show_by,    // status가 'no_show'일 때 불참한 쪽: 'youth' | 'expert' | 'both'
+  settled_at,    // 상담 후 자동 정리된 시각 (자동 완료·노쇼)
   youth_id, expert_id,
   slot:   { start_at, end_at },
   youth:  { name },
@@ -150,12 +164,30 @@ else showBuyButton(note.price_points); // 구매 안 함 → 구매 버튼
 }
 ```
 
+**상담 후 자동 정리 (10분마다)**: 상담 종료 30분 뒤에도 `confirmed`이면 채팅 참여로 판단해요.
+| 채팅 기록 | 결과 | 포인트 |
+| --- | --- | --- |
+| 둘 다 보냄 | `completed` (자동 완료) | 베테랑에게 지급 |
+| 베테랑이 안 보냄 | `no_show` / `no_show_by: 'expert'`(청년만 보냄) 또는 `'both'` | 청년에게 전액 환불 |
+| 청년이 안 보냄 | `no_show` / `no_show_by: 'youth'` | 환불 없이 베테랑에게 지급 |
+
+페널티: 베테랑 노쇼 1회면 신뢰 등급 한 단계 하락, 2회 이상이면 `bronze`. 청년은 최근 30일 노쇼 2회 이상이면 `createBooking`이 "예약이 제한됐어요"로 throw.
+
+상담 완료 → 보고서 흐름:
+```js
+await completeBooking(bookingId);          // 포인트가 베테랑에게 지급되고 상태가 completed로
+const report = await generateReport(bookingId); // 몇 초 걸림 → "보고서를 만들고 있어요…" 표시
+// report.summary, report.checklist, report.risks 를 화면에
+// 나중에 다시 볼 때는 getReport(bookingId)
+```
+
 ## chat.js: 실시간 채팅
 
 | 함수 | 설명 |
 | --- | --- |
 | `getMessages(bookingId)` | 지난 메시지 (오래된 순) `[{ id, sender_id, content, created_at }]` |
-| `sendMessage(bookingId, content)` | 메시지 보내기 (`status`가 `'confirmed'`인 예약만) |
+| `sendMessage(bookingId, content)` | 메시지 보내기. **진행 중 예약 + 상담 시작 10분 전 ~ 종료 30분 후**에만 가능 (그 외엔 안내 메시지로 throw) |
+| `getChatWindow(booking)` | 채팅방 상태 `{ state: 'before' \| 'open' \| 'closed', opensAt, closesAt, message }`. `message`를 입력창 위에 그대로 보여주고, `state !== 'open'`이면 입력창 비활성화 |
 | `subscribeMessages(bookingId, (msg) => {})` | 새 메시지가 올 때마다 호출. 구독 해제 함수를 돌려줌 |
 
 ```js
@@ -222,3 +254,44 @@ try {
   // AI 장애 시: 키워드 검색(getExperts)으로 대신 찾기
 }
 ```
+
+## notifications.js: 알림함
+
+알림은 DB가 자동으로 만들어요 (예약·30분 전·취소·완료·노쇼·보고서·노트 판매·후기·경력 인증). 화면은 읽고 "읽음" 처리만 해요.
+
+| 함수 | 설명 | 돌려주는 값 |
+| --- | --- | --- |
+| `getNotifications({ limit, unreadOnly })` | 내 알림 (최신순, 기본 30개) | `[{ id, type, title, body, data: { booking_id?, note_id? }, read_at, created_at }]` |
+| `getUnreadCount()` | 안 읽은 알림 수 (알림 버튼 빨간 점) | 숫자 |
+| `markNotificationRead(id)` / `markAllNotificationsRead()` | 읽음 처리 | |
+| `subscribeNotifications((n) => {})` | 새 알림 실시간 수신 | 구독 해제 함수 (Promise) |
+
+| type | 누르면 이동하면 좋은 곳 |
+| --- | --- |
+| `booking_new`, `booking_confirmed`, `booking_reminder`, `booking_cancelled`, `booking_completed`, `booking_no_show` | 내 상담 / 채팅방 (`data.booking_id`) |
+| `report_ready` | AI 전략 보고서 (`data.booking_id`) |
+| `note_sold` | 오답노트 상세 (`data.note_id`) |
+| `review_new` | 내 베테랑 프로필 |
+| `verification_changed` | 베테랑 프로필 등록·수정 |
+
+```js
+import { getUnreadCount, subscribeNotifications } from '../api/notifications.js';
+
+const bell = document.querySelector('#notifications');
+const render = (n) => bell.classList.toggle('has-unread', n > 0);
+render(await getUnreadCount());
+await subscribeNotifications(async () => render(await getUnreadCount()));
+```
+
+
+## points.js: 포인트 충전(데모) · 내역
+
+| 함수 / 값 | 설명 | 돌려주는 값 |
+| --- | --- | --- |
+| `chargePoints(amount)` | 데모 충전 (실제 결제 없음). `5000` / `10000` / `30000`, 하루 최대 50,000P | 충전 후 잔액 |
+| `CHARGE_OPTIONS` | 충전 버튼 금액 | `[5000, 10000, 30000]` |
+| `getPointHistory({ limit })` | 내 포인트 내역 (최신순, 기본 50개) | `[{ id, amount, balance_after, type, label, ref: { booking_id?, note_id? }, created_at }]` |
+| `POINT_TYPE_LABELS` | 내역 종류 → 문구 | `{ booking_payout: '상담 수익', ... }` |
+
+- `amount`가 양수면 적립(+), 음수면 사용(-). `balance_after`는 그 직후 잔액이에요.
+- 포인트가 바뀌는 모든 곳(가입·충전·예약·환불·완료·노쇼·노트 구매·판매)이 자동으로 기록돼요.

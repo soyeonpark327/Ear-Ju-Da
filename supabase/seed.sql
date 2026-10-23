@@ -15,6 +15,9 @@
 delete from public.bookings
 where youth_id in (select id from auth.users where email like '%@example.com')
    or expert_id in (select id from auth.users where email like '%@example.com');
+delete from public.note_purchases
+where user_id in (select id from auth.users where email like '%@example.com')
+   or note_id in (select n.id from public.notes n join auth.users u on u.id = n.author_id where u.email like '%@example.com');
 delete from auth.users where email like '%@example.com';
 
 
@@ -72,6 +75,11 @@ begin
   insert into public.bookings (slot_id, youth_id, expert_id, topic, price_points, status, created_at)
   values (v_slot, p_youth, p_expert, p_topic, v_price, 'completed', pg_temp.kst(-p_days_ago - 3, 10))
   returning id into v_booking;
+  -- 지난 상담 수익을 베테랑에게 지급 (포인트 내역의 "상담 수익", 010 적용 전 DB에서는 건너뜀)
+  if to_regprocedure('public.set_point_reason(text,jsonb)') is not null then
+    perform public.set_point_reason('booking_payout', jsonb_build_object('booking_id', v_booking));
+    update public.profiles set points = points + v_price where id = p_expert;
+  end if;
   if p_rating is not null then
     insert into public.reviews (booking_id, youth_id, expert_id, rating, content, created_at)
     values (v_booking, p_youth, p_expert, p_rating, p_review, pg_temp.kst(-p_days_ago, 21));
@@ -99,10 +107,18 @@ declare
   v_booking bigint;
   v_slot    bigint;
   v_expert  uuid;
+  v_buy     record;
   d         integer;
 begin
   -- ---------- 포인트 ----------
-  update public.profiles set points = 50000 where id = v_kim;   -- 데모 중에 이것저것 사볼 수 있게 넉넉히
+  -- 데모 중에 이것저것 사볼 수 있게 넉넉히 (포인트 내역에는 "이벤트 보너스"로 기록 → 하루 충전 한도와 무관, 010 적용 전 DB에서도 동작)
+  if to_regprocedure('public.set_point_reason(text,jsonb)') is not null then
+    perform public.set_point_reason('bonus');
+  end if;
+  update public.profiles set points = 50000 where id = v_kim;
+  if to_regprocedure('public.set_point_reason(text,jsonb)') is not null then
+    perform public.set_point_reason('bonus');
+  end if;
   update public.profiles set points = 20000 where id = v_park;
 
   -- ---------- 베테랑 정보 ----------
@@ -200,6 +216,32 @@ E'1. 유동인구가 아니라 "내 손님"의 동선을 봐라\n역 앞 유동�
   select v_kim, id, price_points from public.notes where author_id = v_lee;
   insert into public.note_purchases (user_id, note_id, price_points)
   select v_park, id, price_points from public.notes where author_id in (v_jung, v_mk);
+  -- 인기순 데모: 베테랑끼리도 서로 노트를 사 본 것으로 구매 수 차이를 만든다
+  -- (이 위원 계약 노트 4 > 무역 사기 3 > 입점 제안서 2 > 상권분석 1)
+  insert into public.note_purchases (user_id, note_id, price_points)
+  select b.buyer, n.id, n.price_points
+  from public.notes n
+  join (values
+    (v_choi, v_lee), (v_ys, v_lee), (v_han, v_lee),
+    (v_lee, v_jung), (v_han, v_jung),
+    (v_ys, v_mk),
+    (v_mk, v_han)
+  ) as b(buyer, author) on n.author_id = b.author
+  where n.is_published;
+
+  -- 위 구매들의 포인트 이동 (구매자 차감 → 작성자 판매 수익, 010 적용 전 DB에서는 건너뜀)
+  if to_regprocedure('public.set_point_reason(text,jsonb)') is not null then
+    for v_buy in
+      select np.user_id, np.note_id, np.price_points, n.author_id
+      from public.note_purchases np join public.notes n on n.id = np.note_id
+      where n.author_id in (v_lee, v_mk, v_choi, v_ys, v_jung, v_han)
+    loop
+      perform public.set_point_reason('note_purchase', jsonb_build_object('note_id', v_buy.note_id));
+      update public.profiles set points = points - v_buy.price_points where id = v_buy.user_id;
+      perform public.set_point_reason('note_sale', jsonb_build_object('note_id', v_buy.note_id));
+      update public.profiles set points = points + v_buy.price_points where id = v_buy.author_id;
+    end loop;
+  end if;
 
   -- ---------- 한 줄 조언 ----------
   insert into public.tips (expert_id, content, created_at) values
@@ -241,11 +283,11 @@ E'1. 유동인구가 아니라 "내 손님"의 동선을 봐라\n역 앞 유동�
   perform pg_temp.past_booking(v_park, v_han, 10, '카페 자리 두 곳 중 어디가 나을까요?', 4, '직접 가서 세어보라는 조언 덕분에 결정했어요.');
 
   -- ---------- 진행 중인 예약 (채팅 데모용) ----------
-  -- 김대표 × 최동수: 가장 빠른 상담 시간에 예약됨
-  select id into v_slot from public.availability_slots
-  where expert_id = v_choi and not is_booked and start_at > now()
-  order by start_at limit 1;
-  update public.availability_slots set is_booked = true where id = v_slot;
+  -- 김대표 × 최동수: seed를 실행한 시점부터 3시간 동안 "상담 중" (채팅은 상담 시간에만 보낼 수 있어서)
+  -- → 발표 직전에 seed.sql을 다시 실행하면 바로 실시간 채팅을 시연할 수 있다.
+  insert into public.availability_slots (expert_id, start_at, end_at, is_booked)
+  values (v_choi, date_trunc('minute', now()) - interval '5 minutes', date_trunc('minute', now()) + interval '3 hours', true)
+  returning id into v_slot;
   insert into public.bookings (slot_id, youth_id, expert_id, topic, price_points)
   values (v_slot, v_kim, v_choi, '청년창업 지원사업에 선정됐는데 사업비 정산을 어떻게 준비해야 할지 모르겠어요.', 3000)
   returning id into v_booking;

@@ -149,3 +149,153 @@
     min-height: 130px;
   }
 }
+.ai-filter-panel {
+  width: 100%;
+  max-width: 390px;
+  text-align: left;
+  margin-top: 24px;
+  padding: 16px;
+  background: #ffffffc9;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+}
+.ai-filter-group {
+  border: 0;
+  padding: 0;
+  margin: 0 0 14px;
+  min-width: 0;
+}
+.ai-filter-group legend {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 7px;
+}
+.ai-filter-chips {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.ai-filter-chip {
+  min-height: 44px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 8px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+.ai-filter-chip[aria-pressed="true"] {
+  background: var(--cyan);
+  border-color: var(--cyan);
+  color: var(--ink);
+}
+.ai-filter-chip:disabled {
+  cursor: wait;
+}
+.matching-intro:has(.ai-filter-panel:not([hidden])) {
+  justify-content: flex-start;
+  padding-top: 28px;
+  min-height: 0;
+  overflow-y: auto;
+}
+.matching-intro:has(.ai-filter-panel:not([hidden])) .suggestions {
+  margin-top: 18px;
+}
+.matching-composer {
+  position: sticky;
+  bottom: 0;
+  grid-template-columns: 44px minmax(0, 1fr) 44px;
+  z-index: 2;
+  min-height: 0;
+}
+.matching-composer #send,
+.matching-composer #attach {
+  width: 44px;
+  height: 44px;
+}
+.matching-results {
+  padding: 24px;
+  overflow-wrap: anywhere;
+  scroll-margin-top: 16px;
+}
+.matching-results > p,
+.matching-results h2 {
+  margin-bottom: 12px;
+}
+.matching-concern {
+  background: var(--cyan);
+  border-radius: 20px;
+  padding: 16px;
+  white-space: pre-wrap;
+}
+.matching-result-card {
+  padding: 20px;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  margin: 16px 0;
+  box-shadow: 0 4px 16px #0000000c;
+}
+.matching-result-card img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.matching-result-card p {
+  margin: 8px 0;
+  line-height: 1.7;
+}
+.matching-caution {
+  color: #5f6674;
+  font-size: 14px;
+}
+.matching-result-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+.matching-result-actions a {
+  min-height: 44px;
+  padding: 10px 12px;
+  text-align: center;
+  flex: 1;
+}
+#matching-new {
+  min-height: 44px;
+  padding: 10px 16px;
+}
+.matching-page .app {
+  overflow: clip;
+}
+/* Once a result exists, keep filters accessible without repeating the intro. */
+.matching-main:has(#matching-results:not([hidden])) .matching-intro {
+  flex: 0;
+  min-height: 0;
+  padding: 20px 24px 0;
+}
+.matching-main:has(#matching-results:not([hidden])) .matching-intro > .sparkle,
+.matching-main:has(#matching-results:not([hidden])) .matching-intro > h2,
+.matching-main:has(#matching-results:not([hidden])) .matching-intro > p,
+.matching-main:has(#matching-results:not([hidden]))
+  .matching-intro
+  > .suggestions {
+  display: none;
+}
+.matching-main:has(#matching-results:not([hidden])) .ai-filter-panel {
+  margin-top: 0;
+}
+.matching-composer textarea {
+  text-align: left;
+}
+.matching-history-item {
+  padding: 24px;
+  border-bottom: 1px solid var(--line);
+  overflow-wrap: anywhere;
+}
+#matching-conversation > #matching-new {
+  margin: 0 24px 24px;
+}

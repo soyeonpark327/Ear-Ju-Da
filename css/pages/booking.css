@@ -263,3 +263,53 @@
 .reservation #booking-content {
   min-height: calc(100dvh - 170px);
 }
+.booking-expert-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  background: var(--panel);
+  border-radius: 20px;
+  margin-bottom: 14px;
+}
+.booking-expert-panel > div:nth-child(2) {
+  flex: 1;
+  min-width: 0;
+}
+#booking-expert-name {
+  overflow-wrap: anywhere;
+}
+#booking-expert-headline {
+  font-size: 13px;
+  color: var(--muted);
+}
+#booking-expert-avatar {
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  background: #dcf8fc;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+#booking-expert-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+#booking-change-expert {
+  min-height: 44px;
+  padding: 8px;
+  flex-shrink: 0;
+}
+#booking-expert-picker {
+  margin-bottom: 20px;
+}
+#expert-choice {
+  width: 100%;
+  min-height: 44px;
+}
+.reservation-footer {
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}

@@ -6,7 +6,8 @@
     <title>오답노트 미리보기 | 이어주다</title>
     <link rel="stylesheet" href="../css/reset.css" />
     <link rel="stylesheet" href="../css/variables.css" />
-    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=cross-center-1" />
+    <link rel="stylesheet" href="../css/pages/note-detail.css?v=safety-2" />
   </head>
   <body>
     <a class="skip" href="#main">본문으로 이동</a>
@@ -62,6 +63,20 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <script type="module" src="../js/pages/note-detail.js"></script>
+    <dialog id="note-purchase-confirm" aria-labelledby="note-purchase-title">
+      <h2 id="note-purchase-title">구매 내용을 확인해주세요</h2>
+      <p id="note-purchase-question"></p>
+      <p id="note-purchase-balance"></p>
+      <p id="note-purchase-error" class="status" role="status"></p>
+      <div class="note-purchase-actions">
+        <button id="note-purchase-cancel" type="button" class="outline">
+          취소
+        </button>
+        <button id="note-purchase-submit" type="button" class="primary">
+          포인트로 구매하기
+        </button>
+      </div>
+    </dialog>
+    <script type="module" src="../js/pages/note-detail.js?v=safety-2"></script>
   </body>
 </html>

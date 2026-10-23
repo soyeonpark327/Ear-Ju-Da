@@ -1,4 +1,14 @@
-import { demo, money, escape, notice, status, init, goLogin } from "./ui.js";
+import {
+  demo,
+  money,
+  escape,
+  notice,
+  status,
+  init,
+  goLogin,
+  avatar,
+  route,
+} from "./ui.js?v=ai-ui-1";
 init();
 const $ = (id) => document.getElementById(id),
   params = new URLSearchParams(location.search);
@@ -35,6 +45,8 @@ const price = () =>
   demo ? (mode === "call" ? 12000 : 10000) : Number(expert?.price_points || 0);
 function update() {
   const valid = !!slot && !busy && !complete;
+  $("booking-change-expert").disabled = busy || complete;
+  $("expert-choice").disabled = busy || complete;
   $("book").disabled = !valid;
   $("book").textContent = complete
     ? "예약 완료"
@@ -96,6 +108,20 @@ function renderDates() {
 async function loadExpert() {
   const v = ++version;
   expert = experts.find((e) => String(e.id) === $("expert-choice").value);
+  $("booking-expert-name").textContent = expert.name;
+  $("booking-expert-headline").textContent = expert.headline;
+  const portrait = demo ? expert.avatar_url : avatar(expert.avatar_url);
+  const fallback = () => {
+    $("booking-expert-avatar").textContent = (expert.name || "베")[0];
+  };
+  fallback();
+  if (portrait) {
+    const img = document.createElement("img");
+    img.src = portrait;
+    img.alt = "";
+    img.onerror = fallback;
+    $("booking-expert-avatar").replaceChildren(img);
+  }
   slots = [];
   slot = null;
   date = "";
@@ -166,6 +192,8 @@ async function load() {
     $("booking-content").hidden = false;
     status("load-status", "");
     $("call-mode").disabled = !demo;
+    $("call-mode").querySelector("b").hidden = !demo;
+    $("call-mode").querySelector(".recommended").hidden = !demo;
     $("chat-label").textContent = demo
       ? "1시간 1:1 채팅 상담"
       : "1:1 채팅 상담";
@@ -186,8 +214,19 @@ async function load() {
     status("load-status", e.message || "불러오지 못했어요.", load);
   }
 }
+$("booking-change-expert").onclick = () => {
+  const picker = $("booking-expert-picker");
+  picker.hidden = !picker.hidden;
+  $("booking-change-expert").setAttribute(
+    "aria-expanded",
+    String(!picker.hidden),
+  );
+  if (!picker.hidden) $("expert-choice").focus();
+};
 $("expert-choice").onchange = () => {
   $("booking-confirm").close();
+  $("booking-expert-picker").hidden = true;
+  $("booking-change-expert").setAttribute("aria-expanded", "false");
   loadExpert();
 };
 $("booking-topic").oninput = update;
@@ -199,6 +238,9 @@ $("chat-mode").onclick = () => {
   mode = "chat";
   update();
 };
+$("booking-confirm").addEventListener("cancel", (e) => {
+  if (busy) e.preventDefault();
+});
 $("cancel-booking").onclick = () => $("booking-confirm").close();
 $("book").onclick = async () => {
   if (!slot || busy || complete) return;
@@ -211,8 +253,15 @@ $("book").onclick = async () => {
     loadExpert();
     return;
   }
+  if (!demo && points !== null && points < price()) {
+    status(
+      "booking-message",
+      `포인트가 ${money(price() - points)}P 부족해요. 보유 ${money(points)}P · 필요 ${money(price())}P예요.`,
+    );
+    return;
+  }
   $("confirm-text").textContent =
-    `${expert.name}\n${date} ${clock(slot.start_at)} – ${clock(slot.end_at)}\n${mode === "call" ? "통화" : "채팅"} 상담 ${money(price())}P\n포인트가 차감되어 상담 완료 전까지 보관됩니다.`;
+    `${expert.name}\n${date} ${clock(slot.start_at)} – ${clock(slot.end_at)}\n${mode === "call" ? "통화 (데모 전용)" : "채팅"} 상담 · 차감 ${money(price())}P\n포인트가 차감되어 상담 완료 전까지 보관됩니다.`;
   $("confirm-error").textContent = "";
   $("booking-confirm").showModal();
 };
@@ -248,14 +297,44 @@ $("confirm-booking").onclick = async () => {
     complete = true;
     $("booking-confirm").close();
     $("expert-choice").disabled = true;
+    $("booking-change-expert").disabled = true;
     $("booking-topic").disabled = true;
     $("date-strip").replaceChildren();
     $("booking-times").replaceChildren();
     $("chat-mode").disabled = true;
     status("booking-message", `예약이 완료됐어요. 예약 번호: ${id}`);
+    const chatLink = document.createElement("a");
+    chatLink.className = "outline";
+    chatLink.textContent = "상담 채팅방 보기";
+    chatLink.href = route("chat.html", { id });
+    $("booking-message").append(document.createElement("br"), chatLink);
   } catch (e) {
     $("booking-confirm").close();
-    status("booking-message", e.message || "예약하지 못했어요.");
+    if (/포인트|잔액/.test(e.message || "")) {
+      try {
+        points =
+          (await (await import("../api/auth.js")).getMyProfile())?.points ??
+          null;
+      } catch {
+        points = null;
+      }
+      status(
+        "booking-message",
+        points === null
+          ? "포인트를 확인하지 못했어요. 계정에서 잔액을 확인하고 다시 시도해주세요."
+          : `필요 ${money(price())}P · 보유 ${money(points)}P · 부족 ${money(Math.max(0, price() - points))}P예요.`,
+        () => $("book").click(),
+      );
+    } else {
+      status(
+        "booking-message",
+        `${e.message || "예약하지 못했어요."} 가능한 시간을 다시 불러와 선택해주세요.`,
+        loadExpert,
+      );
+    }
+    // Discard the rejected slot so it cannot be submitted again without reload.
+    slot = null;
+    renderTimes();
   } finally {
     busy = false;
     $("confirm-booking").disabled = false;
@@ -263,3 +342,31 @@ $("confirm-booking").onclick = async () => {
   }
 };
 load();
+
+// This is AI_MATCH_KEY from the API contract. Read storage without importing
+// ai.js, so loading a demo booking never initializes backend modules.
+function fillAiQuestions() {
+  const topic = $("booking-topic");
+  const expertId = params.get("id");
+  if (!expertId || topic.value.trim()) return;
+  try {
+    const result = JSON.parse(
+      sessionStorage.getItem("ear-ju-da:ai-match") || "null",
+    );
+    if (
+      !Array.isArray(result?.matches) ||
+      !result.matches.some((match) => String(match.expert_id) === expertId)
+    )
+      return;
+    const questions = Array.isArray(result.questions)
+      ? result.questions
+          .filter((q) => typeof q === "string" && q.trim())
+          .slice(0, 3)
+      : [];
+    if (questions.length)
+      topic.value = questions.map((q, i) => `${i + 1}. ${q}`).join("\n");
+  } catch {
+    /* Missing/blocked/malformed storage leaves user input untouched. */
+  }
+}
+fillAiQuestions();

@@ -413,17 +413,30 @@ p {
   align-items: start;
 }
 .cross {
-  display: inline-grid;
-  place-items: center;
+  position: relative;
+  display: inline-block;
   flex-shrink: 0;
   width: 28px;
   height: 28px;
   border-radius: 50%;
   background: #ffdedf;
   color: red;
-  font-size: 31px;
-  line-height: 1;
-  font-weight: 400;
+  font-size: 0;
+}
+.cross::before,
+.cross::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+.cross::after {
+  transform: translate(-50%, -50%) rotate(-45deg);
 }
 .note-top h2 {
   font-size: 15px;
@@ -751,4 +764,40 @@ dialog form button {
   margin-left: 0;
   padding: 7px 10px;
   font-size: 12px;
+}
+/* Keep consultation navigation readable with long signed-in account names. */
+.home-page .home-header {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.home-page .header-actions {
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+.home-page #account {
+  max-width: 100%;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.expert-portrait-frame {
+  position: relative;
+  width: 64px;
+  height: 84px;
+  display: block;
+}
+.expert-portrait-frame .portrait {
+  display: block;
+}
+.expert-portrait-label {
+  position: absolute;
+  bottom: 3px;
+  left: 3px;
+  right: 3px;
+  padding: 2px 3px;
+  border-radius: 5px;
+  background: #ffffffed;
+  color: #525a67;
+  text-align: center;
+  font-size: 9px;
+  line-height: 1.4;
 }

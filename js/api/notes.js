@@ -7,16 +7,18 @@ import { getCurrentUser } from './auth.js';
 const NOTE_WITH_AUTHOR = '*, author:experts(headline, profiles(name))';
 
 /**
- * 공개된 노트 목록 (최신순). 본문(body)은 포함되지 않는다.
- * @param {{ keyword?: string, industry?: string }} [filter]
+ * 공개된 노트 목록. 본문(body)은 포함되지 않는다.
+ * @param {{ keyword?: string, industry?: string, sort?: 'latest' | 'popular' }} [filter]
+ *   sort: 'latest' 최신순(기본) / 'popular' 구매 많은 순
  *   keyword: 제목·미리보기·업종에 포함되거나 키워드와 일치하는 단어. 띄어쓰기로 여러 단어를 넣으면 모두 만족하는 노트만 찾는다.
  */
-export async function getNotes({ keyword, industry } = {}) {
+export async function getNotes({ keyword, industry, sort = 'latest' } = {}) {
   let query = supabase.from('notes').select(NOTE_WITH_AUTHOR).eq('is_published', true);
   for (const word of splitKeywords(keyword)) {
     query = query.or(`title.ilike.*${word}*,summary.ilike.*${word}*,industry.ilike.*${word}*,keywords.cs.{${word}}`);
   }
   if (industry) query = query.eq('industry', industry);
+  if (sort === 'popular') query = query.order('purchase_count', { ascending: false });
   return unwrap(await query.order('created_at', { ascending: false }));
 }
 

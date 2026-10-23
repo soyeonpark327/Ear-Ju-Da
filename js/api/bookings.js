@@ -1,5 +1,5 @@
 // 상담 예약, AI 보고서, 후기
-import { supabase } from '../supabase.js';
+import { supabase, SUPABASE_URL, SUPABASE_ANON_KEY } from '../supabase.js';
 import { unwrap } from './_utils.js';
 import { getCurrentUser } from './auth.js';
 
@@ -40,6 +40,27 @@ export async function completeBooking(bookingId) {
 /** 예약 취소 (상담 시작 전, 당사자만). 청년에게 포인트 환불 */
 export async function cancelBooking(bookingId) {
   unwrap(await supabase.rpc('cancel_booking', { p_booking_id: bookingId }));
+}
+
+/**
+ * AI 전략 보고서 만들기 (Gemini). 완료된 상담의 청년·베테랑만 가능, 상담당 하나.
+ * 이미 있으면 새로 만들지 않고 그대로 돌려준다. 보통 몇 초 걸린다.
+ * @returns {Promise<{ booking_id, summary, checklist: string[], risks: string[], created_at }>}
+ *   실패하면 '상담을 완료한 뒤에 보고서를 만들 수 있어요.' 같은 메시지로 throw
+ */
+export async function generateReport(bookingId) {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  if (!token) throw new Error('로그인이 필요합니다.');
+  const res = await fetch(`${SUPABASE_URL}/functions/v1/generate-report`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${token}` },
+    body: JSON.stringify({ booking_id: bookingId }),
+    signal: AbortSignal.timeout(60_000),
+  });
+  const body = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(body.error || '보고서를 만들지 못했어요.');
+  return body.report;
 }
 
 /** AI 전략 보고서 { summary, checklist[], risks[] } (아직 없으면 null) */

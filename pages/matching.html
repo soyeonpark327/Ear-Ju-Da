@@ -2,19 +2,22 @@
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
     <title>AI 매칭 | 이어주다</title>
     <link rel="stylesheet" href="../css/reset.css" />
     <link rel="stylesheet" href="../css/variables.css" />
     <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
-    <link rel="stylesheet" href="../css/pages/matching.css" />
+    <link rel="stylesheet" href="../css/pages/matching.css?v=safety-3" />
   </head>
   <body class="matching-page">
     <a class="skip" href="#main">본문으로 이동</a>
     <div class="app">
       <header class="page-header">
         <a href="home.html" data-route aria-label="메인으로 돌아가기">〈</a>
-        <h1>AI 매칭 결과</h1>
+        <h1>베테랑 매칭</h1>
       </header>
       <main id="main" class="matching-main">
         <section class="matching-intro">
@@ -39,6 +42,55 @@
               정부 지원금 신청이 처음이에요
             </button>
           </div>
+          <section
+            id="ai-filters"
+            class="ai-filter-panel"
+            aria-label="베테랑 추천 조건"
+            hidden
+          >
+            <fieldset class="ai-filter-group">
+              <legend>분야</legend>
+              <div id="ai-filter-industry" class="ai-filter-chips"></div>
+            </fieldset>
+            <fieldset class="ai-filter-group">
+              <legend>창업 단계</legend>
+              <div id="ai-filter-stage" class="ai-filter-chips"></div>
+            </fieldset>
+            <fieldset class="ai-filter-group">
+              <legend>상담 예산</legend>
+              <div id="ai-filter-budget" class="ai-filter-chips"></div>
+            </fieldset>
+            <button
+              id="ai-filter-soon"
+              type="button"
+              class="ai-filter-chip"
+              aria-pressed="false"
+            >
+              이번 주 상담 가능
+            </button>
+          </section>
+        </section>
+        <section
+          id="matching-conversation"
+          role="log"
+          aria-label="매칭 대화"
+          hidden
+        >
+          <div id="matching-history"></div>
+          <section
+            id="matching-results"
+            class="matching-results"
+            aria-label="추천 결과"
+            hidden
+          >
+            <p id="matching-concern" class="matching-concern"></p>
+            <h2 id="matching-source"></h2>
+            <p id="matching-explanation"></p>
+            <div id="matching-cards"></div>
+          </section>
+          <button type="button" id="matching-new" class="outline">
+            새 고민 시작하기
+          </button>
         </section>
         <form id="matching-form" class="matching-composer">
           <button id="attach" type="button" aria-label="첨부 기능 안내">
@@ -74,6 +126,6 @@
       <p id="notice-body"></p>
       <form method="dialog"><button class="primary">확인</button></form>
     </dialog>
-    <script type="module" src="../js/pages/matching.js"></script>
+    <script type="module" src="../js/pages/matching.js?v=safety-3"></script>
   </body>
 </html>
