@@ -7,7 +7,7 @@
 -- ---------- 타입 ----------
 create type public.user_role as enum ('youth', 'veteran');
 create type public.verification_status as enum ('pending', 'approved', 'rejected');
-create type public.booking_status as enum ('confirmed', 'completed', 'cancelled');
+create type public.booking_status as enum ('confirmed', 'completed', 'cancelled', 'no_show');
 
 
 -- ---------- 회원 ----------
@@ -59,6 +59,8 @@ create table public.bookings (
   topic        text not null,                     -- 상담하고 싶은 고민
   price_points integer not null,                  -- 예약 당시 가격 (에스크로로 보관 중인 포인트)
   status       public.booking_status not null default 'confirmed',
+  no_show_by   text check (no_show_by in ('youth', 'expert', 'both')),  -- 노쇼한 쪽 (status = 'no_show'일 때)
+  settled_at   timestamptz,                      -- 상담 후 자동 정리된 시각
   created_at   timestamptz not null default now()
 );
 
@@ -212,6 +214,7 @@ create trigger on_auth_user_created
 --   gold   : 경력 25년 이상 + 완료 상담 2회 이상 + 평점 4.5 이상
 --   silver : 경력 20년 이상 + 완료 상담 1회 이상 + 평점 4.0 이상
 --   bronze : 관리자 승인(경력 인증)을 받은 베테랑
+--   노쇼 페널티: 베테랑 노쇼 1회면 한 단계 하락, 2회 이상이면 bronze
 -- 완료한 상담 수. bookings는 당사자만 볼 수 있어서(RLS) 개수만 공개하는 함수로 센다.
 create or replace function public.expert_completed_count(p_expert_id uuid)
 returns integer
@@ -220,6 +223,20 @@ security definer set search_path = ''
 as $$
   select count(*)::integer from public.bookings
   where expert_id = p_expert_id and status = 'completed';
+$$;
+
+-- ---------- 베테랑 노쇼 수 (예약 상세는 비공개, 개수만) ----------
+create or replace function public.expert_no_show_count(p_expert_id uuid)
+returns integer
+language plpgsql stable
+security definer set search_path = ''
+as $$
+begin
+  return (
+    select count(*)::integer from public.bookings
+    where expert_id = p_expert_id and status::text = 'no_show' and no_show_by in ('expert', 'both')
+  );
+end;
 $$;
 
 create or replace view public.expert_cards
@@ -237,7 +254,8 @@ with base as (
     coalesce(round(avg(r.rating), 1), 0) as rating,
     count(r.id) as review_count,
     concat_ws(' ', p.name, e.headline, e.industry, e.career_summary, array_to_string(e.keywords, ' ')) as search_text,
-    public.expert_completed_count(e.id) as completed_count
+    public.expert_completed_count(e.id) as completed_count,
+    public.expert_no_show_count(e.id) as no_show_count
   from public.experts e
   join public.profiles p on p.id = e.id
   left join public.reviews r on r.expert_id = e.id
@@ -247,20 +265,27 @@ with base as (
 graded as (
   select *,
     case
-      when career_years >= 25 and completed_count >= 2 and rating >= 4.5 then 'gold'
-      when career_years >= 20 and completed_count >= 1 and rating >= 4.0 then 'silver'
+      when no_show_count >= 2 then 'bronze'
+      when career_years >= 25 and completed_count >= 2 and rating >= 4.5 then
+        case when no_show_count = 1 then 'silver' else 'gold' end
+      when career_years >= 20 and completed_count >= 1 and rating >= 4.0 then
+        case when no_show_count = 1 then 'bronze' else 'silver' end
       else 'bronze'
     end as trust_grade
   from base
 )
-select *,
+select
+  id, name, avatar_url, headline, industry, career_years, keywords, price_points,
+  rating, review_count, search_text, completed_count,
+  trust_grade,
   case trust_grade when 'gold' then '최고 신뢰' when 'silver' then '신뢰 베테랑' else '경력 인증' end as trust_label,
   array_remove(array[
     '경력 인증',
     case when career_years >= 30 then '30년+ 경력' when career_years >= 20 then '20년+ 경력' end,
     case when review_count >= 2 and rating >= 4.8 then '평점 최상위' end,
     case when completed_count >= 1 then '상담 ' || completed_count || '회' end
-  ], null) as badges
+  ], null) as badges,
+  no_show_count
 from graded;
 
 
