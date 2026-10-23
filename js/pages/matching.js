@@ -134,8 +134,8 @@ input.addEventListener("input", () => {
 });
 document.getElementById("attach").onclick = () =>
   notice(
-    "첨부 기능 준비 중",
-    "현재는 글로 고민을 입력할 수 있어요. 첨부 파일은 아직 전송하지 않아요.",
+    "글로 적어 주세요",
+    "계약서 내용이나 상황을 글로 적어 주면 AI가 더 정확하게 추천해요. 파일은 상담 채팅에서 베테랑에게 직접 보여 주세요.",
   );
 document.getElementById("matching-form").onsubmit = async (e) => {
   e.preventDefault();

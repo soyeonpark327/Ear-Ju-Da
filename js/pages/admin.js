@@ -196,9 +196,41 @@ async function loadList() {
   }
 }
 
+// ---------- 신고 ----------
+const TARGET = { user: "회원", note: "오답노트", booking: "상담" };
+async function loadReports() {
+  status("adm-reports-status", "불러오고 있어요.");
+  try {
+    const rows = demo ? [] : await api.getReports("open");
+    status("adm-reports-status", rows.length ? "" : "처리할 신고가 없어요.");
+    $("adm-reports").replaceChildren(
+      ...rows.map((r) => {
+        const li = document.createElement("li");
+        const head = el("div", "adm-head");
+        head.append(el("h3", null, r.target_label ?? `${TARGET[r.target_type]} #${r.target_id}`), el("span", "adm-badge", TARGET[r.target_type]));
+        li.append(head, el("p", "adm-meta", `신고한 사람 ${r.reporter_name} · ${day(r.created_at)}`), el("p", "adm-summary", r.reason));
+        const actions = el("div", "adm-actions");
+        const done = (st) => async () => {
+          try {
+            await api.resolveReport(r.id, st);
+            await loadReports();
+          } catch (e) {
+            notice("신고 처리", e.message);
+          }
+        };
+        actions.append(button("조치함", "primary", done("resolved")), button("문제없음", "outline", done("dismissed")));
+        li.append(actions);
+        return li;
+      }),
+    );
+  } catch (e) {
+    status("adm-reports-status", e.message || "신고를 불러오지 못했어요.", loadReports);
+  }
+}
+
 async function reload() {
   renderStats(demo ? DEMO_STATS : await api.getAdminStats());
-  await loadList();
+  await Promise.all([loadList(), loadReports()]);
 }
 
 async function start() {
