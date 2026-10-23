@@ -321,3 +321,17 @@ await subscribeNotifications(async () => render(await getUnreadCount()));
 | `getCertificateUrl(path)` | 증명서 보기 링크 (1분 유효) | 문자열 |
 
 관리자 지정은 SQL Editor에서만: `update public.profiles set is_admin = true where id = (select id from auth.users where email = '...');`
+
+## social.js: 신고 · 차단 · 찜
+
+화면에 `<div id="social-actions" data-type="expert|note|chat"></div>`와 `js/pages/social-actions.js`를 넣으면 찜·신고·차단 버튼이 자동으로 붙어요 (`?id=` 사용).
+
+| 함수 | 설명 |
+| --- | --- |
+| `report(targetType, targetId, reason)` | 신고 (`'user'`·`'note'`·`'booking'`). 같은 대상은 처리 전까지 한 번 |
+| `blockUser(userId)` / `unblockUser(userId)` / `isBlocked(userId)` | 차단하면 그 사람과 채팅 메시지를 주고받을 수 없음 (양쪽) |
+| `getMyBlocks()` | `[{ blocked_id, created_at, user: { name } }]` |
+| `toggleFavorite(type, id)` / `isFavorite(type, id)` | 찜 (`'expert'`·`'note'`). toggle은 바뀐 상태(true = 찜함) 반환 |
+| `getMyFavorites()` | `{ experts: [...], notes: [...] }` |
+
+관리자: `admin.js`의 `getReports(status)`, `resolveReport(id, 'resolved' \| 'dismissed')`

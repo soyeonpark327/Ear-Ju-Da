@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>찜·차단 목록 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/mypage.css?v=1" />
+  </head>
+  <body class="my-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a href="mypage.html" data-route aria-label="내 정보로 돌아가기">〈</a>
+        <h1>찜·차단 목록</h1>
+      </header>
+      <main id="main" class="my-main">
+        <p id="fav-status" class="status" role="status"></p>
+        <div id="fav-content" hidden>
+          <section aria-labelledby="fav-experts-title">
+            <h2 id="fav-experts-title" class="fav-title">찜한 베테랑</h2>
+            <ul id="fav-experts" class="my-menu"></ul>
+          </section>
+          <section aria-labelledby="fav-notes-title">
+            <h2 id="fav-notes-title" class="fav-title">찜한 오답노트</h2>
+            <ul id="fav-notes" class="my-menu"></ul>
+          </section>
+          <section aria-labelledby="fav-blocks-title">
+            <h2 id="fav-blocks-title" class="fav-title">차단한 사람</h2>
+            <p class="my-hint">차단한 사람과는 채팅 메시지를 주고받을 수 없어요.</p>
+            <ul id="fav-blocks" class="fav-blocks"></ul>
+          </section>
+        </div>
+      </main>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <script type="module" src="../js/pages/favorites.js?v=1"></script>
+  </body>
+</html>

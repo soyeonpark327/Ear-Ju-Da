@@ -218,3 +218,24 @@
   min-height: 48px;
   margin-top: 16px;
 }
+.fav-title {
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+.my-menu .fav-empty,
+.fav-blocks .fav-empty {
+  padding: 14px 4px;
+  color: var(--muted);
+  font-size: 14px;
+}
+.fav-blocks li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 56px;
+  border-bottom: 1px solid var(--line);
+}
+.fav-blocks .outline {
+  min-height: 40px;
+  padding: 6px 12px;
+}
