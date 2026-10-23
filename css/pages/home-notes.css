@@ -724,3 +724,31 @@ dialog form button {
 .home-page #experts {
   scroll-margin-top: 20px;
 }
+/* 신뢰 등급 뱃지 */
+.trust {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 4px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+.trust-gold {
+  background: #fff4d6;
+  color: #8a5a00;
+}
+.trust-silver {
+  background: #eceef3;
+  color: #4a4f60;
+}
+.trust-bronze {
+  background: #f8ebe2;
+  color: #8a4b23;
+}
+.expert-tags li.trust {
+  margin-left: 0;
+  padding: 7px 10px;
+  font-size: 12px;
+}
