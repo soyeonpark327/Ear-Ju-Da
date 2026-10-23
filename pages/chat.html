@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover, interactive-widget=resizes-content"
+    />
+    <title>상담 채팅 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/home-notes.css?v=2" />
+    <link rel="stylesheet" href="../css/pages/consultations.css?v=1" />
+  </head>
+  <body class="consultation-page">
+    <a class="skip" href="#main">본문으로 이동</a>
+    <div class="app">
+      <header class="page-header">
+        <a
+          href="consultations.html"
+          data-route
+          aria-label="내 상담으로 돌아가기"
+          >〈</a
+        >
+        <h1>상담 채팅</h1>
+      </header>
+      <main id="main" class="consultation-main consultation-chat-main">
+        <p id="chat-load" class="status" role="status"></p>
+        <div id="chat-content" hidden>
+          <section
+            class="consultation-card consultation-chat-info"
+            aria-labelledby="chat-person"
+          >
+            <p id="chat-booking-status" class="consultation-badge"></p>
+            <h2 id="chat-person"></h2>
+            <p id="chat-schedule"></p>
+            <p id="chat-topic" class="consultation-topic"></p>
+            <p id="chat-window" role="status"></p>
+            <div class="consultation-actions">
+              <button id="chat-refresh" class="outline" type="button">
+                대화 새로 불러오기</button
+              ><button id="chat-complete" class="primary" type="button" hidden>
+                상담 완료하기</button
+              ><a id="chat-report" class="primary" hidden>보고서 보기</a>
+            </div>
+          </section>
+          <p id="chat-sync-status" class="status" role="status"></p>
+          <p id="chat-empty" class="consultation-empty" hidden>
+            아직 대화가 없어요. 상담 시간에 질문을 보내보세요.
+          </p>
+          <div
+            id="chat-messages"
+            class="consultation-messages"
+            role="log"
+            aria-label="상담 대화"
+            aria-live="polite"
+            aria-relevant="additions"
+          ></div>
+          <button id="chat-latest" type="button" class="outline" hidden>
+            새 메시지 보기 ↓
+          </button>
+          <form id="chat-form" class="consultation-composer">
+            <label for="chat-input">상담 메시지</label>
+            <div class="consultation-compose-row">
+              <textarea
+                id="chat-input"
+                rows="2"
+                maxlength="2000"
+                placeholder="질문이나 답변을 입력해주세요."
+                disabled
+              ></textarea
+              ><button id="chat-send" type="submit" class="primary" disabled>
+                전송
+              </button>
+            </div>
+            <p id="chat-send-status" class="status" role="status"></p>
+          </form>
+        </div>
+      </main>
+    </div>
+    <dialog id="notice">
+      <h2 id="notice-title">안내</h2>
+      <p id="notice-body"></p>
+      <form method="dialog"><button class="primary">확인</button></form>
+    </dialog>
+    <dialog id="chat-complete-dialog" aria-labelledby="chat-complete-title">
+      <h2 id="chat-complete-title">상담을 완료할까요?</h2>
+      <p id="chat-complete-description"></p>
+      <p id="chat-complete-error" class="status" role="status"></p>
+      <div class="consultation-actions">
+        <button id="chat-complete-cancel" type="button" class="outline">
+          계속 상담하기</button
+        ><button id="chat-complete-confirm" type="button" class="primary">
+          완료하고 보고서 보기
+        </button>
+      </div>
+    </dialog>
+    <script type="module" src="../js/pages/chat.js?v=1"></script>
+  </body>
+</html>

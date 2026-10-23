@@ -1,0 +1,196 @@
+.consultation-main {
+  padding: 24px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.consultation-intro {
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+.consultation-filters,
+.consultation-actions,
+.consultation-tools {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+.consultation-page button,
+.consultation-page a.primary,
+.consultation-page a.outline {
+  min-height: 44px;
+  padding: 10px 14px;
+  border-radius: 16px;
+}
+.consultation-filters button {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  border-radius: 22px;
+}
+.consultation-filters button[aria-pressed="true"] {
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+.consultation-card {
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 22px;
+  margin-bottom: 20px;
+}
+.consultation-card h2,
+.consultation-card h3 {
+  font-size: 18px;
+  margin: 8px 0;
+}
+.consultation-card p {
+  margin: 8px 0;
+  white-space: pre-wrap;
+}
+.consultation-card a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.consultation-badge {
+  display: inline-block;
+  padding: 3px 10px;
+  background: #dff9fd;
+  color: #087d96;
+  border-radius: 20px;
+  font-size: 13px;
+}
+.consultation-topic {
+  color: #646877;
+}
+.consultation-empty {
+  text-align: center;
+  padding: 32px 0;
+  color: var(--muted);
+}
+.consultation-messages {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 12px 0 24px;
+}
+.consultation-message {
+  align-self: flex-start;
+  max-width: 90%;
+}
+.consultation-message.is-mine {
+  align-self: flex-end;
+}
+.consultation-message p {
+  border-radius: 18px;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  padding: 12px 16px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.consultation-message.is-mine p {
+  background: #dff9fd;
+  border-color: #c5eff5;
+}
+.consultation-message small {
+  display: block;
+  font-size: 12px;
+  color: #686d7a;
+  margin: 4px 3px;
+}
+.consultation-message.is-mine small {
+  text-align: right;
+}
+.consultation-composer {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  padding: 16px 0 max(16px, env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+}
+.consultation-compose-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+.consultation-composer textarea {
+  width: 100%;
+  min-width: 0;
+  min-height: 70px;
+  max-height: 180px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 12px;
+  background: var(--panel);
+  font: inherit;
+}
+.consultation-composer label {
+  font-size: 13px;
+  color: #636877;
+}
+.consultation-composer button {
+  flex-shrink: 0;
+}
+.consultation-page dialog {
+  max-height: 85dvh;
+  overflow: auto;
+}
+.consultation-page dialog p {
+  white-space: pre-wrap;
+  line-height: 1.8;
+  margin: 16px 0;
+}
+.consultation-page .status button {
+  margin-left: 8px;
+  border: 1px solid var(--line);
+}
+.consultation-report-eyebrow {
+  color: #0086a0;
+  font-weight: 600;
+}
+#report-content > h2 {
+  font-size: 24px;
+  margin: 8px 0;
+}
+#report-created-at {
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 20px;
+}
+#report-content ul {
+  padding-left: 22px;
+  list-style: disc;
+}
+#report-content li {
+  margin: 12px 0;
+  white-space: pre-wrap;
+}
+.consultation-disclaimer {
+  font-size: 13px;
+  color: #636877;
+}
+#report-generate {
+  margin-top: 16px;
+  width: 100%;
+}
+#chat-latest {
+  position: sticky;
+  bottom: 165px;
+  z-index: 1;
+  background: white;
+  border: 1px solid var(--cyan);
+}
+@media (max-width: 360px) {
+  .consultation-main {
+    padding: 20px 16px;
+  }
+  .consultation-actions > * {
+    flex: 1;
+    text-align: center;
+  }
+}
+.consultation-message {
+  scroll-margin-bottom: 210px;
+}
