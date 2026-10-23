@@ -162,6 +162,26 @@ end;
 $$;
 
 
+-- ---------- 소셜 가입자 역할 선택 ----------
+-- 역할 선택 (한 번만)
+create or replace function public.choose_my_role(p_role public.user_role)
+returns void
+language plpgsql
+security definer set search_path = ''
+as $$
+begin
+  if auth.uid() is null then
+    raise exception '로그인이 필요합니다.';
+  end if;
+  update public.profiles set role = p_role, role_confirmed = true
+  where id = auth.uid() and not role_confirmed;
+  if not found then
+    raise exception '이미 역할을 선택했습니다.';
+  end if;
+end;
+$$;
+
+
 -- ---------- 권한 ----------
 -- 로그인한 사용자만 호출 가능
 revoke execute on function public.purchase_note(bigint)        from public, anon;
@@ -172,3 +192,5 @@ grant  execute on function public.purchase_note(bigint)        to authenticated;
 grant  execute on function public.create_booking(bigint, text) to authenticated;
 grant  execute on function public.complete_booking(bigint)     to authenticated;
 grant  execute on function public.cancel_booking(bigint)       to authenticated;
+revoke execute on function public.choose_my_role(public.user_role) from public, anon;
+grant  execute on function public.choose_my_role(public.user_role) to authenticated;

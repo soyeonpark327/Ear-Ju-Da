@@ -235,3 +235,56 @@
 .confirm-actions button {
   flex: 1;
 }
+/* AI 매칭 추천 이유 */
+.ai-reason {
+  margin: 20px 24px 0;
+  padding: 18px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #e6f9fd, #f3f0ff);
+}
+.ai-badge {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #079fbd;
+}
+.ai-summary {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #5b5f6e;
+}
+.ai-summary:empty {
+  display: none;
+}
+.ai-reason-text {
+  margin-top: 8px;
+  font-size: 15px;
+  line-height: 1.65;
+  font-weight: 600;
+}
+.ai-others {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #10111414;
+}
+.ai-others > p {
+  font-size: 12px;
+  color: #6e7282;
+  margin-bottom: 8px;
+}
+.ai-others-list,
+#ai-others-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+#ai-others-list a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 18px;
+  background: white;
+  font-size: 13px;
+  font-weight: 600;
+}

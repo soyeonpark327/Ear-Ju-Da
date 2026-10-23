@@ -7,9 +7,10 @@ import {
   normalizePhone,
   getAuthProviders,
   signInWithSocial,
-  isNaverEnabled,
-  signInWithNaver,
-  completeNaverLogin,
+  isFunctionLoginEnabled,
+  signInWithFunction,
+  completeFunctionLogin,
+  chooseMyRole,
 } from "../api/auth.js";
 
 const $ = (id) => document.getElementById(id);
@@ -47,6 +48,9 @@ function setMode(value) {
   $("tab-signup").setAttribute("aria-selected", String(signup));
   $("signup-fields").hidden = !signup;
   $("password-hint").hidden = !signup;
+  $("confirm-wrap").hidden = !signup;
+  $("password-confirm").value = "";
+  updateConfirmHint();
   $("demo-box").hidden = signup;
   $("password").autocomplete = signup ? "new-password" : "current-password";
   $("page-title").textContent = signup ? "회원가입" : "로그인";
@@ -57,27 +61,46 @@ function setMode(value) {
 $("tab-login").onclick = () => setMode("login");
 $("tab-signup").onclick = () => setMode("signup");
 
+// 회원가입: 비밀번호 확인 칸 아래에 일치 여부를 바로 보여준다
+function updateConfirmHint() {
+  const hint = $("confirm-hint");
+  const confirm = $("password-confirm").value;
+  const same = confirm && confirm === $("password").value;
+  hint.className = "hint" + (confirm ? (same ? " confirm-ok" : " confirm-bad") : "");
+  hint.textContent = confirm ? (same ? "비밀번호가 일치해요." : "비밀번호가 일치하지 않아요.") : "";
+}
+$("password").addEventListener("input", updateConfirmHint);
+$("password-confirm").addEventListener("input", updateConfirmHint);
+
+// 칸별 문제. 문제가 없으면 null
+function problem(input) {
+  const value = input.value.trim();
+  const signup = mode === "signup";
+  const labels = { name: "이름을", email: "이메일 또는 휴대폰 번호를", password: "비밀번호를", "password-confirm": "비밀번호를 한 번 더" };
+  if (!value) return `${labels[input.id]} 입력해주세요.`;
+  if (input.id === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && !normalizePhone(value))
+    return "이메일 또는 휴대폰 번호를 확인해주세요.";
+  if (input.id === "password" && signup && value.length < 6) return "비밀번호는 6자 이상 입력해주세요.";
+  if (input.id === "password-confirm" && input.value !== $("password").value) return "비밀번호가 일치하지 않아요.";
+  return null;
+}
+
 function validate() {
-  const fields = [$("email"), $("password")];
-  if (mode === "signup") fields.unshift($("name"));
-  let firstInvalid = null;
+  const fields =
+    mode === "signup"
+      ? [$("name"), $("email"), $("password"), $("password-confirm")]
+      : [$("email"), $("password")];
+  let first = null;
   for (const input of fields) {
-    const value = input.value.trim();
-    const bad =
-      !value ||
-      (input.id === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && !normalizePhone(value)) ||
-      (input.id === "password" && mode === "signup" && value.length < 6);
-    input.setAttribute("aria-invalid", String(bad));
-    if (bad && !firstInvalid) firstInvalid = input;
+    const message = problem(input);
+    input.setAttribute("aria-invalid", String(Boolean(message)));
+    if (message && !first) first = { input, message };
   }
-  if (firstInvalid) {
-    firstInvalid.focus();
-    const label = { name: "이름을", email: "이메일 또는 휴대폰 번호를", password: "비밀번호를" }[firstInvalid.id];
-    status("auth-status", firstInvalid.id === "password" && mode === "signup" && firstInvalid.value
-      ? "비밀번호는 6자 이상 입력해주세요."
-      : `${label} 확인해주세요.`);
+  if (first) {
+    first.input.focus();
+    status("auth-status", first.message);
   }
-  return !firstInvalid;
+  return !first;
 }
 
 $("auth-form").onsubmit = async (e) => {
@@ -133,11 +156,15 @@ $("logout").onclick = async () => {
 };
 
 // ---------- 간편 로그인 (카카오·네이버·구글) ----------
-// Supabase에서 켠 방식만 버튼을 활성화한다. 네이버는 Edge Function이 배포·설정됐는지 따로 확인한다.
+// 구글은 Supabase 설정, 네이버·카카오는 Edge Function이 배포·설정됐는지 확인해서 버튼을 활성화한다.
 (async () => {
   let enabled = {};
-  const [providers, naver] = await Promise.all([getAuthProviders().catch(() => ({})), isNaverEnabled()]);
-  enabled = { ...providers, naver };
+  const [providers, naver, kakao] = await Promise.all([
+    getAuthProviders().catch(() => ({})),
+    isFunctionLoginEnabled("naver"),
+    isFunctionLoginEnabled("kakao"),
+  ]);
+  enabled = { google: providers.google === true, naver, kakao };
   const off = [];
   document.querySelectorAll("[data-provider]").forEach((button) => {
     const provider = button.dataset.provider;
@@ -151,7 +178,7 @@ $("logout").onclick = async () => {
       try {
         // 로그인 후 이 화면으로 돌아와서(next 유지) 원래 보던 곳으로 보낸다
         const back = location.href.split("#")[0];
-        if (provider === "naver") signInWithNaver(back);
+        if (provider === "naver" || provider === "kakao") signInWithFunction(provider, back);
         else await signInWithSocial(provider, back);
       } catch (err) {
         status("social-status", friendly(err.message));
@@ -159,8 +186,37 @@ $("logout").onclick = async () => {
       }
     };
   });
-  if (off.length) status("social-status", `${off.join(", ")} 로그인은 준비 중이에요.`);
+  // 로그인에서 돌아온 결과(오류·진행 안내)가 이미 표시돼 있으면 덮어쓰지 않는다
+  if (off.length && !$("social-status").textContent) {
+    status("social-status", `${off.join(", ")} 로그인은 준비 중이에요.`);
+  }
 })();
+
+// ---------- 역할 선택 (소셜 가입자가 처음 로그인했을 때) ----------
+function showChooseRole() {
+  ["auth-form", "demo-box", "social", "signed-in"].forEach((id) => ($(id).hidden = true));
+  document.querySelector(".tabs").hidden = true;
+  $("choose-role").hidden = false;
+  $("page-title").textContent = "가입 마무리";
+  document.title = "가입 마무리 | 이어주다";
+}
+$("choose-submit").onclick = async () => {
+  $("choose-submit").disabled = true;
+  try {
+    const role = document.querySelector('input[name="first-role"]:checked').value;
+    await chooseMyRole(role);
+    location.replace(next);
+  } catch (err) {
+    status("choose-status", friendly(err.message));
+    $("choose-submit").disabled = false;
+  }
+};
+// 로그인 직후: 역할을 아직 안 골랐으면 선택 화면, 아니면 원래 보던 곳으로
+async function afterSocialLogin() {
+  const me = await getMyProfile();
+  if (me?.role_confirmed === false) showChooseRole();
+  else location.replace(next);
+}
 
 // 소셜 로그인에서 돌아왔을 때: 성공이면 원래 화면으로, 실패면 이유를 보여준다
 const returnParams = new URLSearchParams(location.hash.slice(1) || location.search);
@@ -168,17 +224,19 @@ const fromSocial = returnParams.has("access_token") || returnParams.has("error_d
 if (returnParams.has("error_description")) {
   status("social-status", friendly(returnParams.get("error_description")));
 }
-if (returnParams.has("naver_error")) {
-  status("social-status", returnParams.get("naver_error"));
+const fnError = returnParams.get("naver_error") || returnParams.get("kakao_error");
+if (fnError) {
+  status("social-status", fnError);
   history.replaceState(null, "", location.pathname + location.search);
 }
-// 네이버: Edge Function이 준 일회용 토큰으로 로그인을 마친다
-if (returnParams.has("naver_token_hash")) {
-  const tokenHash = returnParams.get("naver_token_hash");
+// 네이버·카카오: Edge Function이 준 일회용 토큰으로 로그인을 마친다
+const fnTokenHash = returnParams.get("naver_token_hash") || returnParams.get("kakao_token_hash");
+if (fnTokenHash) {
+  const tokenHash = fnTokenHash;
   history.replaceState(null, "", location.pathname + location.search);
-  status("social-status", "네이버 로그인을 마무리하고 있어요…");
-  completeNaverLogin(tokenHash)
-    .then(() => location.replace(next))
+  status("social-status", "로그인을 마무리하고 있어요…");
+  completeFunctionLogin(tokenHash)
+    .then(afterSocialLogin)
     .catch((err) => status("social-status", friendly(err.message)));
 }
 
@@ -188,7 +246,11 @@ if (returnParams.has("naver_token_hash")) {
     const me = await getMyProfile();
     if (!me) return;
     if (fromSocial) {
-      location.replace(next);
+      await afterSocialLogin();
+      return;
+    }
+    if (me.role_confirmed === false) {
+      showChooseRole();
       return;
     }
     $("auth-form").hidden = true;

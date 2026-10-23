@@ -147,6 +147,31 @@ async function loadSlots() {
     status("slots-status", e.message || "시간을 불러오지 못했어요.", loadSlots);
   }
 }
+// AI 매칭으로 들어왔으면(?ai=1) 추천 이유와 다른 추천 베테랑을 보여준다
+function renderAiReason() {
+  if (new URLSearchParams(location.search).get("ai") !== "1") return;
+  let result;
+  try {
+    result = JSON.parse(sessionStorage.getItem("ear-ju-da:ai-match") || "null");
+  } catch {
+    return;
+  }
+  const match = result?.matches?.find((m) => m.expert_id === id);
+  if (!match) return;
+  $("ai-summary").textContent = result.summary ? `“${result.summary}” 고민에 맞춘 추천이에요` : "";
+  $("ai-reason-text").textContent = match.reason;
+  const others = result.matches.filter((m) => m.expert_id !== id);
+  $("ai-others").hidden = !others.length;
+  $("ai-others-list").replaceChildren(
+    ...others.map((m) => {
+      const a = document.createElement("a");
+      a.href = route("expert-booking.html", { id: m.expert_id, ai: "1" });
+      a.textContent = `${m.name} · ${m.headline}`;
+      return a;
+    }),
+  );
+  $("ai-reason").hidden = false;
+}
 async function load() {
   status("expert-load", "베테랑 정보를 불러오고 있어요.");
   try {
@@ -207,6 +232,7 @@ async function load() {
         ...(expert.keywords || []),
       ].map((k) => `<li>${escape(k)}</li>`),
     ].join("");
+    renderAiReason();
     $("profile-content").hidden = false;
     status("expert-load", "");
     document.title = `${expert.name} 상담 예약 | 이어주다`;

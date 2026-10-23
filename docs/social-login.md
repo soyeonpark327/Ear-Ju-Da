@@ -44,26 +44,27 @@
 
 ## 2. 카카오
 
-1. [Kakao Developers](https://developers.kakao.com/)에 로그인 → **내 애플리케이션 → 애플리케이션 추가하기** (앱 이름 `이어주다`)
-2. **앱 키**에서 **REST API 키**를 복사합니다. → Supabase의 Client ID
-3. **카카오 로그인** 메뉴
-   - 활성화 설정 **ON**
-   - Redirect URI 등록: `https://idjaoyktgnfqpfaovmth.supabase.co/auth/v1/callback`
-4. **카카오 로그인 → 보안 → Client Secret** 코드 생성, 활성화 상태 **사용함** → 코드 복사 → Supabase의 Client Secret
-5. **플랫폼 → Web** 사이트 도메인 등록: `https://earjuda.vercel.app`
-6. **카카오 로그인 → 동의항목**
-   - 닉네임(`profile_nickname`), 프로필 사진(`profile_image`): **필수 동의** 또는 선택 동의
-   - 카카오계정(이메일)(`account_email`): 아래 주의 참고
-7. Supabase **Authentication → Sign In / Providers → Kakao**
-   - Enable 켜기, Client ID(REST API 키) / Client Secret 붙여넣기 → **Save**
+Supabase 기본 카카오 로그인은 **이메일(account_email)** 을 반드시 요청하는데, 카카오는 이메일 동의항목을 비즈 앱에서만 켤 수 있어 `KOE205` 에러가 납니다. 그래서 네이버처럼 **Edge Function(`supabase/functions/kakao-login`)** 으로 닉네임·프로필 사진만 받아 로그인합니다.
 
-### ⚠️ 이메일 동의항목
-Supabase는 카카오 로그인 때 **이메일(account_email)** 을 요청합니다. 그런데 카카오는 이메일 동의항목을 **비즈 앱**에서만 켤 수 있습니다.
+### 2-1. 카카오 콘솔
+1. [Kakao Developers](https://developers.kakao.com/) → 내 애플리케이션 → 앱 선택
+2. **앱 → 플랫폼 키 → REST API 키** 상세 화면
+   - **REST API 키** 값 복사 → Secret `KAKAO_REST_API_KEY`
+   - **카카오 로그인 리다이렉트 URI**에 추가: `https://idjaoyktgnfqpfaovmth.supabase.co/functions/v1/kakao-login/callback`
+   - **클라이언트 시크릿** 코드 생성·활성화 → 복사 → Secret `KAKAO_CLIENT_SECRET`
+3. **카카오 로그인 → 일반**: 사용 설정 **ON**
+4. **카카오 로그인 → 동의항목**: 닉네임(필수 동의), 프로필 사진(선택 동의). 이메일은 필요 없습니다.
+5. **플랫폼 → Web** 사이트 도메인: `https://earjuda.vercel.app`
 
-- 로그인 시 `KOE205` 같은 에러가 나면 이메일 동의항목 때문입니다.
-- 해결 방법 (둘 중 하나)
-  1. Supabase Kakao 설정에 **이메일 없이 로그인 허용** 옵션이 있으면 켭니다.
-  2. 카카오 앱을 **비즈 앱으로 전환**합니다. 사업자등록번호가 없어도 **개인 개발자 비즈 앱**으로 전환할 수 있는 경우가 있습니다. 전환 후 이메일 동의항목을 켭니다.
+### 2-2. Edge Function 배포 · Secrets
+네이버(4-2, 4-3)와 같은 방법입니다.
+1. **Edge Functions → Deploy a new function → Via Editor**, 이름 **`kakao-login`** (Deploy 전에 이름 먼저!)
+2. `supabase/functions/kakao-login/index.ts` 붙여넣기 → Deploy
+3. 함수 **Settings → Verify JWT 끄기 → Save changes**
+4. **Edge Functions → Secrets**: `KAKAO_REST_API_KEY`, `KAKAO_CLIENT_SECRET`
+5. 확인: `https://idjaoyktgnfqpfaovmth.supabase.co/functions/v1/kakao-login/status` → `{"enabled":true}`
+
+> Supabase **Sign In / Providers → Kakao**는 더 이상 쓰지 않으므로 꺼도 됩니다.
 
 ---
 

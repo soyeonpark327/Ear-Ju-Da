@@ -1,4 +1,7 @@
 import { demo, init, route, notice, escape, avatar } from "./ui.js";
+
+// AI 매칭 결과를 결과 화면에 전달하는 저장 키
+const AI_KEY = "ear-ju-da:ai-match";
 init();
 const input = document.getElementById("concern");
 const send = document.getElementById("send");
@@ -92,6 +95,29 @@ async function findExperts(text, reply) {
   conversation.setAttribute("aria-busy", "true");
   scrollToLatest();
   try {
+    // 기존 AI 매칭을 먼저 시도하고 실패하면 대화형 키워드 검색을 사용한다.
+    if (!demo) {
+      bubble.textContent = "AI가 고민을 읽고 딱 맞는 베테랑을 찾고 있어요…";
+      try {
+        const { aiMatch } = await import("../api/ai.js");
+        const result = await aiMatch(text);
+        if (result.matches.length) {
+          try {
+            sessionStorage.setItem(AI_KEY, JSON.stringify({ concern: text, ...result }));
+          } catch {
+            // 저장이 불가능해도 첫 번째 베테랑의 프로필로 이동한다.
+          }
+          location.href = route("expert-booking.html", {
+            id: result.matches[0].expert_id,
+            ai: "1",
+          });
+          return;
+        }
+        bubble.textContent = "딱 맞는 베테랑을 찾지 못해 키워드로 찾아볼게요.";
+      } catch {
+        bubble.textContent = "AI 연결이 원활하지 않아 키워드로 찾아볼게요.";
+      }
+    }
     const keyword = searchKeyword(text);
     let rows;
     if (demo) {
