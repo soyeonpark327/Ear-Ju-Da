@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#ffffff" />
+    <title>베테랑 앱 미리보기 | 이어주다</title>
+    <link rel="stylesheet" href="../css/reset.css" />
+    <link rel="stylesheet" href="../css/variables.css" />
+    <link rel="stylesheet" href="../css/pages/veteran-preview.css?v=1" />
+  </head>
+  <body>
+    <main class="v-app" aria-label="베테랑 모바일 앱 미리보기">
+      <div class="v-status" aria-label="오전 9시 41분"><b>9:41</b><span aria-hidden="true">▮▮ ◉ ▰</span></div>
+      <section class="v-screen is-active" data-screen="home" aria-labelledby="home-title">
+        <header class="v-home-head"><a class="v-logo" href="#home" aria-label="이어주다 홈">EARJUDA</a><button class="v-icon-button" aria-label="알림">♧</button></header>
+        <div class="v-content v-home-content">
+          <h1 id="home-title">다가오는 상담</h1>
+          <article class="v-next-card">
+            <h2><span class="v-today">오늘</span> 10월 26일 월요일 14:00</h2>
+            <div class="v-next-person"><span class="v-person-icon" aria-hidden="true">●</span><div><b>최강은 <small>스타터</small></b><p>1시간 1:1 통화 상담</p></div><strong>12,000P</strong></div>
+            <p class="v-hint">◷ &nbsp;상담방은 예약 시간에 열려요</p>
+          </article>
+          <button class="v-primary v-full" data-go="chat">상담방 들어가기</button>
+          <nav class="v-shortcuts" aria-label="빠른 메뉴">
+            <button data-go="schedule"><span aria-hidden="true">▦</span>상담 일정</button>
+            <button data-go="editor"><span aria-hidden="true">✎</span>오답노트 쓰기</button>
+            <button data-go="income"><span aria-hidden="true">ⓢ</span>수익 확인</button>
+          </nav>
+          <article class="v-income-banner" data-go="income" role="button" tabindex="0"><header><b>10월 수익</b><span>자세히 ›</span></header><strong>86,000P</strong><p>♙ &nbsp;보관 중 24,000P | 상담 완료 후 정산</p></article>
+        </div>
+      </section>
+
+      <section class="v-screen" data-screen="schedule" aria-labelledby="schedule-title">
+        <header class="v-page-head"><h1 id="schedule-title">상담 일정</h1></header>
+        <div class="v-content v-schedule-content">
+          <div class="v-date-strip" aria-label="날짜 선택"><button><small>월</small><b>26</b><i></i></button><button><small>화</small><b>27</b></button><button><small>수</small><b>28</b><i></i></button><button><small>목</small><b>29</b></button><button><small>금</small><b>30</b><i></i></button></div>
+          <h2>월요일 상담 2건</h2>
+          <article class="v-appointment"><span class="v-round-icon">♧</span><div><b>14:00 · 최강은 님</b><p>1시간 1:1 통화 상담</p></div><strong>12,000P</strong></article>
+          <article class="v-appointment"><span class="v-round-icon v-gray">▢</span><div><b>16:30 · 김수현 님</b><p>1시간 1:1 채팅 상담</p></div><strong>10,000P</strong></article>
+          <div class="v-open-heading"><h2>상담 가능 시간</h2><span>눌러서 열고 닫아요</span></div>
+          <div class="v-time-options" aria-label="상담 가능 시간 선택"><button>10:00</button><button>12:00</button><button class="selected" aria-pressed="true">14:00</button><button class="selected" aria-pressed="true">15:00</button><button class="selected" aria-pressed="true">16:00</button><button class="selected" aria-pressed="true">17:00</button></div>
+          <label class="v-repeat"><span>매주 월 · 수 · 금 반복</span><input type="checkbox" checked aria-label="매주 월요일, 수요일, 금요일 반복"/><i></i></label>
+          <button class="v-primary v-full" data-notice="상담 가능 시간 예시를 저장했어요.">저장하기</button>
+        </div>
+      </section>
+
+      <section class="v-screen" data-screen="income" aria-labelledby="income-title">
+        <header class="v-page-head"><h1 id="income-title">수익</h1></header>
+        <div class="v-content v-income-content">
+          <article class="v-income-total"><header><b>10월 수익</b><button data-notice="정산 내역 예시예요.">정산 내역 ›</button></header><strong>86,000P</strong><p>♙ &nbsp;보관 중 24,000P | 상담 완료 후 정산</p></article>
+          <div class="v-income-stats"><article><span>10월 상담</span><b>7회</b></article><article><span>받은 별점</span><b><em>★</em> 4.9</b></article></div>
+          <h2>최근 수익</h2>
+          <ul class="v-earnings">
+            <li><span class="v-round-icon">●</span><div><b>최강은 <small>스타터</small></b><p>10월 23일 · 1시간 1:1 채팅 상담</p></div><strong>+10,000P</strong></li>
+            <li><span class="v-round-icon v-doc">▤</span><div><b>오답노트 판매</b><p>10월 21일 · 제조사 계약 조항 5가지</p></div><strong>+5,900P</strong></li>
+            <li><span class="v-round-icon">●</span><div><b>김지훈 <small>스타터</small></b><p>10월 19일 · 1시간 1:1 통화 상담</p></div><strong>+12,000P</strong></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="v-screen" data-screen="mypage" aria-labelledby="mypage-title">
+        <header class="v-page-head v-my-head"><h1 id="mypage-title">마이페이지</h1></header>
+        <div class="v-content v-my-content">
+          <button class="v-profile" data-notice="프로필을 확인할 수 있어요."><img src="../assets/home/expert-lee.png" alt="이승호 위원 프로필"/><span><b>이승호 <small>위원</small></b><p>자동차 부품사 구매팀 | 2024년 정년퇴임</p></span><i>›</i></button>
+          <article class="v-verified"><header><b>♢ &nbsp;경력 인증</b><span>인증 완료</span></header><div class="v-badges"><b>근속 30년 인증</b><b>납품 계약</b><b>단가협상</b></div><p>신뢰 등급 <em>우수</em> · 답변채택 128건</p></article>
+          <nav class="v-my-menu" aria-label="마이페이지 메뉴"><button data-go="editor">내 오답노트 관리 <i>›</i></button><button data-go="schedule">상담 가능 시간 설정 <i>›</i></button><button data-notice="글자 크기를 크게 설정했어요.">글자 크기 <b>크게</b><i>›</i></button><button data-notice="알림 설정 화면은 준비 중이에요.">알림 설정 <i>›</i></button><button data-notice="고객센터로 문의해주세요.">고객센터 <i>›</i></button><button class="v-logout" data-notice="미리보기에서는 로그아웃되지 않아요.">로그아웃</button></nav>
+        </div>
+      </section>
+
+      <section class="v-screen" data-screen="editor" aria-labelledby="editor-title">
+        <header class="v-page-head v-editor-head"><button data-go="mypage" aria-label="마이페이지로 돌아가기">‹</button><h1 id="editor-title">오답노트 쓰기</h1></header>
+        <div class="v-content v-editor-content">
+          <div class="v-categories" aria-label="분야 선택"><button class="selected">계약</button><button>노무</button><button>세무</button><button>자금</button><button>판로</button></div>
+          <label class="v-field-label" for="v-note-title">제목</label><input id="v-note-title" class="v-note-title" value="초보 창업가가 제조사 계약 시 놓치면 100% 손해 보는 조항 5가지" maxlength="60"/>
+          <div class="v-error-head"><h2>오답 1</h2><span>1 / 5</span></div>
+          <div class="v-error-form">
+            <label><span class="v-step-icon">▯</span><b>문제</b><textarea rows="2">“품질 기준은 추후 협의한다”</textarea></label>
+            <label><span class="v-step-icon v-red">×</span><b>당시 판단</b><textarea rows="3">‘추후 협의’라고 적혀 있으니 나중에 반영되겠지 하고 계약했어요.</textarea></label>
+            <label><span class="v-step-icon v-red">!</span><b>결과</b><textarea rows="2" placeholder="어떤 손해를 봤는지 적어주세요"></textarea></label>
+            <label><span class="v-step-icon v-cyan">✓</span><b class="v-cyan-text">정답</b><textarea rows="2" class="v-answer" placeholder="이렇게 했어야 해요"></textarea></label>
+          </div>
+        </div>
+        <footer class="v-editor-actions"><button data-notice="오답노트를 임시 저장했어요.">임시 저장</button><button class="v-primary" data-notice="다음 오답 입력 화면이에요.">다음 오답 쓰기</button></footer>
+      </section>
+
+      <section class="v-screen" data-screen="chat" aria-labelledby="chat-title">
+        <header class="v-chat-head"><button data-go="home" aria-label="홈으로 돌아가기">‹</button><div><h1 id="chat-title">최강은 님</h1><p>첫 창업 준비 중 | 제조 분야</p></div><strong>46:20<small>남은 시간</small></strong></header>
+        <div class="v-content v-chat-content">
+          <button class="v-call" data-notice="통화 상담 연결은 서비스 준비 중이에요.">♧ &nbsp;통화 상담 · 최강은 님께 전화 걸기</button>
+          <p class="v-chat-date">10월 26일 월요일 오후 2:00</p>
+          <div class="v-file">▯ &nbsp;계약서_3조_단가_조항.pdf <small>PDF</small><time>2:01</time></div>
+          <p class="v-bubble v-out">계약서 3조 단가 조항, pdf로 보내주신 것 확인했습니다.<time>2:03</time></p>
+          <p class="v-bubble v-in">공장에서 이 정도는 관행이라는데 그냥 싸인해도 될까요?<time>2:04</time></p>
+          <article class="v-advice"><b>핵심조언</b><p>이 조항은 나중에 단가 인하 압박의 빌미가 됩니다. “추후 협의”를 지우고 <strong>조정상한 3%</strong>를 숫자로 박아두면 됩니다.</p><button data-notice="핵심조언으로 보냈어요.">↳ 전략 리포트에 담김</button></article>
+          <p class="v-bubble v-out">그리고 검수 기준 조항도 같이 보시죠. 거기가 더 위험합니다.<time>2:07</time></p>
+          <button class="v-key-advice" data-notice="핵심조언으로 보냈어요.">☆ 핵심조언으로 보내기</button>
+        </div>
+        <form class="v-chat-compose"><button type="button" aria-label="첨부">＋</button><input aria-label="메시지" placeholder="메시지를 입력해주세요."/><button class="v-send" aria-label="전송">↑</button></form>
+      </section>
+
+      <nav class="v-bottom-nav" aria-label="하단 메뉴"><button data-go="home" aria-current="page"><span>⌂</span>홈</button><button data-go="schedule"><span>▦</span>일정</button><button data-go="income"><span>ⓢ</span>수익</button><button data-go="mypage"><span>♙</span>마이</button></nav>
+      <div class="v-toast" role="status" aria-live="polite"></div>
+    </main>
+    <script type="module" src="../js/pages/veteran-preview.js?v=1"></script>
+  </body>
+</html>
