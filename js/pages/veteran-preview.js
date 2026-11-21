@@ -1,5 +1,13 @@
 const screens = [...document.querySelectorAll("[data-screen]")];
 const bottomItems = [...document.querySelectorAll(".v-bottom-nav [data-go]")];
+const tabIcons = bottomItems.map((button) => {
+  const image = button.querySelector("img");
+  return {
+    image,
+    active: image.dataset.activeSrc ?? image.getAttribute("src"),
+    idle: image.dataset.idleSrc ?? image.getAttribute("src"),
+  };
+});
 const toast = document.querySelector(".v-toast");
 let toastTimer;
 
@@ -19,8 +27,10 @@ function showScreen(name) {
     screen.setAttribute("aria-hidden", String(!active));
   });
   document.querySelector(".v-app").classList.toggle("v-no-bottom", ["editor", "chat"].includes(name));
-  bottomItems.forEach((button) => {
+  bottomItems.forEach((button, index) => {
     const active = button.dataset.go === name;
+    const icon = tabIcons[index];
+    icon.image.src = active ? icon.active : icon.idle;
     if (active) button.setAttribute("aria-current", "page");
     else button.removeAttribute("aria-current");
   });
